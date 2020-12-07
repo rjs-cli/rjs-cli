@@ -2,6 +2,7 @@ import { readdir } from 'fs/promises';
 import { program } from 'commander';
 import shell from 'shelljs';
 import { mkdir } from 'fs';
+import { jsComponentTemplate } from '../utils';
 
 export class App {
   usesTypescript = () => {
@@ -57,6 +58,17 @@ export class App {
     message += ` in "${componentDirPath}"`;
 
     console.info(`${message}...`);
+    this.createComponent(componentName);
+  };
+
+  createComponent = (componentName: string) => {
+    shell.cd('src');
+    shell.cd('components');
+    shell.mkdir(componentName);
+    shell.cd(componentName);
+    shell.touch(`${componentName}.module.scss`);
+    shell.touch(`${componentName}.js`);
+    shell.exec(`echo "${jsComponentTemplate(componentName)}" >> ${componentName}.js`);
   };
 
   checkSrcDirectory = async () => {

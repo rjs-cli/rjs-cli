@@ -43,6 +43,7 @@ exports.App = void 0;
 var promises_1 = require("fs/promises");
 var commander_1 = require("commander");
 var shelljs_1 = __importDefault(require("shelljs"));
+var utils_1 = require("../utils");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
@@ -104,10 +105,20 @@ var App = /** @class */ (function () {
                             componentDirPath = shelljs_1.default.pwd() + "/src/components/" + componentName;
                             message += " in \"" + componentDirPath + "\"";
                             console.info(message + "...");
+                            this.createComponent(componentName);
                             return [2 /*return*/];
                     }
                 });
             });
+        };
+        this.createComponent = function (componentName) {
+            shelljs_1.default.cd('src');
+            shelljs_1.default.cd('components');
+            shelljs_1.default.mkdir(componentName);
+            shelljs_1.default.cd(componentName);
+            shelljs_1.default.touch(componentName + ".module.scss");
+            shelljs_1.default.touch(componentName + ".js");
+            shelljs_1.default.exec("echo \"" + utils_1.jsComponentTemplate(componentName) + "\" >> " + componentName + ".js");
         };
         this.checkSrcDirectory = function () { return __awaiter(_this, void 0, void 0, function () {
             var dirContent;
