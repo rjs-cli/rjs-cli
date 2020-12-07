@@ -21,8 +21,8 @@ program
   .option(
     '-s, --with-styles [type]',
     'Generates a componente with a stylesheet associated with [type] = css | scss',
-    'css',
   )
+  .option('-m, --uses-modules', 'Wheter or not to use the so called css modules', false)
   .action(component.generate);
 program
   .command('gc <name> [dir]')
@@ -32,7 +32,6 @@ program
   .option(
     '-s, --with-styles [type]',
     'Generates a componente with a stylesheet associated with [type] = css | scss',
-    'css',
   )
   .option('-m, --uses-modules', 'Wheter or not to use the so called css modules', false)
   .action(component.generate);

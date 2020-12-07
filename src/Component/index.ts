@@ -9,7 +9,7 @@ import {
 import { FsUtil } from '../FsUtil';
 
 interface GenerateComponentOptions {
-  withStyles: 'css' | 'scss';
+  withStyles?: 'css' | 'scss';
   typescript: boolean;
   usesModules: boolean;
   isClassBased: boolean;
@@ -18,65 +18,88 @@ interface GenerateComponentOptions {
 export class Component {
   name: string = '';
   directory: string = '';
-  withStyles: 'css' | 'scss' = 'css';
+  withStyles?: 'css' | 'scss' = 'css';
   usesTypescript: boolean = false;
   usesModules: boolean = false;
   isClassBased: boolean = false;
+  fsUtil;
+  message: string = '';
+
+  constructor() {
+    this.fsUtil = new FsUtil();
+  }
 
   generate = async (
     componentName: string,
     componentDir: string,
     { withStyles, typescript, isClassBased, usesModules }: GenerateComponentOptions,
   ) => {
-    let message = `Generating ${componentName} component`;
+    this.name = componentName;
+    this.directory = componentDir;
+    this.withStyles = withStyles;
+    this.usesTypescript = typescript;
+    this.isClassBased = isClassBased;
+    this.usesModules = usesModules;
+
+    this.message = `Generating ${this.name} component`;
     if (typescript) {
-      message += ' with typescript';
+      this.message += ' with typescript';
     }
 
-    if (withStyles && ['css', 'scss'].includes(withStyles)) {
+    if (this.withStyles && ['css', 'scss'].includes(this.withStyles)) {
       if (typescript) {
-        message += ' and';
+        this.message += ' and';
       }
-      message += ` ${withStyles}`;
+      this.message += ` ${this.withStyles}`;
     }
 
-    if (componentDir) {
-      if (componentDir === '.') {
-        console.info(`${message} in ${shell.pwd()}/`);
+    if (this.directory) {
+      if (this.directory === '.') {
+        console.info(`${this.message} in ${shell.pwd()}/`);
       } else {
-        console.info(`${message} in ${shell.pwd()}/${componentDir}`);
+        console.info(`${this.message} in ${shell.pwd()}/${this.directory}`);
       }
       return;
     }
 
-    const fsUtil = new FsUtil();
-
-    const hasSrcDir = await fsUtil.checkSrcDirectory();
+    const hasSrcDir = await this.fsUtil.checkSrcDirectory();
 
     if (hasSrcDir) {
-      const hasComponentsDir = await fsUtil.checkComponentsDirectory();
+      const hasComponentsDir = await this.fsUtil.checkComponentsDirectory();
 
       if (!hasComponentsDir) {
-        fsUtil.createComponentsDirectory();
+        this.fsUtil.createComponentsDirectory();
       }
     } else {
-      fsUtil.createSrcDirectory();
-      fsUtil.createComponentsDirectory();
+      this.fsUtil.createSrcDirectory();
+      this.fsUtil.createComponentsDirectory();
     }
-    const componentDirPath = `${shell.pwd()}/src/components/${componentName}`;
-    message += ` in "${componentDirPath}"`;
 
-    console.info(`${message}...`);
-    this.create();
+    this.directory = `${shell.pwd()}/src/components/${this.name}`;
+    this.message += ` in "${this.directory}"`;
+
+    await this.create();
   };
 
-  create = () => {
+  create = async () => {
     shell.cd('src');
     shell.cd('components');
+
+    const alreadyExists = await this.fsUtil.alreadyExists(this.name);
+
+    if (alreadyExists) {
+      console.error('This component already exists, please choose a different name.');
+      return;
+    }
+
+    console.info(`${this.message}...`);
+
     shell.mkdir(this.name);
     shell.cd(this.name);
 
-    this.createStyles();
+    if (this.withStyles) {
+      this.createStyles();
+    }
 
     let filename = this.createFile();
 
@@ -116,13 +139,13 @@ export class Component {
   createTemplate = () => {
     let template;
     if (this.isClassBased && this.usesTypescript) {
-      template = createTsClassComponentTemplate(this.name);
+      template = createTsClassComponentTemplate(this.name, this.withStyles);
     } else if (this.isClassBased && !this.usesTypescript) {
-      template = createJsClassComponentTemplate(this.name);
+      template = createJsClassComponentTemplate(this.name, this.withStyles);
     } else if (!this.isClassBased && this.usesTypescript) {
-      template = createTsFunctionalComponentTemplate(this.name);
+      template = createTsFunctionalComponentTemplate(this.name, this.withStyles);
     } else {
-      template = createJsFunctionalComponentTemplate(this.name);
+      template = createJsFunctionalComponentTemplate(this.name, this.withStyles);
     }
 
     return template;
