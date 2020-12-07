@@ -1,4 +1,4 @@
-export const jsComponentTemplate = (componentName: string) => `import React from 'react';
+export const jsFunctionalComponentTemplate = (componentName: string) => `import React from 'react';
 
 const ${componentName} = () => {
   return (
@@ -9,3 +9,9 @@ const ${componentName} = () => {
 };
 
 export default ${componentName};`;
+
+export const tsFunctionalComponent = (componentName: string) => '';
+
+export const jsClassComponent = (componentName: string) => '';
+
+export const tsClassComponent = (componentName: string) => '';

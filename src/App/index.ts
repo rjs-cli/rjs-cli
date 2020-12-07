@@ -1,26 +1,75 @@
 import { readdir } from 'fs/promises';
-import { program } from 'commander';
 import shell from 'shelljs';
-import { mkdir } from 'fs';
-import { jsComponentTemplate } from '../utils';
+import { prompt } from 'enquirer';
+import {
+  jsFunctionalComponentTemplate,
+  jsClassComponent,
+  tsFunctionalComponent,
+  tsClassComponent,
+} from '../utils';
+
+interface CreateReactAppOptions {
+  typescript: boolean;
+  interactive: boolean;
+}
+
+interface GenerateComponentOptions {
+  withStyles: 'css' | 'scss' | 'css-module' | 'scss-module';
+  typescript: boolean;
+  class: boolean;
+}
 
 export class App {
-  usesTypescript = () => {
-    return !!program.typescript || !!program.t ? true : false;
-  };
+  appName: string = '';
+  usesTypescript: boolean = false;
 
-  createReactApp = (dir: string) => {
-    // const appDirectory = `${process.cwd()}/${dir}`;
-    let command = `npx create-react-app ${dir}`;
-    if (this.usesTypescript()) {
-      command += ` --template typescript`;
+  interactiveCreateReactApp = async (askName: boolean) => {
+    if (askName) {
+      const { appName }: { appName: string } = await prompt({
+        type: 'input',
+        name: 'appName',
+        message: 'What is the name of the project ?',
+      });
+
+      this.appName = appName;
     }
-    console.log(command);
-    shell.exec(command);
+    const { typescript }: { typescript: boolean } = await prompt({
+      type: 'confirm',
+      name: 'typescript',
+      message: 'Would you like to use typescript in your project ?',
+      required: true,
+    });
+    this.usesTypescript = typescript;
   };
 
-  //@ts-ignore
-  generateComponent = async (componentName, componentDir, { withStyles, typescript }) => {
+  createReactApp = async (appName: string, { typescript, interactive }: CreateReactAppOptions) => {
+    try {
+      this.appName = appName;
+      this.usesTypescript = typescript;
+
+      if (interactive || !appName) {
+        await this.interactiveCreateReactApp(!appName);
+      }
+      // const appDirectory = `${process.cwd()}/${dir}`;
+
+      let command = `npx create-react-app ${appName}`;
+      if (typescript) {
+        command += ` --template typescript`;
+      }
+      console.log({ typescript: this.usesTypescript, appName: this.appName });
+
+      // console.log(command);
+      // shell.exec(command);
+    } catch (e) {
+      process.exit(1);
+    }
+  };
+
+  generateComponent = async (
+    componentName: string,
+    componentDir: string,
+    { withStyles, typescript, class: classBased }: GenerateComponentOptions,
+  ) => {
     let message = `Generating ${componentName} component`;
     if (typescript) {
       message += ' with typescript';
@@ -68,7 +117,7 @@ export class App {
     shell.cd(componentName);
     shell.touch(`${componentName}.module.scss`);
     shell.touch(`${componentName}.js`);
-    shell.exec(`echo "${jsComponentTemplate(componentName)}" >> ${componentName}.js`);
+    shell.exec(`echo "${jsFunctionalComponentTemplate(componentName)}" >> ${componentName}.js`);
   };
 
   checkSrcDirectory = async () => {

@@ -41,27 +41,75 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var promises_1 = require("fs/promises");
-var commander_1 = require("commander");
 var shelljs_1 = __importDefault(require("shelljs"));
+var enquirer_1 = require("enquirer");
 var utils_1 = require("../utils");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
-        this.usesTypescript = function () {
-            return !!commander_1.program.typescript || !!commander_1.program.t ? true : false;
+        this.appName = '';
+        this.usesTypescript = false;
+        this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
+            var appName, typescript;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!askName) return [3 /*break*/, 2];
+                        return [4 /*yield*/, enquirer_1.prompt({
+                                type: 'input',
+                                name: 'appName',
+                                message: 'What is the name of the project ?',
+                            })];
+                    case 1:
+                        appName = (_a.sent()).appName;
+                        this.appName = appName;
+                        _a.label = 2;
+                    case 2: return [4 /*yield*/, enquirer_1.prompt({
+                            type: 'confirm',
+                            name: 'typescript',
+                            message: 'Would you like to use typescript in your project ?',
+                            required: true,
+                        })];
+                    case 3:
+                        typescript = (_a.sent()).typescript;
+                        this.usesTypescript = typescript;
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.createReactApp = function (appName, _a) {
+            var typescript = _a.typescript, interactive = _a.interactive;
+            return __awaiter(_this, void 0, void 0, function () {
+                var command, e_1;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _b.trys.push([0, 3, , 4]);
+                            this.appName = appName;
+                            this.usesTypescript = typescript;
+                            if (!(interactive || !appName)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, this.interactiveCreateReactApp(!appName)];
+                        case 1:
+                            _b.sent();
+                            _b.label = 2;
+                        case 2:
+                            command = "npx create-react-app " + appName;
+                            if (typescript) {
+                                command += " --template typescript";
+                            }
+                            console.log({ typescript: this.usesTypescript, appName: this.appName });
+                            return [3 /*break*/, 4];
+                        case 3:
+                            e_1 = _b.sent();
+                            process.exit(1);
+                            return [3 /*break*/, 4];
+                        case 4: return [2 /*return*/];
+                    }
+                });
+            });
         };
-        this.createReactApp = function (dir) {
-            // const appDirectory = `${process.cwd()}/${dir}`;
-            var command = "npx create-react-app " + dir;
-            if (_this.usesTypescript()) {
-                command += " --template typescript";
-            }
-            console.log(command);
-            shelljs_1.default.exec(command);
-        };
-        //@ts-ignore
         this.generateComponent = function (componentName, componentDir, _a) {
-            var withStyles = _a.withStyles, typescript = _a.typescript;
+            var withStyles = _a.withStyles, typescript = _a.typescript, classBased = _a.class;
             return __awaiter(_this, void 0, void 0, function () {
                 var message, hasSrcDir, hasComponentsDir, componentDirPath;
                 return __generator(this, function (_b) {
@@ -118,7 +166,7 @@ var App = /** @class */ (function () {
             shelljs_1.default.cd(componentName);
             shelljs_1.default.touch(componentName + ".module.scss");
             shelljs_1.default.touch(componentName + ".js");
-            shelljs_1.default.exec("echo \"" + utils_1.jsComponentTemplate(componentName) + "\" >> " + componentName + ".js");
+            shelljs_1.default.exec("echo \"" + utils_1.jsFunctionalComponentTemplate(componentName) + "\" >> " + componentName + ".js");
         };
         this.checkSrcDirectory = function () { return __awaiter(_this, void 0, void 0, function () {
             var dirContent;
