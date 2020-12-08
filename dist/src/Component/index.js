@@ -76,70 +76,55 @@ var Component = /** @class */ (function () {
                                 }
                                 this.message += " " + this.withStyles;
                             }
-                            if (!this.directory) return [3 /*break*/, 2];
-                            return [4 /*yield*/, this.checkExistance()
-                                // todo create component
-                            ];
+                            if (this.directory) {
+                                if (this.directory === '.') {
+                                    console.info(this.message + " in " + shelljs_1.default.pwd() + "/");
+                                }
+                                else {
+                                    console.info(this.message + " in " + shelljs_1.default.pwd() + "/" + this.directory);
+                                }
+                                return [2 /*return*/];
+                            }
+                            return [4 /*yield*/, this.fsUtil.checkSrcDirectory()];
                         case 1:
-                            _b.sent();
-                            // todo create component
-                            if (this.directory === '.') {
-                                console.info(this.message + " in " + shelljs_1.default.pwd() + "/");
-                            }
-                            else {
-                                console.info(this.message + " in " + shelljs_1.default.pwd() + "/" + this.directory);
-                            }
-                            process.exit(0);
-                            _b.label = 2;
-                        case 2: return [4 /*yield*/, this.fsUtil.checkSrcDirectory()];
-                        case 3:
                             hasSrcDir = _b.sent();
-                            if (!hasSrcDir) return [3 /*break*/, 5];
+                            if (!hasSrcDir) return [3 /*break*/, 3];
                             return [4 /*yield*/, this.fsUtil.checkComponentsDirectory()];
-                        case 4:
+                        case 2:
                             hasComponentsDir = _b.sent();
                             if (!hasComponentsDir) {
                                 this.fsUtil.createComponentsDirectory();
                             }
-                            return [3 /*break*/, 6];
-                        case 5:
+                            return [3 /*break*/, 4];
+                        case 3:
                             this.fsUtil.createSrcDirectory();
                             this.fsUtil.createComponentsDirectory();
-                            _b.label = 6;
-                        case 6:
+                            _b.label = 4;
+                        case 4:
                             this.directory = shelljs_1.default.pwd() + "/src/components/" + this.name;
                             this.message += " in \"" + this.directory + "\"";
-                            shelljs_1.default.cd('src/components');
                             return [4 /*yield*/, this.create()];
-                        case 7:
+                        case 5:
                             _b.sent();
                             return [2 /*return*/];
                     }
                 });
             });
         };
-        this.checkExistance = function () { return __awaiter(_this, void 0, void 0, function () {
-            var alreadyExists;
+        this.create = function () { return __awaiter(_this, void 0, void 0, function () {
+            var alreadyExists, filename;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.fsUtil.alreadyExists(this.name)];
+                    case 0:
+                        shelljs_1.default.cd('src');
+                        shelljs_1.default.cd('components');
+                        return [4 /*yield*/, this.fsUtil.alreadyExists(this.name)];
                     case 1:
                         alreadyExists = _a.sent();
                         if (alreadyExists) {
                             console.error('This component already exists, please choose a different name.');
-                            process.exit(1);
+                            return [2 /*return*/];
                         }
-                        return [2 /*return*/];
-                }
-            });
-        }); };
-        this.create = function () { return __awaiter(_this, void 0, void 0, function () {
-            var filename;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.checkExistance()];
-                    case 1:
-                        _a.sent();
                         console.info(this.message + "...");
                         shelljs_1.default.mkdir(this.name);
                         shelljs_1.default.cd(this.name);
@@ -147,25 +132,39 @@ var Component = /** @class */ (function () {
                             this.createStyles();
                         }
                         filename = this.createFile();
-                        shelljs_1.default.exec("echo \"" + this.createTemplate() + "\" > " + filename);
+                        shelljs_1.default.exec("echo \"" + this.createTemplate() + "\" >> " + filename);
                         return [2 /*return*/];
                 }
             });
         }); };
         this.createStyles = function () {
-            var extension = _this.withStyles;
-            var file;
-            _this.usesModules
-                ? file = _this.name + ".module." + extension
-                : file = _this.name + "." + extension;
-            shelljs_1.default.touch(file);
+            if (_this.withStyles === 'css') {
+                if (_this.usesModules) {
+                    shelljs_1.default.touch(_this.name + ".module.css");
+                }
+                else {
+                    shelljs_1.default.touch(_this.name + ".css");
+                }
+            }
+            else {
+                if (_this.usesModules) {
+                    shelljs_1.default.touch(_this.name + ".module.scss");
+                }
+                else {
+                    shelljs_1.default.touch(_this.name + ".scss");
+                }
+            }
         };
         this.createFile = function () {
             var filename;
-            _this.usesTypescript
-                ? filename = _this.name + ".tsx"
-                : filename = _this.name + ".js";
-            shelljs_1.default.touch(filename);
+            if (_this.usesTypescript) {
+                shelljs_1.default.touch(_this.name + ".tsx");
+                filename = _this.name + ".tsx";
+            }
+            else {
+                shelljs_1.default.touch(_this.name + ".js");
+                filename = _this.name + ".js";
+            }
             return filename;
         };
         this.createTemplate = function () {

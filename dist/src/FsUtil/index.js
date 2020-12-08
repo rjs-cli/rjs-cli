@@ -45,48 +45,12 @@ var shelljs_1 = __importDefault(require("shelljs"));
 var FsUtil = /** @class */ (function () {
     function FsUtil() {
         var _this = this;
-        this.goToRootDir = function () { return __awaiter(_this, void 0, void 0, function () {
-            var path, hasPackageJson, timeout, dirContent;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        path = shelljs_1.default.pwd().stdout;
-                        hasPackageJson = false;
-                        timeout = setTimeout(function () {
-                            if (!hasPackageJson) {
-                                console.log("No package.json found, exiting ...");
-                                process.exit(1);
-                            }
-                        }, 5000);
-                        _a.label = 1;
-                    case 1: return [4 /*yield*/, promises_1.readdir(path)];
-                    case 2:
-                        dirContent = _a.sent();
-                        hasPackageJson = dirContent.includes("package.json");
-                        if (hasPackageJson) {
-                            clearTimeout(timeout);
-                            return [3 /*break*/, 4];
-                        }
-                        shelljs_1.default.cd("../");
-                        path = shelljs_1.default.pwd().stdout;
-                        _a.label = 3;
-                    case 3:
-                        if (true) return [3 /*break*/, 1];
-                        _a.label = 4;
-                    case 4: return [2 /*return*/];
-                }
-            });
-        }); };
         this.checkSrcDirectory = function () { return __awaiter(_this, void 0, void 0, function () {
-            var appDir, dirContent;
+            var dirContent;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.goToRootDir()];
+                    case 0: return [4 /*yield*/, promises_1.readdir(process.cwd())];
                     case 1:
-                        _a.sent();
-                        appDir = shelljs_1.default.pwd().stdout;
-                        return [4 /*yield*/, promises_1.readdir(appDir)];
-                    case 2:
                         dirContent = _a.sent();
                         if (dirContent.includes('src')) {
                             return [2 /*return*/, true];
@@ -112,7 +76,6 @@ var FsUtil = /** @class */ (function () {
         this.createComponentsDirectory = function () {
             shelljs_1.default.cd('src');
             shelljs_1.default.mkdir('components');
-            shelljs_1.default.cd('..');
         };
         this.createSrcDirectory = function () {
             shelljs_1.default.mkdir('src');

@@ -31,7 +31,7 @@ exports.createJsFunctionalComponentTemplate = function (componentName, withStyle
 };
 exports.createTsClassComponentTemplate = function (componentName, withStyles, usesModules) {
     if (usesModules === void 0) { usesModules = false; }
-    return "import React, { Component } from 'react';\n" + importStyle(componentName, withStyles, usesModules) + "\n\ninterface " + componentName + "Props {}\n\ninterface " + componentName + "State {}\n\nclass " + componentName + " extends Component<" + componentName + "Props, " + componentName + "State> {\n  state = {}\n\n  render() {\n    return (\n      <div className=" + className(componentName, usesModules) + ">\n        " + componentName + " Component\n      </div>\n    );\n  }\n}\n\nexport default index;";
+    return "import React, { Component } from 'react';\n" + importStyle(componentName, withStyles, usesModules) + "\n\ninterface " + componentName + "Props {}\n\ninterface " + componentName + "State {}\n\nclass " + componentName + " extends Component<" + componentName + "Props, " + componentName + "State> {\n  state = {}\n  render() {\n    return (\n      <div className=" + className(componentName, usesModules) + ">\n        " + componentName + " Component\n      </div>\n    );\n  }\n}\n\nexport default index;";
 };
 exports.createTsFunctionalComponentTemplate = function (componentName, withStyles, usesModules) {
     if (usesModules === void 0) { usesModules = false; }
