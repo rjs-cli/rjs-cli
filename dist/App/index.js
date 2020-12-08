@@ -35,14 +35,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var enquirer_1 = require("enquirer");
+var shelljs_1 = __importDefault(require("shelljs"));
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.appName = '';
         this.usesTypescript = false;
+        this.withRouter = false;
+        this.packageManager = "yarn";
+        // todo interactive creating
         this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
             var appName, typescript;
             return __generator(this, function (_a) {
@@ -72,7 +79,7 @@ var App = /** @class */ (function () {
             });
         }); };
         this.createReactApp = function (appName, _a) {
-            var typescript = _a.typescript, interactive = _a.interactive;
+            var typescript = _a.typescript, interactive = _a.interactive, withRouter = _a.withRouter;
             return __awaiter(_this, void 0, void 0, function () {
                 var command, e_1;
                 return __generator(this, function (_b) {
@@ -81,6 +88,7 @@ var App = /** @class */ (function () {
                             _b.trys.push([0, 3, , 4]);
                             this.appName = appName;
                             this.usesTypescript = typescript;
+                            this.withRouter = withRouter;
                             if (!(interactive || !appName)) return [3 /*break*/, 2];
                             return [4 /*yield*/, this.interactiveCreateReactApp(!appName)];
                         case 1:
@@ -91,16 +99,30 @@ var App = /** @class */ (function () {
                             if (typescript) {
                                 command += " --template typescript";
                             }
-                            console.log({ typescript: this.usesTypescript, appName: this.appName });
+                            console.log(command);
+                            shelljs_1.default.exec(command);
+                            shelljs_1.default.cd(this.appName);
+                            this.installPackages();
                             return [3 /*break*/, 4];
                         case 3:
                             e_1 = _b.sent();
+                            console.error("An error occured! Please try again.");
                             process.exit(1);
                             return [3 /*break*/, 4];
                         case 4: return [2 /*return*/];
                     }
                 });
             });
+        };
+        this.installPackages = function () {
+            var command = _this.packageManager + " ";
+            if (_this.withRouter) {
+                command += " add react-router-dom";
+                if (_this.usesTypescript) {
+                    command += " && " + _this.packageManager + " add -D @types/react-router-dom";
+                }
+            }
+            shelljs_1.default.exec(command);
         };
     }
     return App;

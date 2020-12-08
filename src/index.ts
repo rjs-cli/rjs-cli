@@ -10,8 +10,9 @@ program.version('0.0.1');
 program
   .command('init [app-name]')
   .description('Uses create-react-app to create a new react app')
-  .option('-i, --interactive', 'Starts the interactive mode')
-  .option('-t, --typescript', 'Uses typescript template to create react app')
+  .option('-i, --interactive', 'Starts the interactive mode', false)
+  .option('-t, --typescript', 'Uses typescript template to create react app', false)
+  .option("-r, --with-router", "Bootsraps a react app with integrated react router", false)
   .action(app.createReactApp);
 program
   .command('generate-component <name> [dir]')
