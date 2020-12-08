@@ -1,5 +1,4 @@
 import shell from 'shelljs';
-
 import {
   createJsClassComponentTemplate,
   createJsFunctionalComponentTemplate,
@@ -54,12 +53,16 @@ export class Component {
     }
 
     if (this.directory) {
+      await this.checkExistance()
+
+      // todo create component
       if (this.directory === '.') {
         console.info(`${this.message} in ${shell.pwd()}/`);
       } else {
         console.info(`${this.message} in ${shell.pwd()}/${this.directory}`);
       }
-      return;
+
+      process.exit(0);
     }
 
     const hasSrcDir = await this.fsUtil.checkSrcDirectory();
@@ -78,19 +81,21 @@ export class Component {
     this.directory = `${shell.pwd()}/src/components/${this.name}`;
     this.message += ` in "${this.directory}"`;
 
+    shell.cd('src/components');
     await this.create();
   };
 
-  create = async () => {
-    shell.cd('src');
-    shell.cd('components');
-
+  checkExistance = async () => {
     const alreadyExists = await this.fsUtil.alreadyExists(this.name);
 
     if (alreadyExists) {
       console.error('This component already exists, please choose a different name.');
-      return;
+      process.exit(1);
     }
+  }
+
+  create = async () => {
+    await this.checkExistance();
 
     console.info(`${this.message}...`);
 
@@ -103,35 +108,28 @@ export class Component {
 
     let filename = this.createFile();
 
-    shell.exec(`echo "${this.createTemplate()}" >> ${filename}`);
+    shell.exec(`echo "${this.createTemplate()}" > ${filename}`);
   };
 
   createStyles = () => {
-    if (this.withStyles === 'css') {
-      if (this.usesModules) {
-        shell.touch(`${this.name}.module.css`);
-      } else {
-        shell.touch(`${this.name}.css`);
-      }
-    } else {
-      if (this.usesModules) {
-        shell.touch(`${this.name}.module.scss`);
-      } else {
-        shell.touch(`${this.name}.scss`);
-      }
-    }
+    const extension = this.withStyles;
+    let file;
+
+    this.usesModules
+      ? file = `${this.name}.module.${extension}`
+      : file = `${this.name}.${extension}`
+
+    shell.touch(file);
   };
 
   createFile = () => {
     let filename;
 
-    if (this.usesTypescript) {
-      shell.touch(`${this.name}.tsx`);
-      filename = `${this.name}.tsx`;
-    } else {
-      shell.touch(`${this.name}.js`);
-      filename = `${this.name}.js`;
-    }
+    this.usesTypescript
+      ? filename = `${this.name}.tsx`
+      : filename = `${this.name}.js`;
+
+    shell.touch(filename);
 
     return filename;
   };
@@ -139,13 +137,13 @@ export class Component {
   createTemplate = () => {
     let template;
     if (this.isClassBased && this.usesTypescript) {
-      template = createTsClassComponentTemplate(this.name, this.withStyles);
+      template = createTsClassComponentTemplate(this.name, this.withStyles,this.usesModules);
     } else if (this.isClassBased && !this.usesTypescript) {
-      template = createJsClassComponentTemplate(this.name, this.withStyles);
+      template = createJsClassComponentTemplate(this.name, this.withStyles,this.usesModules);
     } else if (!this.isClassBased && this.usesTypescript) {
-      template = createTsFunctionalComponentTemplate(this.name, this.withStyles);
+      template = createTsFunctionalComponentTemplate(this.name, this.withStyles,this.usesModules);
     } else {
-      template = createJsFunctionalComponentTemplate(this.name, this.withStyles);
+      template = createJsFunctionalComponentTemplate(this.name, this.withStyles,this.usesModules);
     }
 
     return template;
