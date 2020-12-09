@@ -8,18 +8,18 @@ import {
 import { FsUtil } from '../FsUtil';
 
 interface GenerateComponentOptions {
-  withStyles?: 'css' | 'scss';
-  typescript: boolean;
-  usesModules: boolean;
+  useStyles?: 'css' | 'scss';
+  useTypescript: boolean;
+  useModules: boolean;
   isClassBased: boolean;
 }
 
 export class Component {
   name: string = '';
   directory: string = '';
-  withStyles?: 'css' | 'scss' = 'css';
-  usesTypescript: boolean = false;
-  usesModules: boolean = false;
+  useStyles?: 'css' | 'scss' = 'css';
+  useTypescript: boolean = false;
+  useModules: boolean = false;
   isClassBased: boolean = false;
   fsUtil;
   message: string = '';
@@ -31,25 +31,25 @@ export class Component {
   generate = async (
     componentName: string,
     componentDir: string,
-    { withStyles, typescript, isClassBased, usesModules }: GenerateComponentOptions,
+    { useStyles, useTypescript, isClassBased, useModules }: GenerateComponentOptions,
   ) => {
     this.name = componentName;
     this.directory = componentDir;
-    this.withStyles = withStyles;
-    this.usesTypescript = typescript;
+    this.useStyles = useStyles;
+    this.useTypescript = useTypescript;
     this.isClassBased = isClassBased;
-    this.usesModules = usesModules;
+    this.useModules = useModules;
 
     this.message = `Generating ${this.name} component`;
-    if (typescript) {
+    if (this.useTypescript) {
       this.message += ' with typescript';
     }
 
-    if (this.withStyles && ['css', 'scss'].includes(this.withStyles)) {
-      if (typescript) {
+    if (this.useStyles && ['css', 'scss'].includes(this.useStyles)) {
+      if (this.useTypescript) {
         this.message += ' and';
       }
-      this.message += ` ${this.withStyles}`;
+      this.message += ` ${this.useStyles}`;
     }
 
     if (this.directory) {
@@ -102,7 +102,7 @@ export class Component {
     shell.mkdir(this.name);
     shell.cd(this.name);
 
-    if (this.withStyles) {
+    if (this.useStyles) {
       this.createStyles();
     }
 
@@ -112,10 +112,10 @@ export class Component {
   };
 
   createStyles = () => {
-    const extension = this.withStyles;
+    const extension = this.useStyles;
     let file;
 
-    this.usesModules
+    this.useModules
       ? file = `${this.name}.module.${extension}`
       : file = `${this.name}.${extension}`
 
@@ -125,7 +125,7 @@ export class Component {
   createFile = () => {
     let filename;
 
-    this.usesTypescript
+    this.useTypescript
       ? filename = `${this.name}.tsx`
       : filename = `${this.name}.js`;
 
@@ -136,14 +136,14 @@ export class Component {
 
   createTemplate = () => {
     let template;
-    if (this.isClassBased && this.usesTypescript) {
-      template = createTsClassComponentTemplate(this.name, this.withStyles,this.usesModules);
-    } else if (this.isClassBased && !this.usesTypescript) {
-      template = createJsClassComponentTemplate(this.name, this.withStyles,this.usesModules);
-    } else if (!this.isClassBased && this.usesTypescript) {
-      template = createTsFunctionalComponentTemplate(this.name, this.withStyles,this.usesModules);
+    if (this.isClassBased && this.useTypescript) {
+      template = createTsClassComponentTemplate(this.name, this.useStyles,this.useModules);
+    } else if (this.isClassBased && !this.useTypescript) {
+      template = createJsClassComponentTemplate(this.name, this.useStyles,this.useModules);
+    } else if (!this.isClassBased && this.useTypescript) {
+      template = createTsFunctionalComponentTemplate(this.name, this.useStyles,this.useModules);
     } else {
-      template = createJsFunctionalComponentTemplate(this.name, this.withStyles,this.usesModules);
+      template = createJsFunctionalComponentTemplate(this.name, this.useStyles,this.useModules);
     }
 
     return template;

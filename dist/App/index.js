@@ -35,20 +35,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var enquirer_1 = require("enquirer");
-var shelljs_1 = __importDefault(require("shelljs"));
+var colors_1 = require("colors");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.appName = '';
-        this.usesTypescript = false;
-        this.withRouter = false;
+        this.useTypescript = false;
+        this.useRouter = false;
+        this.useRedux = false;
+        this.useSass = false;
         this.packageManager = "yarn";
+        this.devPackages = [];
         // todo interactive creating
         this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
             var appName, typescript;
@@ -73,13 +73,13 @@ var App = /** @class */ (function () {
                         })];
                     case 3:
                         typescript = (_a.sent()).typescript;
-                        this.usesTypescript = typescript;
+                        this.useTypescript = typescript;
                         return [2 /*return*/];
                 }
             });
         }); };
         this.createReactApp = function (appName, _a) {
-            var typescript = _a.typescript, interactive = _a.interactive, withRouter = _a.withRouter;
+            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass;
             return __awaiter(_this, void 0, void 0, function () {
                 var command, e_1;
                 return __generator(this, function (_b) {
@@ -87,8 +87,10 @@ var App = /** @class */ (function () {
                         case 0:
                             _b.trys.push([0, 3, , 4]);
                             this.appName = appName;
-                            this.usesTypescript = typescript;
-                            this.withRouter = withRouter;
+                            this.useTypescript = useTypescript;
+                            this.useRouter = useRouter;
+                            this.useRedux = useRedux;
+                            this.useSass = useSass;
                             if (!(interactive || !appName)) return [3 /*break*/, 2];
                             return [4 /*yield*/, this.interactiveCreateReactApp(!appName)];
                         case 1:
@@ -96,13 +98,17 @@ var App = /** @class */ (function () {
                             _b.label = 2;
                         case 2:
                             command = "npx create-react-app " + appName;
-                            if (typescript) {
+                            if (useTypescript) {
                                 command += " --template typescript";
                             }
-                            console.log(command);
-                            shelljs_1.default.exec(command);
-                            shelljs_1.default.cd(this.appName);
+                            console.info("executing : " + colors_1.cyan("" + command));
+                            console.log("\nSit back and relax we're taking care of everything ! \uD83D\uDE01");
+                            // shell.exec(command);
+                            // shell.cd(this.appName);
                             this.installPackages();
+                            console.info(colors_1.cyan("\nAll done!"));
+                            console.log("\nYou can now type " + colors_1.cyan("cd " + this.appName) + " and start an amazing project.");
+                            console.info(colors_1.cyan("\nHappy Coding !"));
                             return [3 /*break*/, 4];
                         case 3:
                             e_1 = _b.sent();
@@ -115,15 +121,48 @@ var App = /** @class */ (function () {
             });
         };
         this.installPackages = function () {
-            var command = _this.packageManager + " ";
-            if (_this.withRouter) {
-                command += " add react-router-dom";
-                if (_this.usesTypescript) {
-                    command += " && " + _this.packageManager + " add -D @types/react-router-dom";
+            var packages = {
+                router: {
+                    value: 'react-router-dom'
+                },
+                sass: {
+                    value: 'node-sass',
+                },
+                redux: {
+                    value: 'redux'
+                },
+                reactRedux: {
+                    value: "react-redux"
                 }
+            };
+            var baseCommand = _this.packageManager + " add";
+            var types = '@types/';
+            var command = baseCommand;
+            if (_this.useRouter) {
+                command += " " + packages.router.value;
+                _this.addDevPackage(_this.useTypescript, "" + types + packages.router.value);
             }
-            shelljs_1.default.exec(command);
+            else {
+                command = baseCommand;
+            }
+            if (_this.useRedux) {
+                command += " " + packages.redux.value + " " + packages.reactRedux.value;
+                _this.addDevPackage(_this.useTypescript, "" + types + packages.redux.value);
+                _this.addDevPackage(_this.useTypescript, "" + types + packages.reactRedux.value);
+            }
+            else {
+                command = baseCommand;
+            }
+            _this.addDevPackage(_this.useSass, "" + packages.sass.value);
+            if (_this.devPackages.length) {
+                command += " && " + baseCommand + " -D " + _this.devPackages.join(' ');
+            }
+            if (command !== baseCommand) {
+                console.log('\n' + command);
+                // shell.exec(command);
+            }
         };
+        this.addDevPackage = function (usePackage, packageName) { return usePackage ? _this.devPackages.push(packageName) : ''; };
     }
     return App;
 }());

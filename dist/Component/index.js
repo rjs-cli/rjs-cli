@@ -48,13 +48,13 @@ var Component = /** @class */ (function () {
         var _this = this;
         this.name = '';
         this.directory = '';
-        this.withStyles = 'css';
-        this.usesTypescript = false;
-        this.usesModules = false;
+        this.useStyles = 'css';
+        this.useTypescript = false;
+        this.useModules = false;
         this.isClassBased = false;
         this.message = '';
         this.generate = function (componentName, componentDir, _a) {
-            var withStyles = _a.withStyles, typescript = _a.typescript, isClassBased = _a.isClassBased, usesModules = _a.usesModules;
+            var useStyles = _a.useStyles, useTypescript = _a.useTypescript, isClassBased = _a.isClassBased, useModules = _a.useModules;
             return __awaiter(_this, void 0, void 0, function () {
                 var hasSrcDir, hasComponentsDir;
                 return __generator(this, function (_b) {
@@ -62,19 +62,19 @@ var Component = /** @class */ (function () {
                         case 0:
                             this.name = componentName;
                             this.directory = componentDir;
-                            this.withStyles = withStyles;
-                            this.usesTypescript = typescript;
+                            this.useStyles = useStyles;
+                            this.useTypescript = useTypescript;
                             this.isClassBased = isClassBased;
-                            this.usesModules = usesModules;
+                            this.useModules = useModules;
                             this.message = "Generating " + this.name + " component";
-                            if (typescript) {
+                            if (this.useTypescript) {
                                 this.message += ' with typescript';
                             }
-                            if (this.withStyles && ['css', 'scss'].includes(this.withStyles)) {
-                                if (typescript) {
+                            if (this.useStyles && ['css', 'scss'].includes(this.useStyles)) {
+                                if (this.useTypescript) {
                                     this.message += ' and';
                                 }
-                                this.message += " " + this.withStyles;
+                                this.message += " " + this.useStyles;
                             }
                             if (!this.directory) return [3 /*break*/, 2];
                             return [4 /*yield*/, this.checkExistance()
@@ -143,7 +143,7 @@ var Component = /** @class */ (function () {
                         console.info(this.message + "...");
                         shelljs_1.default.mkdir(this.name);
                         shelljs_1.default.cd(this.name);
-                        if (this.withStyles) {
+                        if (this.useStyles) {
                             this.createStyles();
                         }
                         filename = this.createFile();
@@ -153,16 +153,16 @@ var Component = /** @class */ (function () {
             });
         }); };
         this.createStyles = function () {
-            var extension = _this.withStyles;
+            var extension = _this.useStyles;
             var file;
-            _this.usesModules
+            _this.useModules
                 ? file = _this.name + ".module." + extension
                 : file = _this.name + "." + extension;
             shelljs_1.default.touch(file);
         };
         this.createFile = function () {
             var filename;
-            _this.usesTypescript
+            _this.useTypescript
                 ? filename = _this.name + ".tsx"
                 : filename = _this.name + ".js";
             shelljs_1.default.touch(filename);
@@ -170,17 +170,17 @@ var Component = /** @class */ (function () {
         };
         this.createTemplate = function () {
             var template;
-            if (_this.isClassBased && _this.usesTypescript) {
-                template = utils_1.createTsClassComponentTemplate(_this.name, _this.withStyles, _this.usesModules);
+            if (_this.isClassBased && _this.useTypescript) {
+                template = utils_1.createTsClassComponentTemplate(_this.name, _this.useStyles, _this.useModules);
             }
-            else if (_this.isClassBased && !_this.usesTypescript) {
-                template = utils_1.createJsClassComponentTemplate(_this.name, _this.withStyles, _this.usesModules);
+            else if (_this.isClassBased && !_this.useTypescript) {
+                template = utils_1.createJsClassComponentTemplate(_this.name, _this.useStyles, _this.useModules);
             }
-            else if (!_this.isClassBased && _this.usesTypescript) {
-                template = utils_1.createTsFunctionalComponentTemplate(_this.name, _this.withStyles, _this.usesModules);
+            else if (!_this.isClassBased && _this.useTypescript) {
+                template = utils_1.createTsFunctionalComponentTemplate(_this.name, _this.useStyles, _this.useModules);
             }
             else {
-                template = utils_1.createJsFunctionalComponentTemplate(_this.name, _this.withStyles, _this.usesModules);
+                template = utils_1.createJsFunctionalComponentTemplate(_this.name, _this.useStyles, _this.useModules);
             }
             return template;
         };

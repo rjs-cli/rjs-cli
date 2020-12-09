@@ -1,24 +1,24 @@
 const importStyle = (
   componentName: string,
-  withStyles?: 'css' | 'scss',
-  usesModules: boolean = false,
+  useStyles?: 'css' | 'scss',
+  useModules: boolean = false,
 ) => {
   let styleImport;
-  if (withStyles) {
-    if (usesModules) {
-      styleImport = `import styles from './${componentName}.module.${withStyles}'`;
+  if (useStyles) {
+    if (useModules) {
+      styleImport = `import styles from './${componentName}.module.${useStyles}'`;
     } else {
-      styleImport = `import './${componentName}.${withStyles}'`;
+      styleImport = `import './${componentName}.${useStyles}'`;
     }
   }
 
   return styleImport;
 };
 
-const className = (componentName: string, usesModules: boolean) => {
+const className = (componentName: string, useModules: boolean) => {
   let className: string = `'${componentName}'`;
 
-  if (usesModules)
+  if (useModules)
     className = `{styles.${componentName}}`;
 
   return className;
@@ -26,18 +26,18 @@ const className = (componentName: string, usesModules: boolean) => {
 
 export const createJsClassComponentTemplate = (
   componentName: string,
-  withStyles?: 'css' | 'scss',
-  usesModules: boolean = false,
+  useStyles?: 'css' | 'scss',
+  useModules: boolean = false,
 ) => {
   return `import React, { Component } from 'react';
-${importStyle(componentName, withStyles, usesModules)}
+${importStyle(componentName, useStyles, useModules)}
 
 class ${componentName} extends Component {
   state = {};
 
   render() {
     return (
-      <div className=${className(componentName,usesModules)}>
+      <div className=${className(componentName,useModules)}>
       ${componentName} Component
       </div>
     );
@@ -49,19 +49,19 @@ export default ${componentName};`;
 
 export const createJsFunctionalComponentTemplate = (
   componentName: string,
-  withStyles?: 'css' | 'scss',
-  usesModules: boolean = false,
+  useStyles?: 'css' | 'scss',
+  useModules: boolean = false,
 ) => {
-  console.log(className(componentName, usesModules));
+  console.log(className(componentName, useModules));
 
   return `import React from 'react';
 import PropTypes from 'prop-types';
 
-${importStyle(componentName, withStyles, usesModules)}
+${importStyle(componentName, useStyles, useModules)}
 
 const ${componentName} = () => {
   return (
-    <div className=${className(componentName,usesModules)}>
+    <div className=${className(componentName,useModules)}>
     ${componentName} Component
     </div>
     );
@@ -73,10 +73,10 @@ export default ${componentName};`};
 
 export const createTsClassComponentTemplate = (
   componentName: string,
-  withStyles?: 'css' | 'scss',
-  usesModules: boolean = false,
+  useStyles?: 'css' | 'scss',
+  useModules: boolean = false,
 ) => `import React, { Component } from 'react';
-${importStyle(componentName, withStyles, usesModules)}
+${importStyle(componentName, useStyles, useModules)}
 
 interface ${componentName}Props {}
 
@@ -87,7 +87,7 @@ class ${componentName} extends Component<${componentName}Props, ${componentName}
 
   render() {
     return (
-      <div className=${className(componentName, usesModules)}>
+      <div className=${className(componentName, useModules)}>
         ${componentName} Component
       </div>
     );
@@ -97,17 +97,17 @@ class ${componentName} extends Component<${componentName}Props, ${componentName}
 export default index;`;
 export const createTsFunctionalComponentTemplate = (
   componentName: string,
-  withStyles?: 'css' | 'scss',
-  usesModules: boolean = false,
+  useStyles?: 'css' | 'scss',
+  useModules: boolean = false,
 ) => `import React, { FC } from 'react';
-${importStyle(componentName,withStyles,usesModules)}
+${importStyle(componentName,useStyles,useModules)}
 
 interface ${componentName}Props {
 
 }
 
 const ${componentName}: FC<indexProps> = () => {
-  return <div className=${className(componentName,usesModules)}>${componentName} Component</div>
+  return <div className=${className(componentName,useModules)}>${componentName} Component</div>
 };
 
 export default ${componentName};`;
