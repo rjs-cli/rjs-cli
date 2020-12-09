@@ -105,16 +105,12 @@ export class App {
     if (this.useRouter) {
       command += ` ${packages.router.value}`;
       this.addDevPackage(this.useTypescript, `${types}${packages.router.value}`)
-    } else {
-      command = baseCommand;
     }
 
     if (this.useRedux) {
       command += ` ${packages.redux.value} ${packages.reactRedux.value}`;
       this.addDevPackage(this.useTypescript, `${types}${packages.redux.value}`)
       this.addDevPackage(this.useTypescript, `${types}${packages.reactRedux.value}`)
-    } else {
-      command = baseCommand;
     }
 
     this.addDevPackage(this.useSass, `${packages.sass.value}`)

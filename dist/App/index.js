@@ -142,16 +142,10 @@ var App = /** @class */ (function () {
                 command += " " + packages.router.value;
                 _this.addDevPackage(_this.useTypescript, "" + types + packages.router.value);
             }
-            else {
-                command = baseCommand;
-            }
             if (_this.useRedux) {
                 command += " " + packages.redux.value + " " + packages.reactRedux.value;
                 _this.addDevPackage(_this.useTypescript, "" + types + packages.redux.value);
                 _this.addDevPackage(_this.useTypescript, "" + types + packages.reactRedux.value);
-            }
-            else {
-                command = baseCommand;
             }
             _this.addDevPackage(_this.useSass, "" + packages.sass.value);
             if (_this.devPackages.length) {
