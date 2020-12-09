@@ -1,101 +1,130 @@
-import { readdir } from 'fs/promises';
-import { program } from 'commander';
-import shell from 'shelljs';
-import { mkdir } from 'fs';
-import { jsComponentTemplate } from '../utils';
+import { prompt } from 'enquirer';
+import shell from "shelljs";
+import { cyan } from 'colors';
+
+interface CreateReactAppOptions {
+  useTypescript: boolean;
+  interactive: boolean;
+  useRouter: boolean;
+  useRedux: boolean;
+  useSass: boolean;
+}
+
+interface Package {
+  value: 'react-router-dom' | 'redux' | 'react-redux' | 'node-sass' | '';
+}
+
+interface AppPackages {
+  router: Package;
+  sass: Package;
+  redux: Package;
+  reactRedux: Package;
+}
 
 export class App {
-  usesTypescript = () => {
-    return !!program.typescript || !!program.t ? true : false;
+  appName: string = '';
+  useTypescript: boolean = false;
+  useRouter: boolean = false;
+  useRedux: boolean = false;
+  useSass: boolean = false;
+  packageManager: "yarn" | "npm" | "pnpm" = "yarn";
+  devPackages: string[] = [];
+
+  // todo interactive creating
+  interactiveCreateReactApp = async (askName: boolean) => {
+    if (askName) {
+      const { appName }: { appName: string } = await prompt({
+        type: 'input',
+        name: 'appName',
+        message: 'What is the name of the project ?',
+      });
+
+      this.appName = appName;
+    }
+    const { typescript }: { typescript: boolean } = await prompt({
+      type: 'confirm',
+      name: 'typescript',
+      message: 'Would you like to use typescript in your project ?',
+      required: true,
+    });
+    this.useTypescript = typescript;
   };
 
-  createReactApp = (dir: string) => {
-    // const appDirectory = `${process.cwd()}/${dir}`;
-    let command = `npx create-react-app ${dir}`;
-    if (this.usesTypescript()) {
-      command += ` --template typescript`;
-    }
-    console.log(command);
-    shell.exec(command);
-  };
+  createReactApp = async (appName: string, { useTypescript, interactive, useRouter, useRedux, useSass }: CreateReactAppOptions) => {
+    try {
+      this.appName = appName;
+      this.useTypescript = useTypescript;
+      this.useRouter = useRouter;
+      this.useRedux = useRedux;
+      this.useSass = useSass
 
-  //@ts-ignore
-  generateComponent = async (componentName, componentDir, { withStyles, typescript }) => {
-    let message = `Generating ${componentName} component`;
-    if (typescript) {
-      message += ' with typescript';
-    }
-
-    if (withStyles && ['css', 'scss'].includes(withStyles)) {
-      if (typescript) {
-        message += ' and';
+      if (interactive || !appName) {
+        await this.interactiveCreateReactApp(!appName);
       }
-      message += ` ${withStyles}`;
-    }
 
-    if (componentDir) {
-      if (componentDir === '.') {
-        console.info(`${message} in ${shell.pwd()}/`);
-      } else {
-        console.info(`${message} in ${shell.pwd()}/${componentDir}`);
+      let command = `npx create-react-app ${appName}`;
+      if (useTypescript) {
+        command += ` --template typescript`;
       }
-      return;
+
+
+      console.info(`executing : ${cyan(`${command}`)}`);
+      console.log(`\nSit back and relax we're taking care of everything ! 😁`);
+      // shell.exec(command);
+      // shell.cd(this.appName);
+      this.installPackages();
+      console.info(cyan("\nAll done!"));
+      console.log(`\nYou can now type ${cyan(`cd ${this.appName}`)} and start an amazing project.`);
+      console.info(cyan("\nHappy Coding !"));
+    } catch (e) {
+      console.error("An error occured! Please try again.");
+      process.exit(1);
     }
+  };
 
-    const hasSrcDir = await this.checkSrcDirectory();
-
-    if (hasSrcDir) {
-      const hasComponentsDir = await this.checkComponentsDirectory();
-
-      if (!hasComponentsDir) {
-        this.createComponentsDirectory();
+  installPackages = () => {
+    const packages: AppPackages = {
+      router: {
+        value: 'react-router-dom'
+      },
+      sass: {
+        value: 'node-sass',
+      },
+      redux: {
+        value: 'redux'
+      },
+      reactRedux: {
+        value: "react-redux"
       }
-    } else {
-      this.createSrcDirectory();
-      this.createComponentsDirectory();
-    }
-    const componentDirPath = `${shell.pwd()}/src/components/${componentName}`;
-    message += ` in "${componentDirPath}"`;
-
-    console.info(`${message}...`);
-    this.createComponent(componentName);
-  };
-
-  createComponent = (componentName: string) => {
-    shell.cd('src');
-    shell.cd('components');
-    shell.mkdir(componentName);
-    shell.cd(componentName);
-    shell.touch(`${componentName}.module.scss`);
-    shell.touch(`${componentName}.js`);
-    shell.exec(`echo "${jsComponentTemplate(componentName)}" >> ${componentName}.js`);
-  };
-
-  checkSrcDirectory = async () => {
-    const dirContent = await readdir(process.cwd());
-    if (dirContent.includes('src')) {
-      return true;
     }
 
-    return false;
-  };
+    const baseCommand = `${this.packageManager} add`
+    const types = '@types/'
 
-  checkComponentsDirectory = async () => {
-    const srcContent = await readdir(`${process.cwd()}/src`);
-    if (srcContent.includes('components')) {
-      console.log('components already exists !');
-      return true;
+    let command = baseCommand;
+    if (this.useRouter) {
+      command += ` ${packages.router.value}`;
+      this.addDevPackage(this.useTypescript, `${types}${packages.router.value}`)
     }
 
-    return false;
-  };
+    if (this.useRedux) {
+      command += ` ${packages.redux.value} ${packages.reactRedux.value}`;
+      this.addDevPackage(this.useTypescript, `${types}${packages.redux.value}`)
+      this.addDevPackage(this.useTypescript, `${types}${packages.reactRedux.value}`)
+    }
 
-  createComponentsDirectory = () => {
-    shell.cd('src');
-    shell.mkdir('components');
-  };
+    this.addDevPackage(this.useSass, `${packages.sass.value}`)
 
-  createSrcDirectory = () => {
-    shell.mkdir('src');
-  };
+    if (this.devPackages.length) {
+      command += ` && ${baseCommand} -D ${this.devPackages.join(' ')}`
+    }
+
+    if (command !== baseCommand) {
+      console.log('\n'+command);
+
+      // shell.exec(command);
+    }
+  }
+
+  addDevPackage = (usePackage: boolean, packageName: string) => usePackage ? this.devPackages.push(packageName) : '';
 }

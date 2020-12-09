@@ -38,18 +38,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var enquirer_1 = require("enquirer");
-var colors_1 = require("colors");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.appName = '';
-        this.useTypescript = false;
-        this.useRouter = false;
-        this.useRedux = false;
-        this.useSass = false;
-        this.packageManager = "yarn";
-        this.devPackages = [];
-        // todo interactive creating
+        this.usesTypescript = false;
         this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
             var appName, typescript;
             return __generator(this, function (_a) {
@@ -73,13 +66,13 @@ var App = /** @class */ (function () {
                         })];
                     case 3:
                         typescript = (_a.sent()).typescript;
-                        this.useTypescript = typescript;
+                        this.usesTypescript = typescript;
                         return [2 /*return*/];
                 }
             });
         }); };
         this.createReactApp = function (appName, _a) {
-            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass;
+            var typescript = _a.typescript, interactive = _a.interactive;
             return __awaiter(_this, void 0, void 0, function () {
                 var command, e_1;
                 return __generator(this, function (_b) {
@@ -87,10 +80,7 @@ var App = /** @class */ (function () {
                         case 0:
                             _b.trys.push([0, 3, , 4]);
                             this.appName = appName;
-                            this.useTypescript = useTypescript;
-                            this.useRouter = useRouter;
-                            this.useRedux = useRedux;
-                            this.useSass = useSass;
+                            this.usesTypescript = typescript;
                             if (!(interactive || !appName)) return [3 /*break*/, 2];
                             return [4 /*yield*/, this.interactiveCreateReactApp(!appName)];
                         case 1:
@@ -98,21 +88,13 @@ var App = /** @class */ (function () {
                             _b.label = 2;
                         case 2:
                             command = "npx create-react-app " + appName;
-                            if (useTypescript) {
+                            if (typescript) {
                                 command += " --template typescript";
                             }
-                            console.info("executing : " + colors_1.cyan("" + command));
-                            console.log("\nSit back and relax we're taking care of everything ! \uD83D\uDE01");
-                            // shell.exec(command);
-                            // shell.cd(this.appName);
-                            this.installPackages();
-                            console.info(colors_1.cyan("\nAll done!"));
-                            console.log("\nYou can now type " + colors_1.cyan("cd " + this.appName) + " and start an amazing project.");
-                            console.info(colors_1.cyan("\nHappy Coding !"));
+                            console.log({ typescript: this.usesTypescript, appName: this.appName });
                             return [3 /*break*/, 4];
                         case 3:
                             e_1 = _b.sent();
-                            console.error("An error occured! Please try again.");
                             process.exit(1);
                             return [3 /*break*/, 4];
                         case 4: return [2 /*return*/];
@@ -120,43 +102,6 @@ var App = /** @class */ (function () {
                 });
             });
         };
-        this.installPackages = function () {
-            var packages = {
-                router: {
-                    value: 'react-router-dom'
-                },
-                sass: {
-                    value: 'node-sass',
-                },
-                redux: {
-                    value: 'redux'
-                },
-                reactRedux: {
-                    value: "react-redux"
-                }
-            };
-            var baseCommand = _this.packageManager + " add";
-            var types = '@types/';
-            var command = baseCommand;
-            if (_this.useRouter) {
-                command += " " + packages.router.value;
-                _this.addDevPackage(_this.useTypescript, "" + types + packages.router.value);
-            }
-            if (_this.useRedux) {
-                command += " " + packages.redux.value + " " + packages.reactRedux.value;
-                _this.addDevPackage(_this.useTypescript, "" + types + packages.redux.value);
-                _this.addDevPackage(_this.useTypescript, "" + types + packages.reactRedux.value);
-            }
-            _this.addDevPackage(_this.useSass, "" + packages.sass.value);
-            if (_this.devPackages.length) {
-                command += " && " + baseCommand + " -D " + _this.devPackages.join(' ');
-            }
-            if (command !== baseCommand) {
-                console.log('\n' + command);
-                // shell.exec(command);
-            }
-        };
-        this.addDevPackage = function (usePackage, packageName) { return usePackage ? _this.devPackages.push(packageName) : ''; };
     }
     return App;
 }());
