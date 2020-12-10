@@ -77,9 +77,7 @@ var Component = /** @class */ (function () {
                                 this.message += " " + this.useStyles;
                             }
                             if (!this.directory) return [3 /*break*/, 2];
-                            return [4 /*yield*/, this.checkExistance()
-                                // todo create component
-                            ];
+                            return [4 /*yield*/, this.checkExistance()];
                         case 1:
                             _b.sent();
                             // todo create component
@@ -156,15 +154,13 @@ var Component = /** @class */ (function () {
             var extension = _this.useStyles;
             var file;
             _this.useModules
-                ? file = _this.name + ".module." + extension
-                : file = _this.name + "." + extension;
+                ? (file = _this.name + ".module." + extension)
+                : (file = _this.name + "." + extension);
             shelljs_1.default.touch(file);
         };
         this.createFile = function () {
             var filename;
-            _this.useTypescript
-                ? filename = _this.name + ".tsx"
-                : filename = _this.name + ".js";
+            _this.useTypescript ? (filename = _this.name + ".tsx") : (filename = _this.name + ".js");
             shelljs_1.default.touch(filename);
             return filename;
         };

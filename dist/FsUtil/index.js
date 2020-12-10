@@ -54,7 +54,7 @@ var FsUtil = /** @class */ (function () {
                         hasPackageJson = false;
                         timeout = setTimeout(function () {
                             if (!hasPackageJson) {
-                                console.log("No package.json found, exiting ...");
+                                console.log('No package.json found, exiting ...');
                                 process.exit(1);
                             }
                         }, 5000);
@@ -62,12 +62,12 @@ var FsUtil = /** @class */ (function () {
                     case 1: return [4 /*yield*/, promises_1.readdir(path)];
                     case 2:
                         dirContent = _a.sent();
-                        hasPackageJson = dirContent.includes("package.json");
+                        hasPackageJson = dirContent.includes('package.json');
                         if (hasPackageJson) {
                             clearTimeout(timeout);
                             return [3 /*break*/, 4];
                         }
-                        shelljs_1.default.cd("../");
+                        shelljs_1.default.cd('../');
                         path = shelljs_1.default.pwd().stdout;
                         _a.label = 3;
                     case 3:

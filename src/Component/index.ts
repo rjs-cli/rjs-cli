@@ -53,7 +53,7 @@ export class Component {
     }
 
     if (this.directory) {
-      await this.checkExistance()
+      await this.checkExistance();
 
       // todo create component
       if (this.directory === '.') {
@@ -92,7 +92,7 @@ export class Component {
       console.error('This component already exists, please choose a different name.');
       process.exit(1);
     }
-  }
+  };
 
   create = async () => {
     await this.checkExistance();
@@ -116,8 +116,8 @@ export class Component {
     let file;
 
     this.useModules
-      ? file = `${this.name}.module.${extension}`
-      : file = `${this.name}.${extension}`
+      ? (file = `${this.name}.module.${extension}`)
+      : (file = `${this.name}.${extension}`);
 
     shell.touch(file);
   };
@@ -125,9 +125,7 @@ export class Component {
   createFile = () => {
     let filename;
 
-    this.useTypescript
-      ? filename = `${this.name}.tsx`
-      : filename = `${this.name}.js`;
+    this.useTypescript ? (filename = `${this.name}.tsx`) : (filename = `${this.name}.js`);
 
     shell.touch(filename);
 
@@ -137,13 +135,13 @@ export class Component {
   createTemplate = () => {
     let template;
     if (this.isClassBased && this.useTypescript) {
-      template = createTsClassComponentTemplate(this.name, this.useStyles,this.useModules);
+      template = createTsClassComponentTemplate(this.name, this.useStyles, this.useModules);
     } else if (this.isClassBased && !this.useTypescript) {
-      template = createJsClassComponentTemplate(this.name, this.useStyles,this.useModules);
+      template = createJsClassComponentTemplate(this.name, this.useStyles, this.useModules);
     } else if (!this.isClassBased && this.useTypescript) {
-      template = createTsFunctionalComponentTemplate(this.name, this.useStyles,this.useModules);
+      template = createTsFunctionalComponentTemplate(this.name, this.useStyles, this.useModules);
     } else {
-      template = createJsFunctionalComponentTemplate(this.name, this.useStyles,this.useModules);
+      template = createJsFunctionalComponentTemplate(this.name, this.useStyles, this.useModules);
     }
 
     return template;

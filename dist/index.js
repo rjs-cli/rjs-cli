@@ -12,9 +12,9 @@ commander_1.program
     .description('Uses create-react-app to create a new react app')
     .option('-i, --interactive', 'Starts the interactive mode', false)
     .option('-t, --use-typescript', 'Uses typescript template to create react app', false)
-    .option("-r, --use-router", "Bootstraps a react app with built in react router", false)
-    .option("-S, --use-sass", 'Bootstraps a react app with built in node-sass', false)
-    .option("-R, --use-redux", "Bootstraps a react app with built in Redux", false)
+    .option('-r, --use-router', 'Bootstraps a react app with built in react router', false)
+    .option('-S, --use-sass', 'Bootstraps a react app with built in node-sass', false)
+    .option('-R, --use-redux', 'Bootstraps a react app with built in Redux', false)
     .action(app.createReactApp);
 commander_1.program
     .command('generate-component <name> [dir]')
