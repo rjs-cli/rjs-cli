@@ -171,7 +171,7 @@ var App = /** @class */ (function () {
             if (_this.hasProdAndDevPackages()) {
                 command += " && " + baseCommand + " -D " + _this.devPackages.join(' ');
             }
-            else {
+            else if (_this.hasDevPackages()) {
                 command += " -D " + _this.devPackages.join(' ');
             }
             if (command !== baseCommand) {
@@ -180,7 +180,8 @@ var App = /** @class */ (function () {
             }
         };
         this.hasProdPackages = function () { return _this.prodPackages.length; };
-        this.hasProdAndDevPackages = function () { return _this.devPackages.length && _this.prodPackages.length; };
+        this.hasDevPackages = function () { return _this.devPackages.length; };
+        this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
         this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
     }
     return App;

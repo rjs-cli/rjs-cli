@@ -136,7 +136,7 @@ export class App {
 
     if (this.hasProdAndDevPackages()) {
       command += ` && ${baseCommand} -D ${this.devPackages.join(' ')}`;
-    } else {
+    } else if (this.hasDevPackages()) {
       command += ` -D ${this.devPackages.join(' ')}`;
     }
 
@@ -148,8 +148,9 @@ export class App {
   };
 
   hasProdPackages = () => this.prodPackages.length;
+  hasDevPackages = () => this.devPackages.length;
 
-  hasProdAndDevPackages = () => this.devPackages.length && this.prodPackages.length;
+  hasProdAndDevPackages = () => this.hasDevPackages() && this.hasProdPackages();
 
   addPackage = (
     usePackage: boolean,
