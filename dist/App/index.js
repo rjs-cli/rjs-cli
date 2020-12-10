@@ -47,34 +47,65 @@ var App = /** @class */ (function () {
         this.useRouter = false;
         this.useRedux = false;
         this.useSass = false;
-        this.packageManager = "yarn";
+        this.packageManager = 'yarn';
+        this.appPackages = {
+            router: { prod: 'react-router-dom', dev: '@types/react-router-dom' },
+            sass: 'node-sass',
+            redux: { prod: 'redux', dev: '@types/redux' },
+            reactRedux: { prod: 'react-redux', dev: '@types/react-redux' },
+        };
+        this.prodPackages = [];
         this.devPackages = [];
-        // todo interactive creating
         this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
-            var appName, typescript;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var appName, _a, _b, _c, _d;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
                     case 0:
                         if (!askName) return [3 /*break*/, 2];
                         return [4 /*yield*/, enquirer_1.prompt({
                                 type: 'input',
                                 name: 'appName',
                                 message: 'What is the name of the project ?',
+                                required: true,
                             })];
                     case 1:
-                        appName = (_a.sent()).appName;
-                        this.appName = appName;
-                        _a.label = 2;
-                    case 2: return [4 /*yield*/, enquirer_1.prompt({
-                            type: 'confirm',
-                            name: 'typescript',
-                            message: 'Would you like to use typescript in your project ?',
+                        appName = (_e.sent()).appName;
+                        this.appName = appName.replace(/\s/g, '');
+                        _e.label = 2;
+                    case 2:
+                        _a = this;
+                        return [4 /*yield*/, this.togglePrompt('useTypescript', 'Would you like to use typescript in your project ?')];
+                    case 3:
+                        _a.useTypescript = _e.sent();
+                        _b = this;
+                        return [4 /*yield*/, this.togglePrompt('useSass', 'Do you plan on using sass ?')];
+                    case 4:
+                        _b.useSass = _e.sent();
+                        _c = this;
+                        return [4 /*yield*/, this.togglePrompt('useRedux', 'Do you need redux as your state management ?')];
+                    case 5:
+                        _c.useRedux = _e.sent();
+                        _d = this;
+                        return [4 /*yield*/, this.togglePrompt('useRouter', 'Do you need a router ?')];
+                    case 6:
+                        _d.useRouter = _e.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.togglePrompt = function (name, message) { return __awaiter(_this, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, enquirer_1.prompt({
+                            type: 'toggle',
+                            name: name,
+                            message: message,
                             required: true,
                         })];
-                    case 3:
-                        typescript = (_a.sent()).typescript;
-                        this.useTypescript = typescript;
-                        return [2 /*return*/];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, Object.values(response).pop()];
                 }
             });
         }); };
@@ -91,14 +122,14 @@ var App = /** @class */ (function () {
                             this.useRouter = useRouter;
                             this.useRedux = useRedux;
                             this.useSass = useSass;
-                            if (!(interactive || !appName)) return [3 /*break*/, 2];
-                            return [4 /*yield*/, this.interactiveCreateReactApp(!appName)];
+                            if (!(interactive || !this.appName)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, this.interactiveCreateReactApp(!this.appName)];
                         case 1:
                             _b.sent();
                             _b.label = 2;
                         case 2:
-                            command = "npx create-react-app " + appName;
-                            if (useTypescript) {
+                            command = "npx create-react-app " + this.appName;
+                            if (this.useTypescript) {
                                 command += " --template typescript";
                             }
                             console.info("executing : " + colors_1.cyan("" + command));
@@ -106,13 +137,13 @@ var App = /** @class */ (function () {
                             // shell.exec(command);
                             // shell.cd(this.appName);
                             this.installPackages();
-                            console.info(colors_1.cyan("\nAll done!"));
+                            console.info(colors_1.cyan('\nAll done!'));
                             console.log("\nYou can now type " + colors_1.cyan("cd " + this.appName) + " and start an amazing project.");
-                            console.info(colors_1.cyan("\nHappy Coding !"));
+                            console.info(colors_1.cyan('\nHappy Coding !'));
                             return [3 /*break*/, 4];
                         case 3:
                             e_1 = _b.sent();
-                            console.error("An error occured! Please try again.");
+                            console.error('An error occured! Please try again.');
                             process.exit(1);
                             return [3 /*break*/, 4];
                         case 4: return [2 /*return*/];
@@ -121,42 +152,36 @@ var App = /** @class */ (function () {
             });
         };
         this.installPackages = function () {
-            var packages = {
-                router: {
-                    value: 'react-router-dom'
-                },
-                sass: {
-                    value: 'node-sass',
-                },
-                redux: {
-                    value: 'redux'
-                },
-                reactRedux: {
-                    value: "react-redux"
-                }
-            };
             var baseCommand = _this.packageManager + " add";
-            var types = '@types/';
             var command = baseCommand;
             if (_this.useRouter) {
-                command += " " + packages.router.value;
-                _this.addDevPackage(_this.useTypescript, "" + types + packages.router.value);
+                _this.addPackage(_this.useRouter, 'prodPackages', _this.appPackages.router.prod);
+                _this.addPackage(_this.useTypescript, 'devPackages', _this.appPackages.router.dev);
             }
             if (_this.useRedux) {
-                command += " " + packages.redux.value + " " + packages.reactRedux.value;
-                _this.addDevPackage(_this.useTypescript, "" + types + packages.redux.value);
-                _this.addDevPackage(_this.useTypescript, "" + types + packages.reactRedux.value);
+                _this.addPackage(_this.useRedux, 'prodPackages', _this.appPackages.redux.prod);
+                _this.addPackage(_this.useRedux, 'prodPackages', _this.appPackages.reactRedux.prod);
+                _this.addPackage(_this.useTypescript, 'devPackages', _this.appPackages.redux.dev);
+                _this.addPackage(_this.useTypescript, 'devPackages', _this.appPackages.reactRedux.dev);
             }
-            _this.addDevPackage(_this.useSass, "" + packages.sass.value);
-            if (_this.devPackages.length) {
+            _this.addPackage(_this.useSass, 'devPackages', _this.appPackages.sass);
+            if (_this.hasProdPackages()) {
+                command += " " + _this.prodPackages.join(' ');
+            }
+            if (_this.hasProdAndDevPackages()) {
                 command += " && " + baseCommand + " -D " + _this.devPackages.join(' ');
+            }
+            else {
+                command += " -D " + _this.devPackages.join(' ');
             }
             if (command !== baseCommand) {
                 console.log('\n' + command);
                 // shell.exec(command);
             }
         };
-        this.addDevPackage = function (usePackage, packageName) { return usePackage ? _this.devPackages.push(packageName) : ''; };
+        this.hasProdPackages = function () { return _this.prodPackages.length; };
+        this.hasProdAndDevPackages = function () { return _this.devPackages.length && _this.prodPackages.length; };
+        this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
     }
     return App;
 }());

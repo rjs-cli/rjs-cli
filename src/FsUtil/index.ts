@@ -2,38 +2,36 @@ import { readdir } from 'fs/promises';
 import shell from 'shelljs';
 
 export class FsUtil {
-
   goToRootDir = async () => {
     let path = shell.pwd().stdout;
     let hasPackageJson: boolean = false;
     const timeout = setTimeout(() => {
       if (!hasPackageJson) {
-        console.log("No package.json found, exiting ...");
+        console.log('No package.json found, exiting ...');
 
         process.exit(1);
       }
-    }, 5000)
+    }, 5000);
     do {
       const dirContent = await readdir(path);
 
-      hasPackageJson = dirContent.includes("package.json");
+      hasPackageJson = dirContent.includes('package.json');
       if (hasPackageJson) {
-        clearTimeout(timeout)
+        clearTimeout(timeout);
         break;
       }
 
-      shell.cd("../");
+      shell.cd('../');
       path = shell.pwd().stdout;
     } while (true);
 
     // const splitPath = path.split('/');
     // return splitPath[splitPath.length - 1];
-  }
-
+  };
 
   checkSrcDirectory = async () => {
     await this.goToRootDir();
-    const appDir = shell.pwd().stdout
+    const appDir = shell.pwd().stdout;
 
     const dirContent = await readdir(appDir);
 
@@ -56,7 +54,7 @@ export class FsUtil {
   createComponentsDirectory = () => {
     shell.cd('src');
     shell.mkdir('components');
-    shell.cd('..')
+    shell.cd('..');
   };
 
   createSrcDirectory = () => {
