@@ -23,7 +23,7 @@ class ${componentName} extends Component${
 
   render() {
     return (
-      <div className=${className(componentName, useModules, styleExtension)}>
+      <div ${className(componentName, useModules, styleExtension)}>
       ${componentName} Component
       </div>
     );

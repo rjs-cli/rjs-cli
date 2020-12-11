@@ -26,12 +26,16 @@ export const importComponentStyle = (
 export const className = (
   componentName: string,
   useModules: boolean,
-  useStyles: 'css' | 'scss' | null,
+  useStyles: 'css' | 'scss' | null = null,
 ) => {
-  let className: string = `'${componentName}'`;
+  let className: string = 'className=';
 
-  if (useModules) className = `{styles.${componentName}}`;
-  if (!useStyles) return `' '`;
+  if (useModules) {
+    className += `{styles.${componentName}}`;
+  } else {
+    className += `'${componentName}'`;
+  }
+  if (!useStyles) return '';
 
   return className;
 };

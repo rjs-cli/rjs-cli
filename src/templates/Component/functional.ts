@@ -20,13 +20,13 @@ ${
 
 const ${componentName}${useTypescript ? `: FC<${componentName}Props>` : ''} = () => {
   return (
-    <div className=${className(componentName, useModules, styleExtension)}>
+    <div ${className(componentName, useModules, styleExtension)}>
     ${componentName} Component
     </div>
     );
   };
 
-${componentName}.propTypes = {};
+${useTypescript ? '' : `${componentName}.propTypes = {};`}
 
 export default ${componentName};`;
 };

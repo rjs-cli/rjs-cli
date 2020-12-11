@@ -62,7 +62,9 @@ var Component = /** @class */ (function () {
                         case 0:
                             this.name = componentName;
                             this.directory = componentDir;
-                            this.useStyles = ['css', 'scss'].includes(useStyles) ? useStyles : 'css';
+                            if (['css', 'scss'].includes(useStyles)) {
+                                this.useStyles = useStyles;
+                            }
                             this.useTypescript = useTypescript;
                             this.isClassBased = isClassBased;
                             this.useModules = useModules;

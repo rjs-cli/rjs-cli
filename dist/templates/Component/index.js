@@ -16,11 +16,16 @@ exports.importComponentStyle = function (componentName, styleExtension, useModul
     return "\" \"";
 };
 exports.className = function (componentName, useModules, useStyles) {
-    var className = "'" + componentName + "'";
-    if (useModules)
-        className = "{styles." + componentName + "}";
+    if (useStyles === void 0) { useStyles = null; }
+    var className = 'className=';
+    if (useModules) {
+        className += "{styles." + componentName + "}";
+    }
+    else {
+        className += "'" + componentName + "'";
+    }
     if (!useStyles)
-        return "' '";
+        return '';
     return className;
 };
 var functional_1 = require("./functional");
