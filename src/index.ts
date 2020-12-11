@@ -16,6 +16,7 @@ program
   .option('-r, --use-router', 'Bootstraps a react app with built in react router', false)
   .option('-S, --use-sass', 'Bootstraps a react app with built in node-sass', false)
   .option('-R, --use-redux', 'Bootstraps a react app with built in Redux', false)
+  .option('-a, --use-axios', 'Bootstraps a react app with built in Axios', false)
   .action(app.createReactApp);
 
 program

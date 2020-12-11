@@ -8,6 +8,7 @@ interface CreateReactAppOptions {
   useRouter: boolean;
   useRedux: boolean;
   useSass: boolean;
+  useAxios: boolean;
 }
 
 type Package =
@@ -18,13 +19,15 @@ type Package =
   | 'react-redux'
   | '@types/react-redux'
   | 'node-sass'
+  | 'axios'
   | '';
 
 interface AppPackages {
   router: { prod: Package; dev: Package };
-  sass: Package;
-  redux: { prod: Package; dev: Package };
+  sass: { dev: Package };
+  redux: { prod: Package };
   reactRedux: { prod: Package; dev: Package };
+  axios: { prod: Package };
 }
 
 export class App {
@@ -33,12 +36,14 @@ export class App {
   useRouter: boolean = false;
   useRedux: boolean = false;
   useSass: boolean = false;
+  useAxios: boolean = false;
   packageManager: 'yarn' | 'npm' | 'pnpm' = 'yarn';
   appPackages: AppPackages = {
     router: { prod: 'react-router-dom', dev: '@types/react-router-dom' },
-    sass: 'node-sass',
-    redux: { prod: 'redux', dev: '@types/redux' },
+    sass: { dev: 'node-sass' },
+    redux: { prod: 'redux' },
     reactRedux: { prod: 'react-redux', dev: '@types/react-redux' },
+    axios: { prod: 'axios' },
   };
 
   prodPackages: Package[] = [];
@@ -53,7 +58,7 @@ export class App {
         required: true,
       });
 
-      this.appName = appName.replace(/\s/g, '');
+      this.appName = appName.replace(/\s/g, '-');
     }
 
     this.useTypescript = await this.togglePrompt(
@@ -65,7 +70,8 @@ export class App {
       'useRedux',
       'Do you need redux as your state management ?',
     );
-    this.useRouter = await this.togglePrompt('useRouter', 'Do you need a router ?');
+    this.useRouter = await this.togglePrompt('useRouter', 'Do you need a some sort of router ?');
+    this.useAxios = await this.togglePrompt('useAxios', 'Will you need Axios ?');
   };
 
   togglePrompt = async (name: string, message: string) => {
@@ -80,7 +86,7 @@ export class App {
 
   createReactApp = async (
     appName: string,
-    { useTypescript, interactive, useRouter, useRedux, useSass }: CreateReactAppOptions,
+    { useTypescript, interactive, useRouter, useRedux, useSass, useAxios }: CreateReactAppOptions,
   ) => {
     try {
       this.appName = appName;
@@ -88,6 +94,7 @@ export class App {
       this.useRouter = useRouter;
       this.useRedux = useRedux;
       this.useSass = useSass;
+      this.useAxios = useAxios;
 
       if (interactive || !this.appName) {
         await this.interactiveCreateReactApp(!this.appName);
@@ -100,7 +107,7 @@ export class App {
 
       console.info(`executing : ${cyan(`${command}`)}`);
       console.log(`\nSit back and relax we're taking care of everything ! 😁`);
-      // shell.exec(command);
+      // await shell.exec(command);
       // shell.cd(this.appName);
       this.installPackages();
       console.info(cyan('\nAll done!'));
@@ -124,11 +131,14 @@ export class App {
     if (this.useRedux) {
       this.addPackage(this.useRedux, 'prodPackages', this.appPackages.redux.prod);
       this.addPackage(this.useRedux, 'prodPackages', this.appPackages.reactRedux.prod);
-      this.addPackage(this.useTypescript, 'devPackages', this.appPackages.redux.dev);
       this.addPackage(this.useTypescript, 'devPackages', this.appPackages.reactRedux.dev);
     }
 
-    this.addPackage(this.useSass, 'devPackages', this.appPackages.sass);
+    if (this.useAxios) {
+      this.addPackage(this.useAxios, 'prodPackages', this.appPackages.axios.prod);
+    }
+
+    this.addPackage(this.useSass, 'devPackages', this.appPackages.sass.dev);
 
     if (this.hasProdPackages()) {
       command += ` ${this.prodPackages.join(' ')}`;
@@ -145,6 +155,14 @@ export class App {
 
       // shell.exec(command);
     }
+  };
+
+  createTemplate = () => {
+    /**
+     *  todo Create the app template based on the installed modules
+     *  todo Create the store if redux is installed
+     *  todo Create a version for JS and one for TS
+     * */
   };
 
   hasProdPackages = () => this.prodPackages.length;

@@ -47,19 +47,21 @@ var App = /** @class */ (function () {
         this.useRouter = false;
         this.useRedux = false;
         this.useSass = false;
+        this.useAxios = false;
         this.packageManager = 'yarn';
         this.appPackages = {
             router: { prod: 'react-router-dom', dev: '@types/react-router-dom' },
-            sass: 'node-sass',
-            redux: { prod: 'redux', dev: '@types/redux' },
+            sass: { dev: 'node-sass' },
+            redux: { prod: 'redux' },
             reactRedux: { prod: 'react-redux', dev: '@types/react-redux' },
+            axios: { prod: 'axios' },
         };
         this.prodPackages = [];
         this.devPackages = [];
         this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
-            var appName, _a, _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var appName, _a, _b, _c, _d, _e;
+            return __generator(this, function (_f) {
+                switch (_f.label) {
                     case 0:
                         if (!askName) return [3 /*break*/, 2];
                         return [4 /*yield*/, enquirer_1.prompt({
@@ -69,26 +71,30 @@ var App = /** @class */ (function () {
                                 required: true,
                             })];
                     case 1:
-                        appName = (_e.sent()).appName;
-                        this.appName = appName.replace(/\s/g, '');
-                        _e.label = 2;
+                        appName = (_f.sent()).appName;
+                        this.appName = appName.replace(/\s/g, '-');
+                        _f.label = 2;
                     case 2:
                         _a = this;
                         return [4 /*yield*/, this.togglePrompt('useTypescript', 'Would you like to use typescript in your project ?')];
                     case 3:
-                        _a.useTypescript = _e.sent();
+                        _a.useTypescript = _f.sent();
                         _b = this;
                         return [4 /*yield*/, this.togglePrompt('useSass', 'Do you plan on using sass ?')];
                     case 4:
-                        _b.useSass = _e.sent();
+                        _b.useSass = _f.sent();
                         _c = this;
                         return [4 /*yield*/, this.togglePrompt('useRedux', 'Do you need redux as your state management ?')];
                     case 5:
-                        _c.useRedux = _e.sent();
+                        _c.useRedux = _f.sent();
                         _d = this;
-                        return [4 /*yield*/, this.togglePrompt('useRouter', 'Do you need a router ?')];
+                        return [4 /*yield*/, this.togglePrompt('useRouter', 'Do you need a some sort of router ?')];
                     case 6:
-                        _d.useRouter = _e.sent();
+                        _d.useRouter = _f.sent();
+                        _e = this;
+                        return [4 /*yield*/, this.togglePrompt('useAxios', 'Will you need Axios ?')];
+                    case 7:
+                        _e.useAxios = _f.sent();
                         return [2 /*return*/];
                 }
             });
@@ -110,7 +116,7 @@ var App = /** @class */ (function () {
             });
         }); };
         this.createReactApp = function (appName, _a) {
-            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass;
+            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useAxios = _a.useAxios;
             return __awaiter(_this, void 0, void 0, function () {
                 var command, e_1;
                 return __generator(this, function (_b) {
@@ -122,6 +128,7 @@ var App = /** @class */ (function () {
                             this.useRouter = useRouter;
                             this.useRedux = useRedux;
                             this.useSass = useSass;
+                            this.useAxios = useAxios;
                             if (!(interactive || !this.appName)) return [3 /*break*/, 2];
                             return [4 /*yield*/, this.interactiveCreateReactApp(!this.appName)];
                         case 1:
@@ -134,7 +141,7 @@ var App = /** @class */ (function () {
                             }
                             console.info("executing : " + colors_1.cyan("" + command));
                             console.log("\nSit back and relax we're taking care of everything ! \uD83D\uDE01");
-                            // shell.exec(command);
+                            // await shell.exec(command);
                             // shell.cd(this.appName);
                             this.installPackages();
                             console.info(colors_1.cyan('\nAll done!'));
@@ -161,10 +168,12 @@ var App = /** @class */ (function () {
             if (_this.useRedux) {
                 _this.addPackage(_this.useRedux, 'prodPackages', _this.appPackages.redux.prod);
                 _this.addPackage(_this.useRedux, 'prodPackages', _this.appPackages.reactRedux.prod);
-                _this.addPackage(_this.useTypescript, 'devPackages', _this.appPackages.redux.dev);
                 _this.addPackage(_this.useTypescript, 'devPackages', _this.appPackages.reactRedux.dev);
             }
-            _this.addPackage(_this.useSass, 'devPackages', _this.appPackages.sass);
+            if (_this.useAxios) {
+                _this.addPackage(_this.useAxios, 'prodPackages', _this.appPackages.axios.prod);
+            }
+            _this.addPackage(_this.useSass, 'devPackages', _this.appPackages.sass.dev);
             if (_this.hasProdPackages()) {
                 command += " " + _this.prodPackages.join(' ');
             }
@@ -178,6 +187,13 @@ var App = /** @class */ (function () {
                 console.log('\n' + command);
                 // shell.exec(command);
             }
+        };
+        this.createTemplate = function () {
+            /**
+             *  todo Create the app template based on the installed modules
+             *  todo Create the store if redux is installed
+             *  todo Create a version for JS and one for TS
+             * */
         };
         this.hasProdPackages = function () { return _this.prodPackages.length; };
         this.hasDevPackages = function () { return _this.devPackages.length; };
