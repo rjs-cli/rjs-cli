@@ -41,14 +41,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Component = void 0;
 var shelljs_1 = __importDefault(require("shelljs"));
-var utils_1 = require("../utils");
+var templates_1 = require("../templates");
 var FsUtil_1 = require("../FsUtil");
 var Component = /** @class */ (function () {
     function Component() {
         var _this = this;
         this.name = '';
         this.directory = '';
-        this.useStyles = 'css';
+        this.useStyles = null;
         this.useTypescript = false;
         this.useModules = false;
         this.isClassBased = false;
@@ -62,7 +62,7 @@ var Component = /** @class */ (function () {
                         case 0:
                             this.name = componentName;
                             this.directory = componentDir;
-                            this.useStyles = useStyles;
+                            this.useStyles = ['css', 'scss'].includes(useStyles) ? useStyles : 'css';
                             this.useTypescript = useTypescript;
                             this.isClassBased = isClassBased;
                             this.useModules = useModules;
@@ -165,18 +165,23 @@ var Component = /** @class */ (function () {
             return filename;
         };
         this.createTemplate = function () {
+            var _a = _this, componentName = _a.name, styleExtension = _a.useStyles, useModules = _a.useModules, useTypescript = _a.useTypescript, isClassBased = _a.isClassBased;
             var template;
-            if (_this.isClassBased && _this.useTypescript) {
-                template = utils_1.createTsClassComponentTemplate(_this.name, _this.useStyles, _this.useModules);
-            }
-            else if (_this.isClassBased && !_this.useTypescript) {
-                template = utils_1.createJsClassComponentTemplate(_this.name, _this.useStyles, _this.useModules);
-            }
-            else if (!_this.isClassBased && _this.useTypescript) {
-                template = utils_1.createTsFunctionalComponentTemplate(_this.name, _this.useStyles, _this.useModules);
+            if (isClassBased) {
+                template = templates_1.createClassComponentTemplate({
+                    componentName: componentName,
+                    useModules: useModules,
+                    useTypescript: useTypescript,
+                    styleExtension: styleExtension,
+                });
             }
             else {
-                template = utils_1.createJsFunctionalComponentTemplate(_this.name, _this.useStyles, _this.useModules);
+                template = templates_1.createFunctionalComponentTemplate({
+                    componentName: componentName,
+                    useModules: useModules,
+                    useTypescript: useTypescript,
+                    styleExtension: styleExtension,
+                });
             }
             return template;
         };

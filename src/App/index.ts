@@ -1,6 +1,8 @@
 import { prompt } from 'enquirer';
 import shell from 'shelljs';
 import { cyan } from 'colors';
+import { createIndexTemplate } from '../templates';
+import { FsUtil } from '../FsUtil';
 
 interface CreateReactAppOptions {
   useTypescript: boolean;
@@ -8,6 +10,7 @@ interface CreateReactAppOptions {
   useRouter: boolean;
   useRedux: boolean;
   useSass: boolean;
+  useModules: boolean;
   useAxios: boolean;
 }
 
@@ -36,6 +39,7 @@ export class App {
   useRouter: boolean = false;
   useRedux: boolean = false;
   useSass: boolean = false;
+  useModules: boolean = false;
   useAxios: boolean = false;
   packageManager: 'yarn' | 'npm' | 'pnpm' = 'yarn';
   appPackages: AppPackages = {
@@ -48,6 +52,12 @@ export class App {
 
   prodPackages: Package[] = [];
   devPackages: Package[] = [];
+
+  fsUtil;
+
+  constructor() {
+    this.fsUtil = new FsUtil();
+  }
 
   interactiveCreateReactApp = async (askName: boolean) => {
     if (askName) {
@@ -66,6 +76,10 @@ export class App {
       'Would you like to use typescript in your project ?',
     );
     this.useSass = await this.togglePrompt('useSass', 'Do you plan on using sass ?');
+    this.useModules = await this.togglePrompt(
+      'useModules',
+      'Do you want to use css/scss modules ?',
+    );
     this.useRedux = await this.togglePrompt(
       'useRedux',
       'Do you need redux as your state management ?',
@@ -86,7 +100,15 @@ export class App {
 
   createReactApp = async (
     appName: string,
-    { useTypescript, interactive, useRouter, useRedux, useSass, useAxios }: CreateReactAppOptions,
+    {
+      useTypescript,
+      interactive,
+      useRouter,
+      useRedux,
+      useSass,
+      useModules,
+      useAxios,
+    }: CreateReactAppOptions,
   ) => {
     try {
       this.appName = appName;
@@ -94,6 +116,7 @@ export class App {
       this.useRouter = useRouter;
       this.useRedux = useRedux;
       this.useSass = useSass;
+      this.useModules = useModules;
       this.useAxios = useAxios;
 
       if (interactive || !this.appName) {
@@ -107,9 +130,10 @@ export class App {
 
       console.info(`executing : ${cyan(`${command}`)}`);
       console.log(`\nSit back and relax we're taking care of everything ! 😁`);
-      // await shell.exec(command);
-      // shell.cd(this.appName);
+      //todo await shell.exec(command);
+      shell.cd(this.appName);
       this.installPackages();
+      this.createTemplates();
       console.info(cyan('\nAll done!'));
       console.log(`\nYou can now type ${cyan(`cd ${this.appName}`)} and start an amazing project.`);
       console.info(cyan('\nHappy Coding !'));
@@ -153,11 +177,24 @@ export class App {
     if (command !== baseCommand) {
       console.log('\n' + command);
 
-      // shell.exec(command);
+      //todo shell.exec(command);
     }
   };
 
-  createTemplate = () => {
+  createTemplates = () => {
+    const { useRedux, useSass, useRouter } = this;
+    const extension = this.useTypescript ? 'tsx' : 'js';
+    const indexTemplate = createIndexTemplate({ useRedux, useRouter, useSass });
+
+    if (this.fsUtil.checkSrcDirectory()) {
+      shell.cd('src');
+      shell.touch(`index.${extension}`);
+      shell.exec(`echo "${indexTemplate}" > index.${extension}`);
+    } else {
+      console.error('No src directory found. Could not create templates');
+      return;
+    }
+
     /**
      *  todo Create the app template based on the installed modules
      *  todo Create the store if redux is installed

@@ -1,14 +1,9 @@
 import shell from 'shelljs';
-import {
-  createJsClassComponentTemplate,
-  createJsFunctionalComponentTemplate,
-  createTsClassComponentTemplate,
-  createTsFunctionalComponentTemplate,
-} from '../utils';
+import { createClassComponentTemplate, createFunctionalComponentTemplate } from '../templates';
 import { FsUtil } from '../FsUtil';
 
 interface GenerateComponentOptions {
-  useStyles?: 'css' | 'scss';
+  useStyles: 'css' | 'scss';
   useTypescript: boolean;
   useModules: boolean;
   isClassBased: boolean;
@@ -17,7 +12,7 @@ interface GenerateComponentOptions {
 export class Component {
   name: string = '';
   directory: string = '';
-  useStyles?: 'css' | 'scss' = 'css';
+  useStyles: 'css' | 'scss' | null = null;
   useTypescript: boolean = false;
   useModules: boolean = false;
   isClassBased: boolean = false;
@@ -35,7 +30,7 @@ export class Component {
   ) => {
     this.name = componentName;
     this.directory = componentDir;
-    this.useStyles = useStyles;
+    this.useStyles = ['css', 'scss'].includes(useStyles) ? useStyles : 'css';
     this.useTypescript = useTypescript;
     this.isClassBased = isClassBased;
     this.useModules = useModules;
@@ -133,15 +128,29 @@ export class Component {
   };
 
   createTemplate = () => {
+    const {
+      name: componentName,
+      useStyles: styleExtension,
+      useModules,
+      useTypescript,
+      isClassBased,
+    } = this;
+
     let template;
-    if (this.isClassBased && this.useTypescript) {
-      template = createTsClassComponentTemplate(this.name, this.useStyles, this.useModules);
-    } else if (this.isClassBased && !this.useTypescript) {
-      template = createJsClassComponentTemplate(this.name, this.useStyles, this.useModules);
-    } else if (!this.isClassBased && this.useTypescript) {
-      template = createTsFunctionalComponentTemplate(this.name, this.useStyles, this.useModules);
+    if (isClassBased) {
+      template = createClassComponentTemplate({
+        componentName,
+        useModules,
+        useTypescript,
+        styleExtension,
+      });
     } else {
-      template = createJsFunctionalComponentTemplate(this.name, this.useStyles, this.useModules);
+      template = createFunctionalComponentTemplate({
+        componentName,
+        useModules,
+        useTypescript,
+        styleExtension,
+      });
     }
 
     return template;

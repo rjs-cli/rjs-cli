@@ -35,10 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var enquirer_1 = require("enquirer");
+var shelljs_1 = __importDefault(require("shelljs"));
 var colors_1 = require("colors");
+var templates_1 = require("../templates");
+var FsUtil_1 = require("../FsUtil");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
@@ -47,6 +53,7 @@ var App = /** @class */ (function () {
         this.useRouter = false;
         this.useRedux = false;
         this.useSass = false;
+        this.useModules = false;
         this.useAxios = false;
         this.packageManager = 'yarn';
         this.appPackages = {
@@ -59,9 +66,9 @@ var App = /** @class */ (function () {
         this.prodPackages = [];
         this.devPackages = [];
         this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
-            var appName, _a, _b, _c, _d, _e;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
+            var appName, _a, _b, _c, _d, _e, _f;
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         if (!askName) return [3 /*break*/, 2];
                         return [4 /*yield*/, enquirer_1.prompt({
@@ -71,30 +78,34 @@ var App = /** @class */ (function () {
                                 required: true,
                             })];
                     case 1:
-                        appName = (_f.sent()).appName;
+                        appName = (_g.sent()).appName;
                         this.appName = appName.replace(/\s/g, '-');
-                        _f.label = 2;
+                        _g.label = 2;
                     case 2:
                         _a = this;
                         return [4 /*yield*/, this.togglePrompt('useTypescript', 'Would you like to use typescript in your project ?')];
                     case 3:
-                        _a.useTypescript = _f.sent();
+                        _a.useTypescript = _g.sent();
                         _b = this;
                         return [4 /*yield*/, this.togglePrompt('useSass', 'Do you plan on using sass ?')];
                     case 4:
-                        _b.useSass = _f.sent();
+                        _b.useSass = _g.sent();
                         _c = this;
-                        return [4 /*yield*/, this.togglePrompt('useRedux', 'Do you need redux as your state management ?')];
+                        return [4 /*yield*/, this.togglePrompt('useModules', 'Do you want to use css/scss modules ?')];
                     case 5:
-                        _c.useRedux = _f.sent();
+                        _c.useModules = _g.sent();
                         _d = this;
-                        return [4 /*yield*/, this.togglePrompt('useRouter', 'Do you need a some sort of router ?')];
+                        return [4 /*yield*/, this.togglePrompt('useRedux', 'Do you need redux as your state management ?')];
                     case 6:
-                        _d.useRouter = _f.sent();
+                        _d.useRedux = _g.sent();
                         _e = this;
-                        return [4 /*yield*/, this.togglePrompt('useAxios', 'Will you need Axios ?')];
+                        return [4 /*yield*/, this.togglePrompt('useRouter', 'Do you need a some sort of router ?')];
                     case 7:
-                        _e.useAxios = _f.sent();
+                        _e.useRouter = _g.sent();
+                        _f = this;
+                        return [4 /*yield*/, this.togglePrompt('useAxios', 'Will you need Axios ?')];
+                    case 8:
+                        _f.useAxios = _g.sent();
                         return [2 /*return*/];
                 }
             });
@@ -116,7 +127,7 @@ var App = /** @class */ (function () {
             });
         }); };
         this.createReactApp = function (appName, _a) {
-            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useAxios = _a.useAxios;
+            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useModules = _a.useModules, useAxios = _a.useAxios;
             return __awaiter(_this, void 0, void 0, function () {
                 var command, e_1;
                 return __generator(this, function (_b) {
@@ -128,6 +139,7 @@ var App = /** @class */ (function () {
                             this.useRouter = useRouter;
                             this.useRedux = useRedux;
                             this.useSass = useSass;
+                            this.useModules = useModules;
                             this.useAxios = useAxios;
                             if (!(interactive || !this.appName)) return [3 /*break*/, 2];
                             return [4 /*yield*/, this.interactiveCreateReactApp(!this.appName)];
@@ -141,9 +153,10 @@ var App = /** @class */ (function () {
                             }
                             console.info("executing : " + colors_1.cyan("" + command));
                             console.log("\nSit back and relax we're taking care of everything ! \uD83D\uDE01");
-                            // await shell.exec(command);
-                            // shell.cd(this.appName);
+                            //todo await shell.exec(command);
+                            shelljs_1.default.cd(this.appName);
                             this.installPackages();
+                            this.createTemplates();
                             console.info(colors_1.cyan('\nAll done!'));
                             console.log("\nYou can now type " + colors_1.cyan("cd " + this.appName) + " and start an amazing project.");
                             console.info(colors_1.cyan('\nHappy Coding !'));
@@ -185,10 +198,22 @@ var App = /** @class */ (function () {
             }
             if (command !== baseCommand) {
                 console.log('\n' + command);
-                // shell.exec(command);
+                //todo shell.exec(command);
             }
         };
-        this.createTemplate = function () {
+        this.createTemplates = function () {
+            var _a = _this, useRedux = _a.useRedux, useSass = _a.useSass, useRouter = _a.useRouter;
+            var extension = _this.useTypescript ? 'tsx' : 'js';
+            var indexTemplate = templates_1.createIndexTemplate({ useRedux: useRedux, useRouter: useRouter, useSass: useSass });
+            if (_this.fsUtil.checkSrcDirectory()) {
+                shelljs_1.default.cd('src');
+                shelljs_1.default.touch("index." + extension);
+                shelljs_1.default.exec("echo \"" + indexTemplate + "\" > index." + extension);
+            }
+            else {
+                console.error('No src directory found. Could not create templates');
+                return;
+            }
             /**
              *  todo Create the app template based on the installed modules
              *  todo Create the store if redux is installed
@@ -199,6 +224,7 @@ var App = /** @class */ (function () {
         this.hasDevPackages = function () { return _this.devPackages.length; };
         this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
         this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
+        this.fsUtil = new FsUtil_1.FsUtil();
     }
     return App;
 }());
