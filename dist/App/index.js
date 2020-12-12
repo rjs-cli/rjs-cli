@@ -42,9 +42,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var enquirer_1 = require("enquirer");
 var shelljs_1 = __importDefault(require("shelljs"));
-var colors_1 = require("colors");
+var chalk_1 = require("chalk");
 var templates_1 = require("../templates");
 var FsUtil_1 = require("../FsUtil");
+var Terminal_1 = require("../Terminal");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
@@ -129,11 +130,11 @@ var App = /** @class */ (function () {
         this.createReactApp = function (appName, _a) {
             var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useModules = _a.useModules, useAxios = _a.useAxios;
             return __awaiter(_this, void 0, void 0, function () {
-                var command, e_1;
+                var command, code, e_1;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _b.trys.push([0, 3, , 4]);
+                            _b.trys.push([0, 5, , 6]);
                             this.appName = appName;
                             this.useTypescript = useTypescript;
                             this.useRouter = useRouter;
@@ -151,80 +152,146 @@ var App = /** @class */ (function () {
                             if (this.useTypescript) {
                                 command += " --template typescript";
                             }
-                            console.info("executing : " + colors_1.cyan("" + command));
-                            console.log("\nSit back and relax we're taking care of everything ! \uD83D\uDE01");
-                            //todo await shell.exec(command);
-                            shelljs_1.default.cd(this.appName);
-                            this.installPackages();
-                            this.createTemplates();
-                            console.info(colors_1.cyan('\nAll done!'));
-                            console.log("\nYou can now type " + colors_1.cyan("cd " + this.appName) + " and start an amazing project.");
-                            console.info(colors_1.cyan('\nHappy Coding !'));
-                            return [3 /*break*/, 4];
+                            console.info("\nexecuting : " + chalk_1.cyan("" + command));
+                            console.log("Sit back and relax we're taking care of everything ! \uD83D\uDE01");
+                            code = shelljs_1.default.cd(this.appName).code;
+                            if (code) {
+                                console.error("An error occured, seems like the folder " + this.appName + " doesn't exist.");
+                                process.exit(code);
+                            }
+                            return [4 /*yield*/, this.installPackages()];
                         case 3:
+                            _b.sent();
+                            return [4 /*yield*/, this.createTemplates()];
+                        case 4:
+                            _b.sent();
+                            this.createAssetsFolder();
+                            console.info(chalk_1.cyan('\nAll done!'));
+                            console.log("\nYou can now type " + chalk_1.cyan("cd " + this.appName) + " and " + chalk_1.cyan(this.packageManager + " start") + " an amazing project.");
+                            console.info(chalk_1.cyan('\nHappy Coding !'));
+                            return [3 /*break*/, 6];
+                        case 5:
                             e_1 = _b.sent();
                             console.error('An error occured! Please try again.');
                             process.exit(1);
-                            return [3 /*break*/, 4];
-                        case 4: return [2 /*return*/];
+                            return [3 /*break*/, 6];
+                        case 6: return [2 /*return*/];
                     }
                 });
             });
         };
-        this.installPackages = function () {
-            var baseCommand = _this.packageManager + " add";
-            var command = baseCommand;
-            if (_this.useRouter) {
-                _this.addPackage(_this.useRouter, 'prodPackages', _this.appPackages.router.prod);
-                _this.addPackage(_this.useTypescript, 'devPackages', _this.appPackages.router.dev);
-            }
-            if (_this.useRedux) {
-                _this.addPackage(_this.useRedux, 'prodPackages', _this.appPackages.redux.prod);
-                _this.addPackage(_this.useRedux, 'prodPackages', _this.appPackages.reactRedux.prod);
-                _this.addPackage(_this.useTypescript, 'devPackages', _this.appPackages.reactRedux.dev);
-            }
-            if (_this.useAxios) {
-                _this.addPackage(_this.useAxios, 'prodPackages', _this.appPackages.axios.prod);
-            }
-            _this.addPackage(_this.useSass, 'devPackages', _this.appPackages.sass.dev);
-            if (_this.hasProdPackages()) {
-                command += " " + _this.prodPackages.join(' ');
-            }
-            if (_this.hasProdAndDevPackages()) {
-                command += " && " + baseCommand + " -D " + _this.devPackages.join(' ');
-            }
-            else if (_this.hasDevPackages()) {
-                command += " -D " + _this.devPackages.join(' ');
-            }
-            if (command !== baseCommand) {
-                console.log('\n' + command);
-                //todo shell.exec(command);
-            }
-        };
-        this.createTemplates = function () {
-            var _a = _this, useRedux = _a.useRedux, useSass = _a.useSass, useRouter = _a.useRouter;
-            var extension = _this.useTypescript ? 'tsx' : 'js';
-            var indexTemplate = templates_1.createIndexTemplate({ useRedux: useRedux, useRouter: useRouter, useSass: useSass });
-            if (_this.fsUtil.checkSrcDirectory()) {
-                shelljs_1.default.cd('src');
-                shelljs_1.default.touch("index." + extension);
-                shelljs_1.default.exec("echo \"" + indexTemplate + "\" > index." + extension);
+        this.installPackages = function () { return __awaiter(_this, void 0, void 0, function () {
+            var baseCommand, command;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.fsUtil.goToRootDir()];
+                    case 1:
+                        _a.sent();
+                        baseCommand = this.packageManager + " add";
+                        command = baseCommand;
+                        if (this.useRouter) {
+                            this.addPackage(this.useRouter, 'prodPackages', this.appPackages.router.prod);
+                            this.addPackage(this.useTypescript, 'devPackages', this.appPackages.router.dev);
+                        }
+                        if (this.useRedux) {
+                            this.addPackage(this.useRedux, 'prodPackages', this.appPackages.redux.prod);
+                            this.addPackage(this.useRedux, 'prodPackages', this.appPackages.reactRedux.prod);
+                            this.addPackage(this.useTypescript, 'devPackages', this.appPackages.reactRedux.dev);
+                        }
+                        if (this.useAxios) {
+                            this.addPackage(this.useAxios, 'prodPackages', this.appPackages.axios.prod);
+                        }
+                        this.addPackage(this.useSass, 'devPackages', this.appPackages.sass.dev);
+                        if (this.hasProdPackages()) {
+                            command += " " + this.prodPackages.join(' ');
+                        }
+                        if (this.hasProdAndDevPackages()) {
+                            command += " && " + baseCommand + " -D " + this.devPackages.join(' ');
+                        }
+                        else if (this.hasDevPackages()) {
+                            command += " -D " + this.devPackages.join(' ');
+                        }
+                        if (command !== baseCommand) {
+                            console.log('\n' + command);
+                            // todo
+                            shelljs_1.default.exec(command);
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.createTemplates = function () { return __awaiter(_this, void 0, void 0, function () {
+            var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexTemplate, appTemplate;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, this.fsUtil.checkSrcDirectory()];
+                    case 1:
+                        if (_b.sent()) {
+                            _a = this, useRedux = _a.useRedux, useSass = _a.useSass, useRouter = _a.useRouter, useModules = _a.useModules, useTypescript = _a.useTypescript;
+                            indexTemplate = templates_1.createIndexTemplate({ useRedux: useRedux, useRouter: useRouter, useSass: useSass });
+                            appTemplate = templates_1.createAppTemplate({
+                                componentName: 'App',
+                                styleExtension: useSass ? 'scss' : 'css',
+                                useModules: useModules,
+                                useTypescript: useTypescript,
+                            });
+                            this.terminal.navigateTo(['src']);
+                            this.createTemplate({
+                                name: 'index',
+                                template: indexTemplate,
+                                type: 'script',
+                                writeFile: true,
+                            });
+                            this.fsUtil.createDirectory('App');
+                            this.terminal.navigateTo(['App']);
+                            this.createTemplate({ name: 'App', template: appTemplate, type: 'script', writeFile: true });
+                            this.createTemplate({ name: 'App', type: 'style' });
+                            this.terminal.goBack(1);
+                        }
+                        else {
+                            console.error('\nNo src directory found. Could not create templates');
+                            return [2 /*return*/];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.createTemplate = function (_a) {
+            var name = _a.name, template = _a.template, type = _a.type, _b = _a.writeFile, writeFile = _b === void 0 ? false : _b, _c = _a.module, module = _c === void 0 ? _this.useModules : _c;
+            var styleModule = module ? 'module.' : '';
+            var extension, filename, writeCommand;
+            if (type === 'script') {
+                extension = _this.useTypescript ? 'tsx' : 'js';
+                filename = name + "." + extension;
+                writeCommand = "echo \"" + template + "\" > " + name + "." + extension;
             }
             else {
-                console.error('No src directory found. Could not create templates');
-                return;
+                extension = _this.useSass ? 'scss' : 'css';
+                filename = name + "." + styleModule + extension;
+                writeCommand = "echo \"" + template + "\" > " + name + "." + styleModule + extension;
             }
-            /**
-             *  todo Create the app template based on the installed modules
-             *  todo Create the store if redux is installed
-             *  todo Create a version for JS and one for TS
-             * */
+            _this.fsUtil.createFile(filename);
+            if (writeFile) {
+                _this.terminal.executeCommand(writeCommand);
+            }
+        };
+        this.createAssetsFolder = function () {
+            var styleFolder = _this.useSass ? 'scss' : 'css';
+            _this.terminal.navigateTo(['src']);
+            _this.fsUtil.createDirectory('assets');
+            _this.terminal.navigateTo(['assets']);
+            _this.fsUtil.createDirectory(styleFolder);
+            _this.fsUtil.createDirectory('images');
+            _this.terminal.navigateTo([styleFolder]);
+            _this.createTemplate({ name: 'index', type: 'style', module: false });
+            _this.terminal.goBack(2);
         };
         this.hasProdPackages = function () { return _this.prodPackages.length; };
         this.hasDevPackages = function () { return _this.devPackages.length; };
         this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
         this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
         this.fsUtil = new FsUtil_1.FsUtil();
+        this.terminal = new Terminal_1.Terminal();
     }
     return App;
 }());

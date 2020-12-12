@@ -1,8 +1,9 @@
 import { prompt } from 'enquirer';
 import shell from 'shelljs';
-import { cyan } from 'colors';
-import { createIndexTemplate } from '../templates';
+import { bgCyanBright, cyan, cyanBright } from 'chalk';
+import { createIndexTemplate, createAppTemplate } from '../templates';
 import { FsUtil } from '../FsUtil';
+import { Terminal } from '../Terminal';
 
 interface CreateReactAppOptions {
   useTypescript: boolean;
@@ -33,6 +34,14 @@ interface AppPackages {
   axios: { prod: Package };
 }
 
+interface CreateTemplateParams {
+  template?: string;
+  name: string;
+  type: 'script' | 'style';
+  writeFile?: boolean;
+  module?: boolean;
+}
+
 export class App {
   appName: string = '';
   useTypescript: boolean = false;
@@ -54,9 +63,11 @@ export class App {
   devPackages: Package[] = [];
 
   fsUtil;
+  terminal;
 
   constructor() {
     this.fsUtil = new FsUtil();
+    this.terminal = new Terminal();
   }
 
   interactiveCreateReactApp = async (askName: boolean) => {
@@ -128,14 +139,23 @@ export class App {
         command += ` --template typescript`;
       }
 
-      console.info(`executing : ${cyan(`${command}`)}`);
-      console.log(`\nSit back and relax we're taking care of everything ! 😁`);
-      //todo await shell.exec(command);
-      shell.cd(this.appName);
-      this.installPackages();
-      this.createTemplates();
+      console.info(`\nexecuting : ${cyan(`${command}`)}`);
+      console.log(`Sit back and relax we're taking care of everything ! 😁`);
+      // await shell.exec(command);
+      const { code } = shell.cd(this.appName);
+      if (code) {
+        console.error(`An error occured, seems like the folder ${this.appName} doesn't exist.`);
+        process.exit(code);
+      }
+      await this.installPackages();
+      await this.createTemplates();
+      this.createAssetsFolder();
       console.info(cyan('\nAll done!'));
-      console.log(`\nYou can now type ${cyan(`cd ${this.appName}`)} and start an amazing project.`);
+      console.log(
+        `\nYou can now type ${cyan(`cd ${this.appName}`)} and ${cyan(
+          `${this.packageManager} start`,
+        )} an amazing project.`,
+      );
       console.info(cyan('\nHappy Coding !'));
     } catch (e) {
       console.error('An error occured! Please try again.');
@@ -143,7 +163,8 @@ export class App {
     }
   };
 
-  installPackages = () => {
+  installPackages = async () => {
+    await this.fsUtil.goToRootDir();
     const baseCommand = `${this.packageManager} add`;
     let command = baseCommand;
 
@@ -177,21 +198,39 @@ export class App {
     if (command !== baseCommand) {
       console.log('\n' + command);
 
-      //todo shell.exec(command);
+      // todo
+      shell.exec(command);
     }
   };
 
-  createTemplates = () => {
-    const { useRedux, useSass, useRouter } = this;
-    const extension = this.useTypescript ? 'tsx' : 'js';
-    const indexTemplate = createIndexTemplate({ useRedux, useRouter, useSass });
+  createTemplates = async () => {
+    if (await this.fsUtil.checkSrcDirectory()) {
+      const { useRedux, useSass, useRouter, useModules, useTypescript } = this;
+      const indexTemplate = createIndexTemplate({ useRedux, useRouter, useSass });
+      const appTemplate = createAppTemplate({
+        componentName: 'App',
+        styleExtension: useSass ? 'scss' : 'css',
+        useModules,
+        useTypescript,
+      });
 
-    if (this.fsUtil.checkSrcDirectory()) {
-      shell.cd('src');
-      shell.touch(`index.${extension}`);
-      shell.exec(`echo "${indexTemplate}" > index.${extension}`);
+      this.terminal.navigateTo(['src']);
+
+      this.createTemplate({
+        name: 'index',
+        template: indexTemplate,
+        type: 'script',
+        writeFile: true,
+      });
+
+      this.fsUtil.createDirectory('App');
+      this.terminal.navigateTo(['App']);
+      this.createTemplate({ name: 'App', template: appTemplate, type: 'script', writeFile: true });
+      this.createTemplate({ name: 'App', type: 'style' });
+
+      this.terminal.goBack(1);
     } else {
-      console.error('No src directory found. Could not create templates');
+      console.error('\nNo src directory found. Could not create templates');
       return;
     }
 
@@ -200,6 +239,44 @@ export class App {
      *  todo Create the store if redux is installed
      *  todo Create a version for JS and one for TS
      * */
+  };
+  createTemplate = ({
+    name,
+    template,
+    type,
+    writeFile = false,
+    module = this.useModules,
+  }: CreateTemplateParams) => {
+    const styleModule = module ? 'module.' : '';
+    let extension, filename, writeCommand;
+
+    if (type === 'script') {
+      extension = this.useTypescript ? 'tsx' : 'js';
+      filename = `${name}.${extension}`;
+      writeCommand = `echo "${template}" > ${name}.${extension}`;
+    } else {
+      extension = this.useSass ? 'scss' : 'css';
+      filename = `${name}.${styleModule}${extension}`;
+      writeCommand = `echo "${template}" > ${name}.${styleModule}${extension}`;
+    }
+
+    this.fsUtil.createFile(filename);
+
+    if (writeFile) {
+      this.terminal.executeCommand(writeCommand);
+    }
+  };
+
+  createAssetsFolder = () => {
+    const styleFolder = this.useSass ? 'scss' : 'css';
+    this.terminal.navigateTo(['src']);
+    this.fsUtil.createDirectory('assets');
+    this.terminal.navigateTo(['assets']);
+    this.fsUtil.createDirectory(styleFolder);
+    this.fsUtil.createDirectory('images');
+    this.terminal.navigateTo([styleFolder]);
+    this.createTemplate({ name: 'index', type: 'style', module: false });
+    this.terminal.goBack(2);
   };
 
   hasProdPackages = () => this.prodPackages.length;

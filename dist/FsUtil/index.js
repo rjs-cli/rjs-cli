@@ -54,10 +54,10 @@ var FsUtil = /** @class */ (function () {
                         hasPackageJson = false;
                         timeout = setTimeout(function () {
                             if (!hasPackageJson) {
-                                console.log('No package.json found, exiting ...');
+                                console.log('Could not find a package.json... Are you in the right directory ?');
                                 process.exit(1);
                             }
-                        }, 5000);
+                        }, 40);
                         _a.label = 1;
                     case 1: return [4 /*yield*/, promises_1.readdir(path)];
                     case 2:
@@ -111,12 +111,14 @@ var FsUtil = /** @class */ (function () {
         }); };
         this.createComponentsDirectory = function () {
             shelljs_1.default.cd('src');
-            shelljs_1.default.mkdir('components');
+            _this.createDirectory('components');
             shelljs_1.default.cd('..');
         };
         this.createSrcDirectory = function () {
-            shelljs_1.default.mkdir('src');
+            _this.createDirectory('src');
         };
+        this.createFile = function (filename) { return shelljs_1.default.touch(filename); };
+        this.createDirectory = function (dirname) { return shelljs_1.default.mkdir(dirname); };
         this.alreadyExists = function (name) { return __awaiter(_this, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {

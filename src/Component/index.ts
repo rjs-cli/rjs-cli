@@ -1,6 +1,8 @@
+import path from 'path';
 import shell from 'shelljs';
 import { createClassComponentTemplate, createFunctionalComponentTemplate } from '../templates';
 import { FsUtil } from '../FsUtil';
+import { Terminal } from '../Terminal';
 
 interface GenerateComponentOptions {
   useStyles: 'css' | 'scss';
@@ -16,11 +18,13 @@ export class Component {
   useTypescript: boolean = false;
   useModules: boolean = false;
   isClassBased: boolean = false;
-  fsUtil;
   message: string = '';
+  fsUtil;
+  terminal;
 
   constructor() {
     this.fsUtil = new FsUtil();
+    this.terminal = new Terminal();
   }
 
   generate = async (
@@ -51,7 +55,7 @@ export class Component {
     }
 
     if (this.directory) {
-      await this.checkExistance();
+      await this.checkExistence();
 
       // todo create component
       if (this.directory === '.') {
@@ -79,11 +83,11 @@ export class Component {
     this.directory = `${shell.pwd()}/src/components/${this.name}`;
     this.message += ` in "${this.directory}"`;
 
-    shell.cd('src/components');
+    shell.cd(path.join('src', 'components'));
     await this.create();
   };
 
-  checkExistance = async () => {
+  checkExistence = async () => {
     const alreadyExists = await this.fsUtil.alreadyExists(this.name);
 
     if (alreadyExists) {
@@ -93,7 +97,7 @@ export class Component {
   };
 
   create = async () => {
-    await this.checkExistance();
+    await this.checkExistence();
 
     console.info(`${this.message}...`);
 

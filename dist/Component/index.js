@@ -40,9 +40,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Component = void 0;
+var path_1 = __importDefault(require("path"));
 var shelljs_1 = __importDefault(require("shelljs"));
 var templates_1 = require("../templates");
 var FsUtil_1 = require("../FsUtil");
+var Terminal_1 = require("../Terminal");
 var Component = /** @class */ (function () {
     function Component() {
         var _this = this;
@@ -79,7 +81,7 @@ var Component = /** @class */ (function () {
                                 this.message += " " + this.useStyles;
                             }
                             if (!this.directory) return [3 /*break*/, 2];
-                            return [4 /*yield*/, this.checkExistance()];
+                            return [4 /*yield*/, this.checkExistence()];
                         case 1:
                             _b.sent();
                             // todo create component
@@ -109,7 +111,7 @@ var Component = /** @class */ (function () {
                         case 6:
                             this.directory = shelljs_1.default.pwd() + "/src/components/" + this.name;
                             this.message += " in \"" + this.directory + "\"";
-                            shelljs_1.default.cd('src/components');
+                            shelljs_1.default.cd(path_1.default.join('src', 'components'));
                             return [4 /*yield*/, this.create()];
                         case 7:
                             _b.sent();
@@ -118,7 +120,7 @@ var Component = /** @class */ (function () {
                 });
             });
         };
-        this.checkExistance = function () { return __awaiter(_this, void 0, void 0, function () {
+        this.checkExistence = function () { return __awaiter(_this, void 0, void 0, function () {
             var alreadyExists;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -137,7 +139,7 @@ var Component = /** @class */ (function () {
             var filename;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.checkExistance()];
+                    case 0: return [4 /*yield*/, this.checkExistence()];
                     case 1:
                         _a.sent();
                         console.info(this.message + "...");
@@ -188,6 +190,7 @@ var Component = /** @class */ (function () {
             return template;
         };
         this.fsUtil = new FsUtil_1.FsUtil();
+        this.terminal = new Terminal_1.Terminal();
     }
     return Component;
 }());

@@ -4,14 +4,14 @@ import shell from 'shelljs';
 export class FsUtil {
   goToRootDir = async () => {
     let path = shell.pwd().stdout;
-    let hasPackageJson: boolean = false;
+    let hasPackageJson = false;
     const timeout = setTimeout(() => {
       if (!hasPackageJson) {
-        console.log('No package.json found, exiting ...');
+        console.log('Could not find a package.json... Are you in the right directory ?');
 
         process.exit(1);
       }
-    }, 5000);
+    }, 40);
     do {
       const dirContent = await readdir(path);
 
@@ -53,13 +53,17 @@ export class FsUtil {
 
   createComponentsDirectory = () => {
     shell.cd('src');
-    shell.mkdir('components');
+    this.createDirectory('components');
     shell.cd('..');
   };
 
   createSrcDirectory = () => {
-    shell.mkdir('src');
+    this.createDirectory('src');
   };
+
+  createFile = (filename: string) => shell.touch(filename);
+
+  createDirectory = (dirname: string) => shell.mkdir(dirname);
 
   alreadyExists = async (name: string) => {
     const response = await readdir(`${process.cwd()}`);
