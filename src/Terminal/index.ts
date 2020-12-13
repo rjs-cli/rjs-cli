@@ -1,7 +1,7 @@
 import path from 'path';
 import shell from 'shelljs';
 
-export class Terminal {
+class Terminal {
   navigateTo = (pathArray: string[]) =>
     shell.cd(pathArray.reduce((prev, curr) => path.join(prev, curr)));
 
@@ -13,3 +13,5 @@ export class Terminal {
 
   executeCommand = (command: string) => shell.exec(command);
 }
+
+export const terminal = new Terminal();

@@ -3,10 +3,13 @@ interface IndexTemplateParams {
   useSass: boolean;
   useRouter: boolean;
 }
-export const createIndexTemplate = ({ useRedux, useSass, useRouter }: IndexTemplateParams) => {
+export const createIndexScriptTemplate = ({
+  useRedux,
+  useSass,
+  useRouter,
+}: IndexTemplateParams) => {
   const extension = useSass ? 'scss' : 'css';
-  return `
-import React from 'react';
+  return `import React from 'react';
 import ReactDOM from 'react-dom';
 ${useRouter ? `import { BrowserRouter as Router } from 'react-router-dom';` : ''}
 ${
@@ -18,6 +21,7 @@ import store from './store';`
 import App from './App/App';
 
 import * as serviceWorker from './serviceWorker';
+${!useSass ? `import './assets/css/reset.css';` : ''}
 import './assets/${extension}/index.${extension}';
 
 ReactDOM.render(

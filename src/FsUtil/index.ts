@@ -1,7 +1,7 @@
 import { readdir } from 'fs/promises';
 import shell from 'shelljs';
 
-export class FsUtil {
+class FsUtil {
   goToRootDir = async () => {
     let path = shell.pwd().stdout;
     let hasPackageJson = false;
@@ -63,11 +63,19 @@ export class FsUtil {
 
   createFile = (filename: string) => shell.touch(filename);
 
-  createDirectory = (dirname: string) => shell.mkdir(dirname);
+  checkAndCreateDir = async (name: string, directory?: string) => {
+    if (!(await this.doesDirectoryExist(name, directory))) {
+      this.createDirectory(name);
+    }
+  };
 
-  alreadyExists = async (name: string) => {
-    const response = await readdir(`${process.cwd()}`);
+  doesDirectoryExist = async (name: string, directory?: string) => {
+    const response = await readdir(directory ?? process.cwd());
 
     return response.includes(name);
   };
+
+  createDirectory = (dirname: string) => shell.mkdir(dirname);
 }
+
+export const fsUtil = new FsUtil();

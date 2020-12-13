@@ -46,6 +46,7 @@ var chalk_1 = require("chalk");
 var templates_1 = require("../templates");
 var FsUtil_1 = require("../FsUtil");
 var Terminal_1 = require("../Terminal");
+var Store_1 = require("../Store");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
@@ -134,7 +135,7 @@ var App = /** @class */ (function () {
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _b.trys.push([0, 5, , 6]);
+                            _b.trys.push([0, 8, , 9]);
                             this.appName = appName;
                             this.useTypescript = useTypescript;
                             this.useRouter = useRouter;
@@ -165,17 +166,25 @@ var App = /** @class */ (function () {
                             return [4 /*yield*/, this.createTemplates()];
                         case 4:
                             _b.sent();
-                            this.createAssetsFolder();
+                            return [4 /*yield*/, this.createAssetsFolder()];
+                        case 5:
+                            _b.sent();
+                            if (!this.useRedux) return [3 /*break*/, 7];
+                            return [4 /*yield*/, this.createStoreFolder()];
+                        case 6:
+                            _b.sent();
+                            _b.label = 7;
+                        case 7:
                             console.info(chalk_1.cyan('\nAll done!'));
                             console.log("\nYou can now type " + chalk_1.cyan("cd " + this.appName) + " and " + chalk_1.cyan(this.packageManager + " start") + " an amazing project.");
                             console.info(chalk_1.cyan('\nHappy Coding !'));
-                            return [3 /*break*/, 6];
-                        case 5:
+                            return [3 /*break*/, 9];
+                        case 8:
                             e_1 = _b.sent();
                             console.error('An error occured! Please try again.');
                             process.exit(1);
-                            return [3 /*break*/, 6];
-                        case 6: return [2 /*return*/];
+                            return [3 /*break*/, 9];
+                        case 9: return [2 /*return*/];
                     }
                 });
             });
@@ -184,7 +193,7 @@ var App = /** @class */ (function () {
             var baseCommand, command;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.fsUtil.goToRootDir()];
+                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.goToRootDir()];
                     case 1:
                         _a.sent();
                         baseCommand = this.packageManager + " add";
@@ -221,47 +230,49 @@ var App = /** @class */ (function () {
             });
         }); };
         this.createTemplates = function () { return __awaiter(_this, void 0, void 0, function () {
-            var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexTemplate, appTemplate;
+            var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexScriptTemplate, appTemplate;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.fsUtil.checkSrcDirectory()];
+                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.checkSrcDirectory()];
                     case 1:
-                        if (_b.sent()) {
-                            _a = this, useRedux = _a.useRedux, useSass = _a.useSass, useRouter = _a.useRouter, useModules = _a.useModules, useTypescript = _a.useTypescript;
-                            indexTemplate = templates_1.createIndexTemplate({ useRedux: useRedux, useRouter: useRouter, useSass: useSass });
-                            appTemplate = templates_1.createAppTemplate({
-                                componentName: 'App',
-                                styleExtension: useSass ? 'scss' : 'css',
-                                useModules: useModules,
-                                useTypescript: useTypescript,
-                            });
-                            this.terminal.navigateTo(['src']);
-                            this.createTemplate({
-                                name: 'index',
-                                template: indexTemplate,
-                                type: 'script',
-                                writeFile: true,
-                            });
-                            this.fsUtil.createDirectory('App');
-                            this.terminal.navigateTo(['App']);
-                            this.createTemplate({ name: 'App', template: appTemplate, type: 'script', writeFile: true });
-                            this.createTemplate({ name: 'App', type: 'style' });
-                            this.terminal.goBack(1);
-                        }
-                        else {
-                            console.error('\nNo src directory found. Could not create templates');
-                            return [2 /*return*/];
-                        }
+                        if (!_b.sent()) return [3 /*break*/, 3];
+                        _a = this, useRedux = _a.useRedux, useSass = _a.useSass, useRouter = _a.useRouter, useModules = _a.useModules, useTypescript = _a.useTypescript;
+                        indexScriptTemplate = templates_1.createIndexScriptTemplate({ useRedux: useRedux, useRouter: useRouter, useSass: useSass });
+                        appTemplate = templates_1.createAppTemplate({
+                            componentName: 'App',
+                            styleExtension: useSass ? 'scss' : 'css',
+                            useModules: useModules,
+                            useTypescript: useTypescript,
+                        });
+                        Terminal_1.terminal.navigateTo(['src']);
+                        this.createTemplate({
+                            name: 'index',
+                            template: indexScriptTemplate,
+                            type: 'script',
+                        });
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('App')];
+                    case 2:
+                        _b.sent();
+                        Terminal_1.terminal.navigateTo(['App']);
+                        this.createTemplate({ name: 'App', template: appTemplate, type: 'script' });
+                        this.createTemplate({ name: 'App', type: 'style' });
+                        // this will put you back in "src"
+                        Terminal_1.terminal.goBack(1);
+                        return [3 /*break*/, 4];
+                    case 3:
+                        console.error('\nNo src directory found. Could not create templates');
                         return [2 /*return*/];
+                    case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.createTemplate = function (_a) {
-            var name = _a.name, template = _a.template, type = _a.type, _b = _a.writeFile, writeFile = _b === void 0 ? false : _b, _c = _a.module, module = _c === void 0 ? _this.useModules : _c;
+            var name = _a.name, template = _a.template, type = _a.type, scriptExtension = _a.scriptExtension, _b = _a.module, module = _b === void 0 ? _this.useModules : _b;
             var styleModule = module ? 'module.' : '';
             var extension, filename, writeCommand;
             if (type === 'script') {
-                extension = _this.useTypescript ? 'tsx' : 'js';
+                extension = scriptExtension ? scriptExtension : _this.useTypescript ? 'tsx' : 'js';
+                console.log({ extension: extension, scriptExtension: scriptExtension });
                 filename = name + "." + extension;
                 writeCommand = "echo \"" + template + "\" > " + name + "." + extension;
             }
@@ -270,28 +281,72 @@ var App = /** @class */ (function () {
                 filename = name + "." + styleModule + extension;
                 writeCommand = "echo \"" + template + "\" > " + name + "." + styleModule + extension;
             }
-            _this.fsUtil.createFile(filename);
-            if (writeFile) {
-                _this.terminal.executeCommand(writeCommand);
+            FsUtil_1.fsUtil.createFile(filename);
+            if (template) {
+                Terminal_1.terminal.executeCommand(writeCommand);
             }
         };
-        this.createAssetsFolder = function () {
-            var styleFolder = _this.useSass ? 'scss' : 'css';
-            _this.terminal.navigateTo(['src']);
-            _this.fsUtil.createDirectory('assets');
-            _this.terminal.navigateTo(['assets']);
-            _this.fsUtil.createDirectory(styleFolder);
-            _this.fsUtil.createDirectory('images');
-            _this.terminal.navigateTo([styleFolder]);
-            _this.createTemplate({ name: 'index', type: 'style', module: false });
-            _this.terminal.goBack(2);
-        };
+        this.createAssetsFolder = function () { return __awaiter(_this, void 0, void 0, function () {
+            var useSass, scssVariablesTemplate, styleResetTemplate, indexStyleTemplate, styleFolder;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        useSass = this.useSass;
+                        scssVariablesTemplate = templates_1.createScssVariablesTemplate();
+                        styleResetTemplate = templates_1.createStyleReset();
+                        indexStyleTemplate = templates_1.createIndexStyleTemplate({ useSass: this.useSass });
+                        styleFolder = this.useSass ? 'scss' : 'css';
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('assets')];
+                    case 1:
+                        _a.sent();
+                        Terminal_1.terminal.navigateTo(['assets']);
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('images')];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir(styleFolder)];
+                    case 3:
+                        _a.sent();
+                        Terminal_1.terminal.navigateTo([styleFolder]);
+                        this.createTemplate({
+                            name: 'index',
+                            template: indexStyleTemplate,
+                            type: 'style',
+                            module: false,
+                        });
+                        if (useSass) {
+                            this.createTemplate({ name: '_variables', template: scssVariablesTemplate, type: 'style' });
+                        }
+                        this.createTemplate({
+                            name: useSass ? '_reset' : 'reset',
+                            type: 'style',
+                            template: styleResetTemplate,
+                        });
+                        Terminal_1.terminal.goBack(2);
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.createStoreFolder = function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, Store_1.store.create()];
+                    case 1:
+                        _a.sent();
+                        this.createTemplate({
+                            name: 'index',
+                            type: 'script',
+                            scriptExtension: 'ts',
+                            template: '// this is the store template',
+                        });
+                        Terminal_1.terminal.goBack(1);
+                        return [2 /*return*/];
+                }
+            });
+        }); };
         this.hasProdPackages = function () { return _this.prodPackages.length; };
         this.hasDevPackages = function () { return _this.devPackages.length; };
         this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
         this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
-        this.fsUtil = new FsUtil_1.FsUtil();
-        this.terminal = new Terminal_1.Terminal();
     }
     return App;
 }());

@@ -5,8 +5,7 @@ export const createClassComponentTemplate = ({
   useTypescript = false,
   styleExtension = null,
   useModules = false,
-}: ComponentTemplateParams) => {
-  return `import React, { Component } from 'react';
+}: ComponentTemplateParams) => `import React, { Component } from 'react';
 ${importComponentStyle(componentName, styleExtension, useModules)}
 
 ${
@@ -17,8 +16,8 @@ interface ${componentName}State {}`
 }
 
 class ${componentName} extends Component${
-    useTypescript ? `<${componentName}Props, ${componentName}State>` : ''
-  } {
+  useTypescript ? `<${componentName}Props, ${componentName}State>` : ''
+} {
   state = {};
 
   render() {
@@ -31,4 +30,3 @@ class ${componentName} extends Component${
 }
 
 export default ${componentName};`;
-};

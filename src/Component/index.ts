@@ -1,8 +1,8 @@
 import path from 'path';
 import shell from 'shelljs';
 import { createClassComponentTemplate, createFunctionalComponentTemplate } from '../templates';
-import { FsUtil } from '../FsUtil';
-import { Terminal } from '../Terminal';
+import { fsUtil } from '../FsUtil';
+import { terminal } from '../Terminal';
 
 interface GenerateComponentOptions {
   useStyles: 'css' | 'scss';
@@ -19,13 +19,6 @@ export class Component {
   useModules: boolean = false;
   isClassBased: boolean = false;
   message: string = '';
-  fsUtil;
-  terminal;
-
-  constructor() {
-    this.fsUtil = new FsUtil();
-    this.terminal = new Terminal();
-  }
 
   generate = async (
     componentName: string,
@@ -67,17 +60,17 @@ export class Component {
       process.exit(0);
     }
 
-    const hasSrcDir = await this.fsUtil.checkSrcDirectory();
+    const hasSrcDir = await fsUtil.checkSrcDirectory();
 
     if (hasSrcDir) {
-      const hasComponentsDir = await this.fsUtil.checkComponentsDirectory();
+      const hasComponentsDir = await fsUtil.checkComponentsDirectory();
 
       if (!hasComponentsDir) {
-        this.fsUtil.createComponentsDirectory();
+        fsUtil.createComponentsDirectory();
       }
     } else {
-      this.fsUtil.createSrcDirectory();
-      this.fsUtil.createComponentsDirectory();
+      fsUtil.createSrcDirectory();
+      fsUtil.createComponentsDirectory();
     }
 
     this.directory = `${shell.pwd()}/src/components/${this.name}`;
@@ -88,7 +81,7 @@ export class Component {
   };
 
   checkExistence = async () => {
-    const alreadyExists = await this.fsUtil.alreadyExists(this.name);
+    const alreadyExists = await fsUtil.doesDirectoryExist(this.name);
 
     if (alreadyExists) {
       console.error('This component already exists, please choose a different name.');

@@ -44,7 +44,6 @@ var path_1 = __importDefault(require("path"));
 var shelljs_1 = __importDefault(require("shelljs"));
 var templates_1 = require("../templates");
 var FsUtil_1 = require("../FsUtil");
-var Terminal_1 = require("../Terminal");
 var Component = /** @class */ (function () {
     function Component() {
         var _this = this;
@@ -93,20 +92,20 @@ var Component = /** @class */ (function () {
                             }
                             process.exit(0);
                             _b.label = 2;
-                        case 2: return [4 /*yield*/, this.fsUtil.checkSrcDirectory()];
+                        case 2: return [4 /*yield*/, FsUtil_1.fsUtil.checkSrcDirectory()];
                         case 3:
                             hasSrcDir = _b.sent();
                             if (!hasSrcDir) return [3 /*break*/, 5];
-                            return [4 /*yield*/, this.fsUtil.checkComponentsDirectory()];
+                            return [4 /*yield*/, FsUtil_1.fsUtil.checkComponentsDirectory()];
                         case 4:
                             hasComponentsDir = _b.sent();
                             if (!hasComponentsDir) {
-                                this.fsUtil.createComponentsDirectory();
+                                FsUtil_1.fsUtil.createComponentsDirectory();
                             }
                             return [3 /*break*/, 6];
                         case 5:
-                            this.fsUtil.createSrcDirectory();
-                            this.fsUtil.createComponentsDirectory();
+                            FsUtil_1.fsUtil.createSrcDirectory();
+                            FsUtil_1.fsUtil.createComponentsDirectory();
                             _b.label = 6;
                         case 6:
                             this.directory = shelljs_1.default.pwd() + "/src/components/" + this.name;
@@ -124,7 +123,7 @@ var Component = /** @class */ (function () {
             var alreadyExists;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.fsUtil.alreadyExists(this.name)];
+                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.doesDirectoryExist(this.name)];
                     case 1:
                         alreadyExists = _a.sent();
                         if (alreadyExists) {
@@ -189,8 +188,6 @@ var Component = /** @class */ (function () {
             }
             return template;
         };
-        this.fsUtil = new FsUtil_1.FsUtil();
-        this.terminal = new Terminal_1.Terminal();
     }
     return Component;
 }());

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Terminal = void 0;
+exports.terminal = void 0;
 var path_1 = __importDefault(require("path"));
 var shelljs_1 = __importDefault(require("shelljs"));
 var Terminal = /** @class */ (function () {
@@ -20,4 +20,4 @@ var Terminal = /** @class */ (function () {
     }
     return Terminal;
 }());
-exports.Terminal = Terminal;
+exports.terminal = new Terminal();

@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FsUtil = void 0;
+exports.fsUtil = void 0;
 var promises_1 = require("fs/promises");
 var shelljs_1 = __importDefault(require("shelljs"));
 var FsUtil = /** @class */ (function () {
@@ -118,19 +118,31 @@ var FsUtil = /** @class */ (function () {
             _this.createDirectory('src');
         };
         this.createFile = function (filename) { return shelljs_1.default.touch(filename); };
-        this.createDirectory = function (dirname) { return shelljs_1.default.mkdir(dirname); };
-        this.alreadyExists = function (name) { return __awaiter(_this, void 0, void 0, function () {
+        this.checkAndCreateDir = function (name, directory) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.doesDirectoryExist(name, directory)];
+                    case 1:
+                        if (!(_a.sent())) {
+                            this.createDirectory(name);
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.doesDirectoryExist = function (name, directory) { return __awaiter(_this, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, promises_1.readdir("" + process.cwd())];
+                    case 0: return [4 /*yield*/, promises_1.readdir(directory !== null && directory !== void 0 ? directory : process.cwd())];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response.includes(name)];
                 }
             });
         }); };
+        this.createDirectory = function (dirname) { return shelljs_1.default.mkdir(dirname); };
     }
     return FsUtil;
 }());
-exports.FsUtil = FsUtil;
+exports.fsUtil = new FsUtil();

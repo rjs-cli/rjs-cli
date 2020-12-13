@@ -1,9 +1,16 @@
 import { prompt } from 'enquirer';
 import shell from 'shelljs';
-import { bgCyanBright, cyan, cyanBright } from 'chalk';
-import { createIndexTemplate, createAppTemplate } from '../templates';
-import { FsUtil } from '../FsUtil';
-import { Terminal } from '../Terminal';
+import { cyan } from 'chalk';
+import {
+  createIndexScriptTemplate,
+  createAppTemplate,
+  createIndexStyleTemplate,
+  createScssVariablesTemplate,
+  createStyleReset,
+} from '../templates';
+import { fsUtil } from '../FsUtil';
+import { terminal } from '../Terminal';
+import { store } from '../Store';
 
 interface CreateReactAppOptions {
   useTypescript: boolean;
@@ -38,7 +45,7 @@ interface CreateTemplateParams {
   template?: string;
   name: string;
   type: 'script' | 'style';
-  writeFile?: boolean;
+  scriptExtension?: 'tsx' | 'ts' | 'jsx' | 'js';
   module?: boolean;
 }
 
@@ -61,14 +68,6 @@ export class App {
 
   prodPackages: Package[] = [];
   devPackages: Package[] = [];
-
-  fsUtil;
-  terminal;
-
-  constructor() {
-    this.fsUtil = new FsUtil();
-    this.terminal = new Terminal();
-  }
 
   interactiveCreateReactApp = async (askName: boolean) => {
     if (askName) {
@@ -149,7 +148,11 @@ export class App {
       }
       await this.installPackages();
       await this.createTemplates();
-      this.createAssetsFolder();
+      await this.createAssetsFolder();
+      if (this.useRedux) {
+        await this.createStoreFolder();
+      }
+
       console.info(cyan('\nAll done!'));
       console.log(
         `\nYou can now type ${cyan(`cd ${this.appName}`)} and ${cyan(
@@ -164,7 +167,7 @@ export class App {
   };
 
   installPackages = async () => {
-    await this.fsUtil.goToRootDir();
+    await fsUtil.goToRootDir();
     const baseCommand = `${this.packageManager} add`;
     let command = baseCommand;
 
@@ -204,9 +207,9 @@ export class App {
   };
 
   createTemplates = async () => {
-    if (await this.fsUtil.checkSrcDirectory()) {
+    if (await fsUtil.checkSrcDirectory()) {
       const { useRedux, useSass, useRouter, useModules, useTypescript } = this;
-      const indexTemplate = createIndexTemplate({ useRedux, useRouter, useSass });
+      const indexScriptTemplate = createIndexScriptTemplate({ useRedux, useRouter, useSass });
       const appTemplate = createAppTemplate({
         componentName: 'App',
         styleExtension: useSass ? 'scss' : 'css',
@@ -214,21 +217,22 @@ export class App {
         useTypescript,
       });
 
-      this.terminal.navigateTo(['src']);
+      terminal.navigateTo(['src']);
 
       this.createTemplate({
         name: 'index',
-        template: indexTemplate,
+        template: indexScriptTemplate,
         type: 'script',
-        writeFile: true,
       });
 
-      this.fsUtil.createDirectory('App');
-      this.terminal.navigateTo(['App']);
-      this.createTemplate({ name: 'App', template: appTemplate, type: 'script', writeFile: true });
+      await fsUtil.checkAndCreateDir('App');
+      terminal.navigateTo(['App']);
+
+      this.createTemplate({ name: 'App', template: appTemplate, type: 'script' });
       this.createTemplate({ name: 'App', type: 'style' });
 
-      this.terminal.goBack(1);
+      // this will put you back in "src"
+      terminal.goBack(1);
     } else {
       console.error('\nNo src directory found. Could not create templates');
       return;
@@ -244,14 +248,15 @@ export class App {
     name,
     template,
     type,
-    writeFile = false,
+    scriptExtension,
     module = this.useModules,
   }: CreateTemplateParams) => {
     const styleModule = module ? 'module.' : '';
     let extension, filename, writeCommand;
 
     if (type === 'script') {
-      extension = this.useTypescript ? 'tsx' : 'js';
+      extension = scriptExtension ? scriptExtension : this.useTypescript ? 'tsx' : 'js';
+      console.log({ extension, scriptExtension });
       filename = `${name}.${extension}`;
       writeCommand = `echo "${template}" > ${name}.${extension}`;
     } else {
@@ -260,23 +265,58 @@ export class App {
       writeCommand = `echo "${template}" > ${name}.${styleModule}${extension}`;
     }
 
-    this.fsUtil.createFile(filename);
+    fsUtil.createFile(filename);
 
-    if (writeFile) {
-      this.terminal.executeCommand(writeCommand);
+    if (template) {
+      terminal.executeCommand(writeCommand);
     }
   };
 
-  createAssetsFolder = () => {
+  createAssetsFolder = async () => {
+    const { useSass } = this;
+    const scssVariablesTemplate = createScssVariablesTemplate();
+    const styleResetTemplate = createStyleReset();
+    const indexStyleTemplate = createIndexStyleTemplate({ useSass: this.useSass });
+
     const styleFolder = this.useSass ? 'scss' : 'css';
-    this.terminal.navigateTo(['src']);
-    this.fsUtil.createDirectory('assets');
-    this.terminal.navigateTo(['assets']);
-    this.fsUtil.createDirectory(styleFolder);
-    this.fsUtil.createDirectory('images');
-    this.terminal.navigateTo([styleFolder]);
-    this.createTemplate({ name: 'index', type: 'style', module: false });
-    this.terminal.goBack(2);
+
+    await fsUtil.checkAndCreateDir('assets');
+    terminal.navigateTo(['assets']);
+
+    await fsUtil.checkAndCreateDir('images');
+
+    await fsUtil.checkAndCreateDir(styleFolder);
+    terminal.navigateTo([styleFolder]);
+
+    this.createTemplate({
+      name: 'index',
+      template: indexStyleTemplate,
+      type: 'style',
+      module: false,
+    });
+    if (useSass) {
+      this.createTemplate({ name: '_variables', template: scssVariablesTemplate, type: 'style' });
+    }
+
+    this.createTemplate({
+      name: useSass ? '_reset' : 'reset',
+      type: 'style',
+      template: styleResetTemplate,
+    });
+
+    terminal.goBack(2);
+  };
+
+  createStoreFolder = async () => {
+    await store.create();
+    this.createTemplate({
+      name: 'index',
+      type: 'script',
+      scriptExtension: 'ts',
+      template: '// this is the store template',
+    });
+
+    terminal.goBack(1);
   };
 
   hasProdPackages = () => this.prodPackages.length;

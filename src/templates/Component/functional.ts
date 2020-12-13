@@ -5,8 +5,7 @@ export const createFunctionalComponentTemplate = ({
   useTypescript = false,
   styleExtension = null,
   useModules = false,
-}: ComponentTemplateParams) => {
-  return `import React${useTypescript ? `, { FC }` : ''} from 'react';
+}: ComponentTemplateParams) => `import React${useTypescript ? `, { FC }` : ''} from 'react';
 ${useTypescript ? '' : `import PropTypes from 'prop-types';`}
 
 ${importComponentStyle(componentName, styleExtension, useModules)}
@@ -29,4 +28,3 @@ const ${componentName}${useTypescript ? `: FC<${componentName}Props>` : ''} = ()
 ${useTypescript ? '' : `${componentName}.propTypes = {};`}
 
 export default ${componentName};`;
-};
