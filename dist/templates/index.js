@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createStyleReset = exports.createScssVariablesTemplate = exports.createIndexStyleTemplate = exports.createClassComponentTemplate = exports.createFunctionalComponentTemplate = exports.createAppTemplate = exports.createIndexScriptTemplate = void 0;
+exports.createStoreTemplate = exports.createStyleReset = exports.createScssVariablesTemplate = exports.createIndexStyleTemplate = exports.createClassComponentTemplate = exports.createFunctionalComponentTemplate = exports.createAppTemplate = exports.createIndexScriptTemplate = void 0;
 var IndexFile_1 = require("./IndexFile");
 Object.defineProperty(exports, "createIndexScriptTemplate", { enumerable: true, get: function () { return IndexFile_1.createIndexScriptTemplate; } });
 var App_1 = require("./App");
@@ -12,3 +12,5 @@ var Styles_1 = require("./Styles");
 Object.defineProperty(exports, "createIndexStyleTemplate", { enumerable: true, get: function () { return Styles_1.createIndexStyleTemplate; } });
 Object.defineProperty(exports, "createScssVariablesTemplate", { enumerable: true, get: function () { return Styles_1.createScssVariablesTemplate; } });
 Object.defineProperty(exports, "createStyleReset", { enumerable: true, get: function () { return Styles_1.createStyleReset; } });
+var Store_1 = require("./Store");
+Object.defineProperty(exports, "createStoreTemplate", { enumerable: true, get: function () { return Store_1.createStoreTemplate; } });

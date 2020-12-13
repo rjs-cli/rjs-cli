@@ -62,6 +62,7 @@ var App = /** @class */ (function () {
             router: { prod: 'react-router-dom', dev: '@types/react-router-dom' },
             sass: { dev: 'node-sass' },
             redux: { prod: 'redux' },
+            reduxDevtools: { dev: 'redux-devtools-extension' },
             reactRedux: { prod: 'react-redux', dev: '@types/react-redux' },
             axios: { prod: 'axios' },
         };
@@ -205,6 +206,7 @@ var App = /** @class */ (function () {
                         if (this.useRedux) {
                             this.addPackage(this.useRedux, 'prodPackages', this.appPackages.redux.prod);
                             this.addPackage(this.useRedux, 'prodPackages', this.appPackages.reactRedux.prod);
+                            this.addPackage(this.useRedux, 'devPackages', this.appPackages.reduxDevtools.dev);
                             this.addPackage(this.useTypescript, 'devPackages', this.appPackages.reactRedux.dev);
                         }
                         if (this.useAxios) {
@@ -272,7 +274,6 @@ var App = /** @class */ (function () {
             var extension, filename, writeCommand;
             if (type === 'script') {
                 extension = scriptExtension ? scriptExtension : _this.useTypescript ? 'tsx' : 'js';
-                console.log({ extension: extension, scriptExtension: scriptExtension });
                 filename = name + "." + extension;
                 writeCommand = "echo \"" + template + "\" > " + name + "." + extension;
             }
@@ -336,17 +337,17 @@ var App = /** @class */ (function () {
                             name: 'index',
                             type: 'script',
                             scriptExtension: 'ts',
-                            template: '// this is the store template',
+                            template: templates_1.createStoreTemplate(),
                         });
                         Terminal_1.terminal.goBack(1);
                         return [2 /*return*/];
                 }
             });
         }); };
+        this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
+        this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
         this.hasProdPackages = function () { return _this.prodPackages.length; };
         this.hasDevPackages = function () { return _this.devPackages.length; };
-        this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
-        this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
     }
     return App;
 }());

@@ -7,6 +7,7 @@ import {
   createIndexStyleTemplate,
   createScssVariablesTemplate,
   createStyleReset,
+  createStoreTemplate,
 } from '../templates';
 import { fsUtil } from '../FsUtil';
 import { terminal } from '../Terminal';
@@ -31,12 +32,14 @@ type Package =
   | '@types/react-redux'
   | 'node-sass'
   | 'axios'
+  | 'redux-devtools-extension'
   | '';
 
 interface AppPackages {
   router: { prod: Package; dev: Package };
   sass: { dev: Package };
   redux: { prod: Package };
+  reduxDevtools: { dev: Package };
   reactRedux: { prod: Package; dev: Package };
   axios: { prod: Package };
 }
@@ -62,6 +65,7 @@ export class App {
     router: { prod: 'react-router-dom', dev: '@types/react-router-dom' },
     sass: { dev: 'node-sass' },
     redux: { prod: 'redux' },
+    reduxDevtools: { dev: 'redux-devtools-extension' },
     reactRedux: { prod: 'react-redux', dev: '@types/react-redux' },
     axios: { prod: 'axios' },
   };
@@ -179,6 +183,7 @@ export class App {
     if (this.useRedux) {
       this.addPackage(this.useRedux, 'prodPackages', this.appPackages.redux.prod);
       this.addPackage(this.useRedux, 'prodPackages', this.appPackages.reactRedux.prod);
+      this.addPackage(this.useRedux, 'devPackages', this.appPackages.reduxDevtools.dev);
       this.addPackage(this.useTypescript, 'devPackages', this.appPackages.reactRedux.dev);
     }
 
@@ -256,7 +261,6 @@ export class App {
 
     if (type === 'script') {
       extension = scriptExtension ? scriptExtension : this.useTypescript ? 'tsx' : 'js';
-      console.log({ extension, scriptExtension });
       filename = `${name}.${extension}`;
       writeCommand = `echo "${template}" > ${name}.${extension}`;
     } else {
@@ -313,20 +317,19 @@ export class App {
       name: 'index',
       type: 'script',
       scriptExtension: 'ts',
-      template: '// this is the store template',
+      template: createStoreTemplate(),
     });
 
     terminal.goBack(1);
   };
-
-  hasProdPackages = () => this.prodPackages.length;
-  hasDevPackages = () => this.devPackages.length;
-
-  hasProdAndDevPackages = () => this.hasDevPackages() && this.hasProdPackages();
 
   addPackage = (
     usePackage: boolean,
     target: 'devPackages' | 'prodPackages',
     packageName: Package,
   ) => (usePackage ? this[target].push(packageName) : '');
+
+  hasProdAndDevPackages = () => this.hasDevPackages() && this.hasProdPackages();
+  hasProdPackages = () => this.prodPackages.length;
+  hasDevPackages = () => this.devPackages.length;
 }
