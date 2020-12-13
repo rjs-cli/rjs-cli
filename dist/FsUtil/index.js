@@ -142,6 +142,47 @@ var FsUtil = /** @class */ (function () {
             });
         }); };
         this.createDirectory = function (dirname) { return shelljs_1.default.mkdir(dirname); };
+        this.removeFiles = function (files) { return __awaiter(_this, void 0, void 0, function () {
+            var _i, files_1, file, currentDirContent;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _i = 0, files_1 = files;
+                        _a.label = 1;
+                    case 1:
+                        if (!(_i < files_1.length)) return [3 /*break*/, 4];
+                        file = files_1[_i];
+                        return [4 /*yield*/, promises_1.readdir(process.cwd())];
+                    case 2:
+                        currentDirContent = _a.sent();
+                        if (currentDirContent.includes(file)) {
+                            shelljs_1.default.rm(file);
+                        }
+                        _a.label = 3;
+                    case 3:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.removeFilesFromRegexp = function (regexp) { return __awaiter(_this, void 0, void 0, function () {
+            var currentDirContent, _i, currentDirContent_1, file;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, promises_1.readdir(process.cwd())];
+                    case 1:
+                        currentDirContent = _a.sent();
+                        for (_i = 0, currentDirContent_1 = currentDirContent; _i < currentDirContent_1.length; _i++) {
+                            file = currentDirContent_1[_i];
+                            if (file.match(regexp)) {
+                                shelljs_1.default.rm(file);
+                            }
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); };
     }
     return FsUtil;
 }());

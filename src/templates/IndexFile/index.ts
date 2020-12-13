@@ -20,7 +20,6 @@ import store from './store';`
 }
 import App from './App/App';
 
-import * as serviceWorker from './serviceWorker';
 ${!useSass ? `import './assets/css/reset.css';` : ''}
 import './assets/${extension}/index.${extension}';
 

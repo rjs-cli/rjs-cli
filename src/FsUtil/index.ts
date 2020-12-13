@@ -1,5 +1,6 @@
 import { readdir } from 'fs/promises';
 import shell from 'shelljs';
+import { terminal } from '../Terminal';
 
 class FsUtil {
   goToRootDir = async () => {
@@ -76,6 +77,26 @@ class FsUtil {
   };
 
   createDirectory = (dirname: string) => shell.mkdir(dirname);
+
+  removeFiles = async (files: string[]) => {
+    for (const file of files) {
+      const currentDirContent = await readdir(process.cwd());
+
+      if (currentDirContent.includes(file)) {
+        shell.rm(file);
+      }
+    }
+  };
+
+  removeFilesFromRegexp = async (regexp: RegExp) => {
+    const currentDirContent = await readdir(process.cwd());
+
+    for (const file of currentDirContent) {
+      if (file.match(regexp)) {
+        shell.rm(file);
+      }
+    }
+  };
 }
 
 export const fsUtil = new FsUtil();

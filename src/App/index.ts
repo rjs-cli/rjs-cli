@@ -1,4 +1,5 @@
 import { prompt } from 'enquirer';
+import { EOL } from 'os';
 import shell from 'shelljs';
 import { cyan } from 'chalk';
 import {
@@ -8,6 +9,7 @@ import {
   createScssVariablesTemplate,
   createStyleReset,
   createStoreTemplate,
+  createAppTestTemplate,
 } from '../templates';
 import { fsUtil } from '../FsUtil';
 import { terminal } from '../Terminal';
@@ -48,7 +50,7 @@ interface CreateTemplateParams {
   template?: string;
   name: string;
   type: 'script' | 'style';
-  scriptExtension?: 'tsx' | 'ts' | 'jsx' | 'js';
+  scriptExtension?: 'tsx' | 'ts' | 'jsx' | 'js' | 'test.tsx' | 'test.js';
   module?: boolean;
 }
 
@@ -142,28 +144,36 @@ export class App {
         command += ` --template typescript`;
       }
 
-      console.info(`\nexecuting : ${cyan(`${command}`)}`);
+      console.info(`${EOL}executing : ${cyan(`${command}`)}`);
       console.log(`Sit back and relax we're taking care of everything ! 😁`);
-      // await shell.exec(command);
+
+      //todo  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____    _    _     _____ ____  _____
+      //todo | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____|  / \  | |   | ____/ ___|| ____|
+      //todo | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _|   / _ \ | |   |  _| \___ \|  _|
+      //todo | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___ / ___ \| |___| |___ ___) | |___
+      //todo  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____/_/   \_\_____|_____|____/|_____|
+      // await terminal.executeCommand(command);
+
       const { code } = shell.cd(this.appName);
       if (code) {
         console.error(`An error occured, seems like the folder ${this.appName} doesn't exist.`);
         process.exit(code);
       }
-      await this.installPackages();
+
       await this.createTemplates();
       await this.createAssetsFolder();
       if (this.useRedux) {
         await this.createStoreFolder();
       }
+      await this.installPackages();
 
-      console.info(cyan('\nAll done!'));
+      console.info(cyan(`${EOL}All done!`));
       console.log(
-        `\nYou can now type ${cyan(`cd ${this.appName}`)} and ${cyan(
+        `${EOL}You can now type ${cyan(`cd ${this.appName}`)} and ${cyan(
           `${this.packageManager} start`,
         )} an amazing project.`,
       );
-      console.info(cyan('\nHappy Coding !'));
+      console.info(cyan(`${EOL}Happy Coding !`));
     } catch (e) {
       console.error('An error occured! Please try again.');
       process.exit(1);
@@ -204,15 +214,23 @@ export class App {
     }
 
     if (command !== baseCommand) {
-      console.log('\n' + command);
+      console.log(EOL + command);
+      //todo  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____    _    _     _____ ____  _____
+      //todo | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____|  / \  | |   | ____/ ___|| ____|
+      //todo | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _|   / _ \ | |   |  _| \___ \|  _|
+      //todo | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___ / ___ \| |___| |___ ___) | |___
+      //todo  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____/_/   \_\_____|_____|____/|_____|
 
-      // todo
-      shell.exec(command);
+      // shell.exec(command);
     }
   };
 
   createTemplates = async () => {
     if (await fsUtil.checkSrcDirectory()) {
+      // Removes the cra templates for App and index
+      terminal.navigateTo(['src']);
+      await fsUtil.removeFilesFromRegexp(/\b(App|index)\b\.([test\.]{5})?[jtscx]{2,3}/gi);
+
       const { useRedux, useSass, useRouter, useModules, useTypescript } = this;
       const indexScriptTemplate = createIndexScriptTemplate({ useRedux, useRouter, useSass });
       const appTemplate = createAppTemplate({
@@ -221,8 +239,7 @@ export class App {
         useModules,
         useTypescript,
       });
-
-      terminal.navigateTo(['src']);
+      const appTestTemplate = createAppTestTemplate();
 
       this.createTemplate({
         name: 'index',
@@ -234,18 +251,24 @@ export class App {
       terminal.navigateTo(['App']);
 
       this.createTemplate({ name: 'App', template: appTemplate, type: 'script' });
+      this.createTemplate({
+        name: 'App',
+        template: appTestTemplate,
+        type: 'script',
+        scriptExtension: `test.${useTypescript ? 'tsx' : 'js'}` as 'test.tsx' | 'test.js',
+      });
       this.createTemplate({ name: 'App', type: 'style' });
 
       // this will put you back in "src"
       terminal.goBack(1);
     } else {
-      console.error('\nNo src directory found. Could not create templates');
+      console.error(`${EOL}No src directory found. Could not create templates`);
       return;
     }
 
     /**
-     *  todo Create the app template based on the installed modules
-     *  todo Create the store if redux is installed
+     *  // todo Create the app template based on the installed modules
+     *  // todo Create the store if redux is installed
      *  todo Create a version for JS and one for TS
      * */
   };

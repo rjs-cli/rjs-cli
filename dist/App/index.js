@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var enquirer_1 = require("enquirer");
+var os_1 = require("os");
 var shelljs_1 = __importDefault(require("shelljs"));
 var chalk_1 = require("chalk");
 var templates_1 = require("../templates");
@@ -154,31 +155,30 @@ var App = /** @class */ (function () {
                             if (this.useTypescript) {
                                 command += " --template typescript";
                             }
-                            console.info("\nexecuting : " + chalk_1.cyan("" + command));
+                            console.info(os_1.EOL + "executing : " + chalk_1.cyan("" + command));
                             console.log("Sit back and relax we're taking care of everything ! \uD83D\uDE01");
                             code = shelljs_1.default.cd(this.appName).code;
                             if (code) {
                                 console.error("An error occured, seems like the folder " + this.appName + " doesn't exist.");
                                 process.exit(code);
                             }
-                            return [4 /*yield*/, this.installPackages()];
+                            return [4 /*yield*/, this.createTemplates()];
                         case 3:
                             _b.sent();
-                            return [4 /*yield*/, this.createTemplates()];
+                            return [4 /*yield*/, this.createAssetsFolder()];
                         case 4:
                             _b.sent();
-                            return [4 /*yield*/, this.createAssetsFolder()];
+                            if (!this.useRedux) return [3 /*break*/, 6];
+                            return [4 /*yield*/, this.createStoreFolder()];
                         case 5:
                             _b.sent();
-                            if (!this.useRedux) return [3 /*break*/, 7];
-                            return [4 /*yield*/, this.createStoreFolder()];
-                        case 6:
-                            _b.sent();
-                            _b.label = 7;
+                            _b.label = 6;
+                        case 6: return [4 /*yield*/, this.installPackages()];
                         case 7:
-                            console.info(chalk_1.cyan('\nAll done!'));
-                            console.log("\nYou can now type " + chalk_1.cyan("cd " + this.appName) + " and " + chalk_1.cyan(this.packageManager + " start") + " an amazing project.");
-                            console.info(chalk_1.cyan('\nHappy Coding !'));
+                            _b.sent();
+                            console.info(chalk_1.cyan(os_1.EOL + "All done!"));
+                            console.log(os_1.EOL + "You can now type " + chalk_1.cyan("cd " + this.appName) + " and " + chalk_1.cyan(this.packageManager + " start") + " an amazing project.");
+                            console.info(chalk_1.cyan(os_1.EOL + "Happy Coding !"));
                             return [3 /*break*/, 9];
                         case 8:
                             e_1 = _b.sent();
@@ -223,21 +223,30 @@ var App = /** @class */ (function () {
                             command += " -D " + this.devPackages.join(' ');
                         }
                         if (command !== baseCommand) {
-                            console.log('\n' + command);
-                            // todo
-                            shelljs_1.default.exec(command);
+                            console.log(os_1.EOL + command);
+                            //todo  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____    _    _     _____ ____  _____
+                            //todo | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____|  / \  | |   | ____/ ___|| ____|
+                            //todo | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _|   / _ \ | |   |  _| \___ \|  _|
+                            //todo | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___ / ___ \| |___| |___ ___) | |___
+                            //todo  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____/_/   \_\_____|_____|____/|_____|
+                            // shell.exec(command);
                         }
                         return [2 /*return*/];
                 }
             });
         }); };
         this.createTemplates = function () { return __awaiter(_this, void 0, void 0, function () {
-            var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexScriptTemplate, appTemplate;
+            var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexScriptTemplate, appTemplate, appTestTemplate;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, FsUtil_1.fsUtil.checkSrcDirectory()];
                     case 1:
-                        if (!_b.sent()) return [3 /*break*/, 3];
+                        if (!_b.sent()) return [3 /*break*/, 4];
+                        // Removes the cra templates for App and index
+                        Terminal_1.terminal.navigateTo(['src']);
+                        return [4 /*yield*/, FsUtil_1.fsUtil.removeFilesFromRegexp(/\b(App|index)\b\.([test\.]{5})?[jtscx]{2,3}/gi)];
+                    case 2:
+                        _b.sent();
                         _a = this, useRedux = _a.useRedux, useSass = _a.useSass, useRouter = _a.useRouter, useModules = _a.useModules, useTypescript = _a.useTypescript;
                         indexScriptTemplate = templates_1.createIndexScriptTemplate({ useRedux: useRedux, useRouter: useRouter, useSass: useSass });
                         appTemplate = templates_1.createAppTemplate({
@@ -246,25 +255,31 @@ var App = /** @class */ (function () {
                             useModules: useModules,
                             useTypescript: useTypescript,
                         });
-                        Terminal_1.terminal.navigateTo(['src']);
+                        appTestTemplate = templates_1.createAppTestTemplate();
                         this.createTemplate({
                             name: 'index',
                             template: indexScriptTemplate,
                             type: 'script',
                         });
                         return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('App')];
-                    case 2:
+                    case 3:
                         _b.sent();
                         Terminal_1.terminal.navigateTo(['App']);
                         this.createTemplate({ name: 'App', template: appTemplate, type: 'script' });
+                        this.createTemplate({
+                            name: 'App',
+                            template: appTestTemplate,
+                            type: 'script',
+                            scriptExtension: "test." + (useTypescript ? 'tsx' : 'js'),
+                        });
                         this.createTemplate({ name: 'App', type: 'style' });
                         // this will put you back in "src"
                         Terminal_1.terminal.goBack(1);
-                        return [3 /*break*/, 4];
-                    case 3:
-                        console.error('\nNo src directory found. Could not create templates');
+                        return [3 /*break*/, 5];
+                    case 4:
+                        console.error(os_1.EOL + "No src directory found. Could not create templates");
                         return [2 /*return*/];
-                    case 4: return [2 /*return*/];
+                    case 5: return [2 /*return*/];
                 }
             });
         }); };
