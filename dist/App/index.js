@@ -317,7 +317,7 @@ var App = /** @class */ (function () {
                         scssVariablesTemplate = templates_1.createScssVariablesTemplate();
                         styleResetTemplate = templates_1.createStyleReset();
                         indexStyleTemplate = templates_1.createIndexStyleTemplate({ useSass: this.useSass });
-                        styleFolder = this.useSass ? 'scss' : 'css';
+                        styleFolder = useSass ? 'scss' : 'css';
                         return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('assets')];
                     case 1:
                         _a.sent();

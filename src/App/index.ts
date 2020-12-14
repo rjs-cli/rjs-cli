@@ -276,13 +276,8 @@ export class App {
       console.error(`Please report this bug to ${repo.issues}`);
       process.exit(1);
     }
-
-    /**
-     *  // todo Create the app template based on the installed modules
-     *  // todo Create the store if redux is installed
-     *  todo Create a version for JS and one for TS
-     * */
   };
+
   createTemplate = ({
     name,
     template,
@@ -316,7 +311,7 @@ export class App {
     const styleResetTemplate = createStyleReset();
     const indexStyleTemplate = createIndexStyleTemplate({ useSass: this.useSass });
 
-    const styleFolder = this.useSass ? 'scss' : 'css';
+    const styleFolder = useSass ? 'scss' : 'css';
 
     await fsUtil.checkAndCreateDir('assets');
     terminal.navigateTo(['assets']);
