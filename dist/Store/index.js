@@ -58,6 +58,9 @@ var Store = /** @class */ (function () {
                         return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('reducers')];
                     case 4:
                         _a.sent();
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('selectors')];
+                    case 5:
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });

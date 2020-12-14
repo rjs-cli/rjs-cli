@@ -64,3 +64,42 @@ test('renders learn react link', () => {
   expect(linkElement).toBeInTheDocument();
 });
 `;
+
+export const createAppContainerTemplate = (useTypescript: boolean) => {
+  const tsImports = useTypescript
+    ? `import { Dispatch } from 'react';
+  import { State } from '../../store/reducers';
+
+  interface StateToProps {}
+
+  interface ownProps {}
+
+  interface DispatchToProps {}`
+    : '';
+
+  const mapDispatchToProps = useTypescript
+    ? `const mapDispatchToProps = (dispatch: Dispatch<actions>): DispatchToProps => ({});`
+    : `const mapDispatchToProps = (dispatch) => ({});`;
+
+  const mapStateToProps = useTypescript
+    ? `const mapStateToProps = (state: State, ownProps: ownProps): StateToProps => ({});`
+    : 'const mapStateToProps = (state, ownProps) => ({});';
+
+  const typeDef = useTypescript
+    ? 'export type CountryDetailsPropsFromRedux = StateToProps & DispatchToProps & ownProps;'
+    : '';
+
+  return `import { connect } from 'react-redux';
+${tsImports}
+
+import * as actions from '../../store/actions';
+import App from '../../App/App';
+
+${mapStateToProps}
+
+${mapDispatchToProps}
+
+${typeDef}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);`;
+};

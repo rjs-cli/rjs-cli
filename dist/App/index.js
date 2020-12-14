@@ -48,6 +48,7 @@ var templates_1 = require("../templates");
 var FsUtil_1 = require("../FsUtil");
 var Terminal_1 = require("../Terminal");
 var Store_1 = require("../Store");
+var utils_1 = require("../utils");
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
@@ -137,7 +138,7 @@ var App = /** @class */ (function () {
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _b.trys.push([0, 8, , 9]);
+                            _b.trys.push([0, 9, , 10]);
                             this.appName = appName;
                             this.useTypescript = useTypescript;
                             this.useRouter = useRouter;
@@ -168,24 +169,27 @@ var App = /** @class */ (function () {
                             return [4 /*yield*/, this.createAssetsFolder()];
                         case 4:
                             _b.sent();
-                            if (!this.useRedux) return [3 /*break*/, 6];
+                            if (!this.useRedux) return [3 /*break*/, 7];
                             return [4 /*yield*/, this.createStoreFolder()];
                         case 5:
                             _b.sent();
-                            _b.label = 6;
-                        case 6: return [4 /*yield*/, this.installPackages()];
-                        case 7:
+                            return [4 /*yield*/, this.createContainersFolder()];
+                        case 6:
+                            _b.sent();
+                            _b.label = 7;
+                        case 7: return [4 /*yield*/, this.installPackages()];
+                        case 8:
                             _b.sent();
                             console.info(chalk_1.cyan(os_1.EOL + "All done!"));
                             console.log(os_1.EOL + "You can now type " + chalk_1.cyan("cd " + this.appName) + " and " + chalk_1.cyan(this.packageManager + " start") + " an amazing project.");
                             console.info(chalk_1.cyan(os_1.EOL + "Happy Coding !"));
-                            return [3 /*break*/, 9];
-                        case 8:
+                            return [3 /*break*/, 10];
+                        case 9:
                             e_1 = _b.sent();
                             console.error('An error occured! Please try again.');
                             process.exit(1);
-                            return [3 /*break*/, 9];
-                        case 9: return [2 /*return*/];
+                            return [3 /*break*/, 10];
+                        case 10: return [2 /*return*/];
                     }
                 });
             });
@@ -224,11 +228,11 @@ var App = /** @class */ (function () {
                         }
                         if (command !== baseCommand) {
                             console.log(os_1.EOL + command);
-                            //todo  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____    _    _     _____ ____  _____
-                            //todo | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____|  / \  | |   | ____/ ___|| ____|
-                            //todo | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _|   / _ \ | |   |  _| \___ \|  _|
-                            //todo | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___ / ___ \| |___| |___ ___) | |___
-                            //todo  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____/_/   \_\_____|_____|____/|_____|
+                            // TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
+                            // TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
+                            // TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
+                            // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
+                            // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
                             // shell.exec(command);
                         }
                         return [2 /*return*/];
@@ -277,8 +281,10 @@ var App = /** @class */ (function () {
                         Terminal_1.terminal.goBack(1);
                         return [3 /*break*/, 5];
                     case 4:
-                        console.error(os_1.EOL + "No src directory found. Could not create templates");
-                        return [2 /*return*/];
+                        console.error(os_1.EOL + "No src directory found. Seems like something went wrong while creating your app.");
+                        console.error("Please report this bug to " + utils_1.repo.issues);
+                        process.exit(1);
+                        _b.label = 5;
                     case 5: return [2 /*return*/];
                 }
             });
@@ -337,6 +343,7 @@ var App = /** @class */ (function () {
                             type: 'style',
                             template: styleResetTemplate,
                         });
+                        // This will put you back in "src"
                         Terminal_1.terminal.goBack(2);
                         return [2 /*return*/];
                 }
@@ -351,10 +358,61 @@ var App = /** @class */ (function () {
                         this.createTemplate({
                             name: 'index',
                             type: 'script',
-                            scriptExtension: 'ts',
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
                             template: templates_1.createStoreTemplate(),
                         });
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('middlewares')];
+                    case 2:
+                        _a.sent();
+                        Terminal_1.terminal.navigateTo(['middlewares']);
+                        this.createTemplate({
+                            name: 'middleware.template',
+                            type: 'script',
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
+                            template: templates_1.createMiddlewareTemplate(this.useTypescript, this.useAxios),
+                        });
                         Terminal_1.terminal.goBack(1);
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('reducers')];
+                    case 3:
+                        _a.sent();
+                        Terminal_1.terminal.navigateTo(['reducers']);
+                        this.createTemplate({
+                            name: 'reducer.template',
+                            type: 'script',
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
+                            template: templates_1.createReducerTemplate(this.useTypescript),
+                        });
+                        this.createTemplate({
+                            name: 'index',
+                            type: 'script',
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
+                            template: templates_1.createRootReducerTemplate(this.useTypescript),
+                        });
+                        Terminal_1.terminal.goBack(1);
+                        Terminal_1.terminal.goBack(1);
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.createContainersFolder = function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('containers')];
+                    case 1:
+                        _a.sent();
+                        Terminal_1.terminal.navigateTo(['containers']);
+                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('App')];
+                    case 2:
+                        _a.sent();
+                        Terminal_1.terminal.navigateTo(['App']);
+                        this.createTemplate({
+                            name: 'container.template',
+                            type: 'script',
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
+                            template: templates_1.createAppContainerTemplate(this.useTypescript),
+                        });
+                        // this will put you back in "src"
+                        Terminal_1.terminal.goBack(2);
                         return [2 /*return*/];
                 }
             });

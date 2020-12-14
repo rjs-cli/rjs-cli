@@ -18,7 +18,8 @@ ${
 import store from './store';`
     : ''
 }
-import App from './App/App';
+import App from '.${useRedux ? '/containers' : ''}/App/App';
+
 
 ${!useSass ? `import './assets/css/reset.css';` : ''}
 import './assets/${extension}/index.${extension}';

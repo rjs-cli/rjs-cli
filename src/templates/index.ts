@@ -1,5 +1,10 @@
 export { createIndexScriptTemplate } from './IndexFile';
-export { createAppTemplate, createAppTestTemplate } from './App';
+export { createAppTemplate, createAppTestTemplate, createAppContainerTemplate } from './App';
 export { createFunctionalComponentTemplate, createClassComponentTemplate } from './Component';
 export { createIndexStyleTemplate, createScssVariablesTemplate, createStyleReset } from './Styles';
-export { createStoreTemplate } from './Store';
+export {
+  createStoreTemplate,
+  createMiddlewareTemplate,
+  createReducerTemplate,
+  createRootReducerTemplate,
+} from './Store';

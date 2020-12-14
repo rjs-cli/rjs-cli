@@ -8,6 +8,7 @@ export class Store {
     await fsUtil.checkAndCreateDir('actions');
     await fsUtil.checkAndCreateDir('middlewares');
     await fsUtil.checkAndCreateDir('reducers');
+    await fsUtil.checkAndCreateDir('selectors');
   };
 }
 

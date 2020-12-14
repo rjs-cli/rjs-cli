@@ -5,15 +5,20 @@ import { cyan } from 'chalk';
 import {
   createIndexScriptTemplate,
   createAppTemplate,
+  createAppTestTemplate,
+  createAppContainerTemplate,
   createIndexStyleTemplate,
   createScssVariablesTemplate,
   createStyleReset,
   createStoreTemplate,
-  createAppTestTemplate,
+  createMiddlewareTemplate,
+  createReducerTemplate,
+  createRootReducerTemplate,
 } from '../templates';
 import { fsUtil } from '../FsUtil';
 import { terminal } from '../Terminal';
 import { store } from '../Store';
+import { repo } from '../utils';
 
 interface CreateReactAppOptions {
   useTypescript: boolean;
@@ -147,11 +152,12 @@ export class App {
       console.info(`${EOL}executing : ${cyan(`${command}`)}`);
       console.log(`Sit back and relax we're taking care of everything ! 😁`);
 
-      //todo  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____    _    _     _____ ____  _____
-      //todo | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____|  / \  | |   | ____/ ___|| ____|
-      //todo | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _|   / _ \ | |   |  _| \___ \|  _|
-      //todo | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___ / ___ \| |___| |___ ___) | |___
-      //todo  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____/_/   \_\_____|_____|____/|_____|
+      //TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
+      //TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
+      //TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
+      //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
+      //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
+
       // await terminal.executeCommand(command);
 
       const { code } = shell.cd(this.appName);
@@ -164,6 +170,7 @@ export class App {
       await this.createAssetsFolder();
       if (this.useRedux) {
         await this.createStoreFolder();
+        await this.createContainersFolder();
       }
       await this.installPackages();
 
@@ -215,11 +222,12 @@ export class App {
 
     if (command !== baseCommand) {
       console.log(EOL + command);
-      //todo  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____    _    _     _____ ____  _____
-      //todo | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____|  / \  | |   | ____/ ___|| ____|
-      //todo | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _|   / _ \ | |   |  _| \___ \|  _|
-      //todo | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___ / ___ \| |___| |___ ___) | |___
-      //todo  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____/_/   \_\_____|_____|____/|_____|
+
+      // TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
+      // TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
+      // TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
+      // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
+      // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
 
       // shell.exec(command);
     }
@@ -262,8 +270,11 @@ export class App {
       // this will put you back in "src"
       terminal.goBack(1);
     } else {
-      console.error(`${EOL}No src directory found. Could not create templates`);
-      return;
+      console.error(
+        `${EOL}No src directory found. Seems like something went wrong while creating your app.`,
+      );
+      console.error(`Please report this bug to ${repo.issues}`);
+      process.exit(1);
     }
 
     /**
@@ -331,6 +342,7 @@ export class App {
       template: styleResetTemplate,
     });
 
+    // This will put you back in "src"
     terminal.goBack(2);
   };
 
@@ -339,11 +351,53 @@ export class App {
     this.createTemplate({
       name: 'index',
       type: 'script',
-      scriptExtension: 'ts',
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
       template: createStoreTemplate(),
     });
 
+    await fsUtil.checkAndCreateDir('middlewares');
+    terminal.navigateTo(['middlewares']);
+    this.createTemplate({
+      name: 'middleware.template',
+      type: 'script',
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
+      template: createMiddlewareTemplate(this.useTypescript, this.useAxios),
+    });
     terminal.goBack(1);
+
+    await fsUtil.checkAndCreateDir('reducers');
+    terminal.navigateTo(['reducers']);
+    this.createTemplate({
+      name: 'reducer.template',
+      type: 'script',
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
+      template: createReducerTemplate(this.useTypescript),
+    });
+    this.createTemplate({
+      name: 'index',
+      type: 'script',
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
+      template: createRootReducerTemplate(this.useTypescript),
+    });
+    terminal.goBack(1);
+
+    terminal.goBack(1);
+  };
+
+  createContainersFolder = async () => {
+    await fsUtil.checkAndCreateDir('containers');
+    terminal.navigateTo(['containers']);
+    await fsUtil.checkAndCreateDir('App');
+    terminal.navigateTo(['App']);
+    this.createTemplate({
+      name: 'container.template',
+      type: 'script',
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
+      template: createAppContainerTemplate(this.useTypescript),
+    });
+
+    // this will put you back in "src"
+    terminal.goBack(2);
   };
 
   addPackage = (
