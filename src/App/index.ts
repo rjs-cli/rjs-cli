@@ -14,6 +14,7 @@ import {
   createMiddlewareTemplate,
   createReducerTemplate,
   createRootReducerTemplate,
+  createActionTemplate,
 } from '../templates';
 import { fsUtil } from '../FsUtil';
 import { terminal } from '../Terminal';
@@ -376,7 +377,22 @@ export class App {
     });
     terminal.goBack(1);
 
-    terminal.goBack(1);
+    fsUtil.checkAndCreateDir('actions');
+    terminal.navigateTo(['actions']);
+    this.createTemplate({
+      name: 'actions.template',
+      type: 'script',
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
+      template: createActionTemplate(this.useTypescript),
+    });
+    this.createTemplate({
+      name: 'index',
+      type: 'script',
+      scriptExtension: 'js',
+      template: `export * from './actions.template'`,
+    });
+    // this will put you back in "src"
+    terminal.goBack(2);
   };
 
   createContainersFolder = async () => {

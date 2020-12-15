@@ -389,7 +389,22 @@ var App = /** @class */ (function () {
                             template: templates_1.createRootReducerTemplate(this.useTypescript),
                         });
                         Terminal_1.terminal.goBack(1);
-                        Terminal_1.terminal.goBack(1);
+                        FsUtil_1.fsUtil.checkAndCreateDir('actions');
+                        Terminal_1.terminal.navigateTo(['actions']);
+                        this.createTemplate({
+                            name: 'actions.template',
+                            type: 'script',
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
+                            template: templates_1.createActionTemplate(this.useTypescript),
+                        });
+                        this.createTemplate({
+                            name: 'index',
+                            type: 'script',
+                            scriptExtension: 'js',
+                            template: "export * from './actions.template'",
+                        });
+                        // this will put you back in "src"
+                        Terminal_1.terminal.goBack(2);
                         return [2 /*return*/];
                 }
             });

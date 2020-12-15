@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createRootReducerTemplate = exports.createReducerTemplate = exports.createMiddlewareTemplate = exports.createStoreTemplate = void 0;
+exports.createActionTemplate = exports.createRootReducerTemplate = exports.createReducerTemplate = exports.createMiddlewareTemplate = exports.createStoreTemplate = void 0;
 exports.createStoreTemplate = function () { return "import { createStore, applyMiddleware } from 'redux';\nimport { composeWithDevTools } from 'redux-devtools-extension';\n\nimport rootReducer from './reducers';\n//import {  } from './middlewares';\n\nconst composeEnhancers = composeWithDevTools({ trace: true });\nconst enhancers = composeEnhancers(applyMiddleware(/* your middlewares go here */));\n\nconst store = createStore(rootReducer, enhancers);\n\nexport default store;"; };
 exports.createMiddlewareTemplate = function (useTypescript, useAxios) {
     var _a, _b, _c;
@@ -15,3 +15,10 @@ exports.createReducerTemplate = function (useTypescript) {
 exports.createRootReducerTemplate = function (useTypescript) { return "import { combineReducers } from 'redux';\n/* import your reducers here */\nimport template" + (useTypescript ? ", { templateReducerState }" : '') + " from './reducer.template';\n" + (useTypescript
     ? "export interface State {\n  template: templateReducerState;\n};"
     : '') + "\n\nconst reducer = combineReducers({ template });\n\nexport default reducer;"; };
+exports.createActionTemplate = function (useTypescript) {
+    return "export const RANDOM_EXAMPLE = 'RANDOM_EXAMPLE';\n\n" + (useTypescript
+        ? "interface RandomExampleAction {\n  type: typeof RANDOM_EXAMPLE;\n  payload: {};\n}"
+        : '') + "\n\nexport const randomExample = (payload" + (useTypescript ? ": {}" : '') + ")" + (useTypescript ? ": RandomExampleAction" : '') + " => ({ type: RANDOM_EXAMPLE, payload });\n\n" + (useTypescript
+        ? "export type ActionTemplateActions = RandomExampleAction; /* | SomeOtherAction | ... */"
+        : '');
+};

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createRootReducerTemplate = exports.createReducerTemplate = exports.createMiddlewareTemplate = exports.createStoreTemplate = exports.createStyleReset = exports.createScssVariablesTemplate = exports.createIndexStyleTemplate = exports.createClassComponentTemplate = exports.createFunctionalComponentTemplate = exports.createAppContainerTemplate = exports.createAppTestTemplate = exports.createAppTemplate = exports.createIndexScriptTemplate = void 0;
+exports.createActionTemplate = exports.createRootReducerTemplate = exports.createReducerTemplate = exports.createMiddlewareTemplate = exports.createStoreTemplate = exports.createStyleReset = exports.createScssVariablesTemplate = exports.createIndexStyleTemplate = exports.createClassComponentTemplate = exports.createFunctionalComponentTemplate = exports.createAppContainerTemplate = exports.createAppTestTemplate = exports.createAppTemplate = exports.createIndexScriptTemplate = void 0;
 var IndexFile_1 = require("./IndexFile");
 Object.defineProperty(exports, "createIndexScriptTemplate", { enumerable: true, get: function () { return IndexFile_1.createIndexScriptTemplate; } });
 var App_1 = require("./App");
@@ -19,3 +19,4 @@ Object.defineProperty(exports, "createStoreTemplate", { enumerable: true, get: f
 Object.defineProperty(exports, "createMiddlewareTemplate", { enumerable: true, get: function () { return Store_1.createMiddlewareTemplate; } });
 Object.defineProperty(exports, "createReducerTemplate", { enumerable: true, get: function () { return Store_1.createReducerTemplate; } });
 Object.defineProperty(exports, "createRootReducerTemplate", { enumerable: true, get: function () { return Store_1.createRootReducerTemplate; } });
+Object.defineProperty(exports, "createActionTemplate", { enumerable: true, get: function () { return Store_1.createActionTemplate; } });

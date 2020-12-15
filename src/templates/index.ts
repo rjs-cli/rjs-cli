@@ -7,4 +7,5 @@ export {
   createMiddlewareTemplate,
   createReducerTemplate,
   createRootReducerTemplate,
+  createActionTemplate,
 } from './Store';

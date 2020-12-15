@@ -72,3 +72,26 @@ ${
 const reducer = combineReducers({ template });
 
 export default reducer;`;
+
+export const createActionTemplate = (useTypescript: boolean) => {
+  return `export const RANDOM_EXAMPLE = 'RANDOM_EXAMPLE';
+
+${
+  useTypescript
+    ? `interface RandomExampleAction {
+  type: typeof RANDOM_EXAMPLE;
+  payload: {};
+}`
+    : ''
+}
+
+export const randomExample = (payload${useTypescript ? `: {}` : ''})${
+    useTypescript ? `: RandomExampleAction` : ''
+  } => ({ type: RANDOM_EXAMPLE, payload });
+
+${
+  useTypescript
+    ? `export type ActionTemplateActions = RandomExampleAction; /* | SomeOtherAction | ... */`
+    : ''
+}`;
+};
