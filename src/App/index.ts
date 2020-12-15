@@ -159,7 +159,7 @@ export class App {
       //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
       //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
 
-      // await terminal.executeCommand(command);
+      await terminal.executeCommand(command);
 
       const { code } = shell.cd(this.appName);
       if (code) {
@@ -230,7 +230,7 @@ export class App {
       // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
       // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
 
-      // shell.exec(command);
+      shell.exec(command);
     }
   };
 
@@ -359,6 +359,12 @@ export class App {
       scriptExtension: this.useTypescript ? 'ts' : 'js',
       template: createMiddlewareTemplate(this.useTypescript, this.useAxios),
     });
+    this.createTemplate({
+      name: 'index',
+      type: 'script',
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
+      template: "export * as templateMiddleware from './middleware.template'",
+    });
     terminal.goBack(1);
 
     await fsUtil.checkAndCreateDir('reducers');
@@ -388,8 +394,8 @@ export class App {
     this.createTemplate({
       name: 'index',
       type: 'script',
-      scriptExtension: 'js',
-      template: `export * from './actions.template'`,
+      scriptExtension: this.useTypescript ? 'ts' : 'js',
+      template: `export * as actionsTemplate from './actions.template'`,
     });
     // this will put you back in "src"
     terminal.goBack(2);
@@ -401,7 +407,7 @@ export class App {
     await fsUtil.checkAndCreateDir('App');
     terminal.navigateTo(['App']);
     this.createTemplate({
-      name: 'container.template',
+      name: 'App',
       type: 'script',
       scriptExtension: this.useTypescript ? 'ts' : 'js',
       template: createAppContainerTemplate(this.useTypescript),

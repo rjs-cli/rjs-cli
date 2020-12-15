@@ -2,17 +2,19 @@ export const createStoreTemplate = () => `import { createStore, applyMiddleware 
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 import rootReducer from './reducers';
-//import {  } from './middlewares';
+import { templateMiddleware } from './middlewares';
 
 const composeEnhancers = composeWithDevTools({ trace: true });
-const enhancers = composeEnhancers(applyMiddleware(/* your middlewares go here */));
+const enhancers = composeEnhancers(applyMiddleware(templateMiddleware /* your other middlewares... */));
 
 const store = createStore(rootReducer, enhancers);
 
 export default store;`;
 
 export const createMiddlewareTemplate = (useTypescript: boolean, useAxios: boolean) => {
-  const typeAnnot = useTypescript ? [': MiddlewareAPI', ': Dispatch<AnyAction>', ': actions'] : [];
+  const typeAnnot = useTypescript
+    ? [': MiddlewareAPI', ': Dispatch<AnyAction>', ': actions.ActionTemplateActions']
+    : [];
 
   return `import * as actions from '../actions';
 ${useTypescript ? "import { MiddlewareAPI, Dispatch, AnyAction } from 'redux';" : ''}
@@ -22,9 +24,9 @@ const middleware = (store${typeAnnot[0] ?? ''}) => (next${typeAnnot[1] ?? ''}) =
     typeAnnot[2] ?? ''
   }) => {
   switch (action.type) {
-    /*case ... :
-
-    break;*/
+    case actions.RANDOM_EXAMPLE:
+      // ...
+      break
     default:
       next(action);
   }
@@ -34,7 +36,9 @@ export default middleware;`;
 };
 
 export const createReducerTemplate = (useTypescript: boolean) => {
-  const typeAnnot = useTypescript ? [': templateReducerState', ': actions'] : [];
+  const typeAnnot = useTypescript
+    ? [': templateReducerState', ': actions.ActionTemplateActions']
+    : [];
   return `import * as actions from '../actions';
 
 ${useTypescript ? `export interface templateReducerState {}` : ''}
@@ -44,10 +48,10 @@ const reducer = (state${typeAnnot[0] ?? ''} = INITIAL_STATE, action${typeAnnot[1
     typeAnnot[0] ?? ''
   } => {
   switch (action.type) {
-    // case ...:
-    //   return {
-    //     ...state,
-    //   };
+    case actions.RANDOM_EXAMPLE:
+      return {
+        ...state,
+      };
     default:
       return state;
   }

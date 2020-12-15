@@ -78,7 +78,9 @@ export const createAppContainerTemplate = (useTypescript: boolean) => {
     : '';
 
   const mapDispatchToProps = useTypescript
-    ? `const mapDispatchToProps = (dispatch: Dispatch<actions>): DispatchToProps => ({});`
+    ? `const mapDispatchToProps = (
+      dispatch: Dispatch<actions.ActionTemplateActions>,
+      ): DispatchToProps => ({});`
     : `const mapDispatchToProps = (dispatch) => ({});`;
 
   const mapStateToProps = useTypescript
@@ -86,7 +88,7 @@ export const createAppContainerTemplate = (useTypescript: boolean) => {
     : 'const mapStateToProps = (state, ownProps) => ({});';
 
   const typeDef = useTypescript
-    ? 'export type CountryDetailsPropsFromRedux = StateToProps & DispatchToProps & ownProps;'
+    ? 'export type AppPropsFromRedux = StateToProps & DispatchToProps & ownProps;'
     : '';
 
   return `import { connect } from 'react-redux';

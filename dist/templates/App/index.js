@@ -14,13 +14,13 @@ exports.createAppContainerTemplate = function (useTypescript) {
         ? "import { Dispatch } from 'react';\n  import { State } from '../../store/reducers';\n\n  interface StateToProps {}\n\n  interface ownProps {}\n\n  interface DispatchToProps {}"
         : '';
     var mapDispatchToProps = useTypescript
-        ? "const mapDispatchToProps = (dispatch: Dispatch<actions>): DispatchToProps => ({});"
+        ? "const mapDispatchToProps = (\n      dispatch: Dispatch<actions.ActionTemplateActions>,\n      ): DispatchToProps => ({});"
         : "const mapDispatchToProps = (dispatch) => ({});";
     var mapStateToProps = useTypescript
         ? "const mapStateToProps = (state: State, ownProps: ownProps): StateToProps => ({});"
         : 'const mapStateToProps = (state, ownProps) => ({});';
     var typeDef = useTypescript
-        ? 'export type CountryDetailsPropsFromRedux = StateToProps & DispatchToProps & ownProps;'
+        ? 'export type AppPropsFromRedux = StateToProps & DispatchToProps & ownProps;'
         : '';
     return "import { connect } from 'react-redux';\n" + tsImports + "\n\nimport * as actions from '../../store/actions';\nimport App from '../../App/App';\n\n" + mapStateToProps + "\n\n" + mapDispatchToProps + "\n\n" + typeDef + "\n\nexport default connect(mapStateToProps, mapDispatchToProps)(App);";
 };

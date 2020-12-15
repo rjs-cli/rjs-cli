@@ -138,7 +138,7 @@ var App = /** @class */ (function () {
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _b.trys.push([0, 9, , 10]);
+                            _b.trys.push([0, 10, , 11]);
                             this.appName = appName;
                             this.useTypescript = useTypescript;
                             this.useRouter = useRouter;
@@ -158,38 +158,51 @@ var App = /** @class */ (function () {
                             }
                             console.info(os_1.EOL + "executing : " + chalk_1.cyan("" + command));
                             console.log("Sit back and relax we're taking care of everything ! \uD83D\uDE01");
+                            //TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
+                            //TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
+                            //TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
+                            //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
+                            //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
+                            return [4 /*yield*/, Terminal_1.terminal.executeCommand(command)];
+                        case 3:
+                            //TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
+                            //TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
+                            //TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
+                            //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
+                            //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
+                            _b.sent();
                             code = shelljs_1.default.cd(this.appName).code;
                             if (code) {
                                 console.error("An error occured, seems like the folder " + this.appName + " doesn't exist.");
                                 process.exit(code);
                             }
                             return [4 /*yield*/, this.createTemplates()];
-                        case 3:
-                            _b.sent();
-                            return [4 /*yield*/, this.createAssetsFolder()];
                         case 4:
                             _b.sent();
-                            if (!this.useRedux) return [3 /*break*/, 7];
-                            return [4 /*yield*/, this.createStoreFolder()];
+                            return [4 /*yield*/, this.createAssetsFolder()];
                         case 5:
                             _b.sent();
-                            return [4 /*yield*/, this.createContainersFolder()];
+                            if (!this.useRedux) return [3 /*break*/, 8];
+                            return [4 /*yield*/, this.createStoreFolder()];
                         case 6:
                             _b.sent();
-                            _b.label = 7;
-                        case 7: return [4 /*yield*/, this.installPackages()];
-                        case 8:
+                            return [4 /*yield*/, this.createContainersFolder()];
+                        case 7:
+                            _b.sent();
+                            _b.label = 8;
+                        case 8: return [4 /*yield*/, this.installPackages()];
+                        case 9:
                             _b.sent();
                             console.info(chalk_1.cyan(os_1.EOL + "All done!"));
                             console.log(os_1.EOL + "You can now type " + chalk_1.cyan("cd " + this.appName) + " and " + chalk_1.cyan(this.packageManager + " start") + " an amazing project.");
                             console.info(chalk_1.cyan(os_1.EOL + "Happy Coding !"));
-                            return [3 /*break*/, 10];
-                        case 9:
+                            return [3 /*break*/, 11];
+                        case 10:
                             e_1 = _b.sent();
                             console.error('An error occured! Please try again.');
                             process.exit(1);
-                            return [3 /*break*/, 10];
-                        case 10: return [2 /*return*/];
+                            return [3 /*break*/, 11];
+                        case 11: return [2 /*return*/];
                     }
                 });
             });
@@ -233,7 +246,7 @@ var App = /** @class */ (function () {
                             // TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
                             // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
                             // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
-                            // shell.exec(command);
+                            shelljs_1.default.exec(command);
                         }
                         return [2 /*return*/];
                 }
@@ -371,6 +384,12 @@ var App = /** @class */ (function () {
                             scriptExtension: this.useTypescript ? 'ts' : 'js',
                             template: templates_1.createMiddlewareTemplate(this.useTypescript, this.useAxios),
                         });
+                        this.createTemplate({
+                            name: 'index',
+                            type: 'script',
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
+                            template: "export * as templateMiddleware from './middleware.template'",
+                        });
                         Terminal_1.terminal.goBack(1);
                         return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('reducers')];
                     case 3:
@@ -400,8 +419,8 @@ var App = /** @class */ (function () {
                         this.createTemplate({
                             name: 'index',
                             type: 'script',
-                            scriptExtension: 'js',
-                            template: "export * from './actions.template'",
+                            scriptExtension: this.useTypescript ? 'ts' : 'js',
+                            template: "export * as actionsTemplate from './actions.template'",
                         });
                         // this will put you back in "src"
                         Terminal_1.terminal.goBack(2);
@@ -421,7 +440,7 @@ var App = /** @class */ (function () {
                         _a.sent();
                         Terminal_1.terminal.navigateTo(['App']);
                         this.createTemplate({
-                            name: 'container.template',
+                            name: 'App',
                             type: 'script',
                             scriptExtension: this.useTypescript ? 'ts' : 'js',
                             template: templates_1.createAppContainerTemplate(this.useTypescript),
