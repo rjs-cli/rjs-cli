@@ -1,4 +1,4 @@
-import { readdir } from 'fs/promises';
+import { readdir, appendFile } from 'fs/promises';
 import shell from 'shelljs';
 import { terminal } from '../Terminal';
 
@@ -62,7 +62,7 @@ class FsUtil {
     this.createDirectory('src');
   };
 
-  createFile = (filename: string) => shell.touch(filename);
+  writeFile = async (filename: string, data: string) => await appendFile(filename, data);
 
   checkAndCreateDir = async (name: string, directory?: string) => {
     if (!(await this.doesDirectoryExist(name, directory))) {

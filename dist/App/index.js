@@ -296,23 +296,18 @@ var App = /** @class */ (function () {
             });
         }); };
         this.createTemplate = function (_a) {
-            var name = _a.name, template = _a.template, type = _a.type, scriptExtension = _a.scriptExtension, _b = _a.module, module = _b === void 0 ? _this.useModules : _b;
+            var name = _a.name, _b = _a.template, template = _b === void 0 ? '' : _b, type = _a.type, scriptExtension = _a.scriptExtension, _c = _a.module, module = _c === void 0 ? _this.useModules : _c;
             var styleModule = module ? 'module.' : '';
             var extension, filename, writeCommand;
             if (type === 'script') {
                 extension = scriptExtension ? scriptExtension : _this.useTypescript ? 'tsx' : 'js';
                 filename = name + "." + extension;
-                writeCommand = "echo \"" + template + "\" > " + name + "." + extension;
             }
             else {
                 extension = _this.useSass ? 'scss' : 'css';
                 filename = name + "." + styleModule + extension;
-                writeCommand = "echo \"" + template + "\" > " + name + "." + styleModule + extension;
             }
-            FsUtil_1.fsUtil.createFile(filename);
-            if (template) {
-                Terminal_1.terminal.executeCommand(writeCommand);
-            }
+            FsUtil_1.fsUtil.writeFile(filename, template);
         };
         this.createAssetsFolder = function () { return __awaiter(_this, void 0, void 0, function () {
             var useSass, scssVariablesTemplate, styleResetTemplate, indexStyleTemplate, styleFolder;
@@ -342,7 +337,7 @@ var App = /** @class */ (function () {
                             module: false,
                         });
                         if (useSass) {
-                            Terminal_1.terminal.executeCommand("echo '" + scssVariablesTemplate + "' > _variables.scss");
+                            FsUtil_1.fsUtil.writeFile("_variables.scss", scssVariablesTemplate);
                         }
                         this.createTemplate({
                             name: useSass ? '_reset' : 'reset',

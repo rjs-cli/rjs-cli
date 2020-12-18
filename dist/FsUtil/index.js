@@ -117,7 +117,12 @@ var FsUtil = /** @class */ (function () {
         this.createSrcDirectory = function () {
             _this.createDirectory('src');
         };
-        this.createFile = function (filename) { return shelljs_1.default.touch(filename); };
+        this.writeFile = function (filename, data) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, promises_1.appendFile(filename, data)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); };
         this.checkAndCreateDir = function (name, directory) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {

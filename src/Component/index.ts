@@ -101,9 +101,9 @@ export class Component {
       this.createStyles();
     }
 
-    let filename = this.createFile();
+    const filename = this.useTypescript ? `${this.name}.tsx` : `${this.name}.js`;
 
-    shell.exec(`echo "${this.createTemplate()}" > ${filename}`);
+    fsUtil.writeFile(filename, this.createTemplate());
   };
 
   createStyles = () => {
@@ -115,16 +115,6 @@ export class Component {
       : (file = `${this.name}.${extension}`);
 
     shell.touch(file);
-  };
-
-  createFile = () => {
-    let filename;
-
-    this.useTypescript ? (filename = `${this.name}.tsx`) : (filename = `${this.name}.js`);
-
-    shell.touch(filename);
-
-    return filename;
   };
 
   createTemplate = () => {

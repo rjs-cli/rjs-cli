@@ -281,7 +281,7 @@ export class App {
 
   createTemplate = ({
     name,
-    template,
+    template = '',
     type,
     scriptExtension,
     module = this.useModules,
@@ -292,18 +292,13 @@ export class App {
     if (type === 'script') {
       extension = scriptExtension ? scriptExtension : this.useTypescript ? 'tsx' : 'js';
       filename = `${name}.${extension}`;
-      writeCommand = `echo "${template}" > ${name}.${extension}`;
     } else {
       extension = this.useSass ? 'scss' : 'css';
       filename = `${name}.${styleModule}${extension}`;
-      writeCommand = `echo "${template}" > ${name}.${styleModule}${extension}`;
     }
 
-    fsUtil.createFile(filename);
+    fsUtil.writeFile(filename, template);
 
-    if (template) {
-      terminal.executeCommand(writeCommand);
-    }
   };
 
   createAssetsFolder = async () => {
@@ -331,7 +326,7 @@ export class App {
     });
 
     if (useSass) {
-      terminal.executeCommand("echo '" + scssVariablesTemplate + "' > _variables.scss");
+      fsUtil.writeFile("_variables.scss", scssVariablesTemplate);
     }
 
     this.createTemplate({

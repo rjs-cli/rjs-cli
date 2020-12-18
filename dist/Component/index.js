@@ -147,8 +147,8 @@ var Component = /** @class */ (function () {
                         if (this.useStyles) {
                             this.createStyles();
                         }
-                        filename = this.createFile();
-                        shelljs_1.default.exec("echo \"" + this.createTemplate() + "\" > " + filename);
+                        filename = this.useTypescript ? this.name + ".tsx" : this.name + ".js";
+                        FsUtil_1.fsUtil.writeFile(filename, this.createTemplate());
                         return [2 /*return*/];
                 }
             });
@@ -160,12 +160,6 @@ var Component = /** @class */ (function () {
                 ? (file = _this.name + ".module." + extension)
                 : (file = _this.name + "." + extension);
             shelljs_1.default.touch(file);
-        };
-        this.createFile = function () {
-            var filename;
-            _this.useTypescript ? (filename = _this.name + ".tsx") : (filename = _this.name + ".js");
-            shelljs_1.default.touch(filename);
-            return filename;
         };
         this.createTemplate = function () {
             var _a = _this, componentName = _a.name, styleExtension = _a.useStyles, useModules = _a.useModules, useTypescript = _a.useTypescript, isClassBased = _a.isClassBased;
