@@ -13,33 +13,31 @@ export default store;`;
 
 export const createMiddlewareTemplate = (useTypescript: boolean, useAxios: boolean) => {
   const typeAnnot = useTypescript
-    ? [': MiddlewareAPI', ': Dispatch<AnyAction>', ': actions.ActionTemplateActions']
+    ? [': MiddlewareAPI', ': Dispatch<AnyAction>', ': actionsTemplate.ActionTemplateActions']
     : [];
 
-  return `import * as actions from '../actions';
+  return `import { actionsTemplate } from '../actions';
 ${useTypescript ? "import { MiddlewareAPI, Dispatch, AnyAction } from 'redux';" : ''}
 ${useAxios ? "import axios from 'axios';" : ''}
 
-const middleware = (store${typeAnnot[0] ?? ''}) => (next${typeAnnot[1] ?? ''}) => async (action${
+export const templateMiddleware = (store${typeAnnot[0] ?? ''}) => (next${typeAnnot[1] ?? ''}) => async (action${
     typeAnnot[2] ?? ''
   }) => {
   switch (action.type) {
-    case actions.RANDOM_EXAMPLE:
+    case actionsTemplate.RANDOM_EXAMPLE:
       // ...
       break
     default:
       next(action);
   }
-};
-
-export default middleware;`;
+};`;
 };
 
 export const createReducerTemplate = (useTypescript: boolean) => {
   const typeAnnot = useTypescript
-    ? [': templateReducerState', ': actions.ActionTemplateActions']
+    ? [': templateReducerState', ': actionsTemplate.ActionTemplateActions']
     : [];
-  return `import * as actions from '../actions';
+  return `import { actionsTemplate } from '../actions';
 
 ${useTypescript ? `export interface templateReducerState {}` : ''}
 const INITIAL_STATE${typeAnnot[0] ?? ''} = {};
@@ -48,7 +46,7 @@ const reducer = (state${typeAnnot[0] ?? ''} = INITIAL_STATE, action${typeAnnot[1
     typeAnnot[0] ?? ''
   } => {
   switch (action.type) {
-    case actions.RANDOM_EXAMPLE:
+    case actionsTemplate.RANDOM_EXAMPLE:
       return {
         ...state,
       };

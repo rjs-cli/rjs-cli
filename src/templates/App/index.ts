@@ -68,18 +68,18 @@ test('renders learn react link', () => {
 export const createAppContainerTemplate = (useTypescript: boolean) => {
   const tsImports = useTypescript
     ? `import { Dispatch } from 'react';
-  import { State } from '../../store/reducers';
+import { State } from '../../store/reducers';
 
-  interface StateToProps {}
+interface StateToProps {}
 
-  interface ownProps {}
+interface ownProps {}
 
-  interface DispatchToProps {}`
+interface DispatchToProps {}`
     : '';
 
   const mapDispatchToProps = useTypescript
     ? `const mapDispatchToProps = (
-      dispatch: Dispatch<actions.ActionTemplateActions>,
+      dispatch: Dispatch<actionsTemplate.ActionTemplateActions>,
       ): DispatchToProps => ({});`
     : `const mapDispatchToProps = (dispatch) => ({});`;
 
@@ -92,10 +92,9 @@ export const createAppContainerTemplate = (useTypescript: boolean) => {
     : '';
 
   return `import { connect } from 'react-redux';
-${tsImports}
-
-import * as actions from '../../store/actions';
+import { actionsTemplate } from '../../store/actions';
 import App from '../../App/App';
+${tsImports}
 
 ${mapStateToProps}
 

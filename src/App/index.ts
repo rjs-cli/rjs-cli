@@ -38,7 +38,7 @@ type Package =
   | '@types/redux'
   | 'react-redux'
   | '@types/react-redux'
-  | 'node-sass'
+  | 'node-sass@4.14.1'
   | 'axios'
   | 'redux-devtools-extension'
   | '';
@@ -71,7 +71,7 @@ export class App {
   packageManager: 'yarn' | 'npm' | 'pnpm' = 'yarn';
   appPackages: AppPackages = {
     router: { prod: 'react-router-dom', dev: '@types/react-router-dom' },
-    sass: { dev: 'node-sass' },
+    sass: { dev: 'node-sass@4.14.1' },
     redux: { prod: 'redux' },
     reduxDevtools: { dev: 'redux-devtools-extension' },
     reactRedux: { prod: 'react-redux', dev: '@types/react-redux' },
@@ -159,7 +159,7 @@ export class App {
       //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
       //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
 
-      await terminal.executeCommand(command);
+      terminal.executeCommand(command);
 
       const { code } = shell.cd(this.appName);
       if (code) {
@@ -309,6 +309,7 @@ export class App {
   createAssetsFolder = async () => {
     const { useSass } = this;
     const scssVariablesTemplate = createScssVariablesTemplate();
+
     const styleResetTemplate = createStyleReset();
     const indexStyleTemplate = createIndexStyleTemplate({ useSass: this.useSass });
 
@@ -328,14 +329,16 @@ export class App {
       type: 'style',
       module: false,
     });
+
     if (useSass) {
-      this.createTemplate({ name: '_variables', template: scssVariablesTemplate, type: 'style' });
+      terminal.executeCommand("echo '" + scssVariablesTemplate + "' > _variables.scss");
     }
 
     this.createTemplate({
       name: useSass ? '_reset' : 'reset',
       type: 'style',
       template: styleResetTemplate,
+      module: false,
     });
 
     // This will put you back in "src"
@@ -363,7 +366,7 @@ export class App {
       name: 'index',
       type: 'script',
       scriptExtension: this.useTypescript ? 'ts' : 'js',
-      template: "export * as templateMiddleware from './middleware.template'",
+      template: "export { templateMiddleware } from './middleware.template'",
     });
     terminal.goBack(1);
 
