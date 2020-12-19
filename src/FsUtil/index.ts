@@ -64,7 +64,7 @@ class FsUtil {
 
   writeFile = async (filename: string, data: string) => await appendFile(filename, data);
 
-  checkAndCreateDir = async (name: string, directory?: string) => {
+  createDirIfNotExists = async (name: string, directory?: string) => {
     if (!(await this.doesDirectoryExist(name, directory))) {
       this.createDirectory(name);
     }

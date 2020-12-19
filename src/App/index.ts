@@ -259,7 +259,7 @@ export class App {
         type: 'script',
       });
 
-      await fsUtil.checkAndCreateDir('App');
+      await fsUtil.createDirIfNotExists('App');
       terminal.navigateTo(['App']);
 
       this.createTemplate({ name: 'App', template: appTemplate, type: 'script' });
@@ -312,12 +312,12 @@ export class App {
 
     const styleFolder = useSass ? 'scss' : 'css';
 
-    await fsUtil.checkAndCreateDir('assets');
+    await fsUtil.createDirIfNotExists('assets');
     terminal.navigateTo(['assets']);
 
-    await fsUtil.checkAndCreateDir('images');
+    await fsUtil.createDirIfNotExists('images');
 
-    await fsUtil.checkAndCreateDir(styleFolder);
+    await fsUtil.createDirIfNotExists(styleFolder);
     terminal.navigateTo([styleFolder]);
 
     this.createTemplate({
@@ -351,7 +351,7 @@ export class App {
       template: createStoreTemplate(),
     });
 
-    await fsUtil.checkAndCreateDir('middlewares');
+    await fsUtil.createDirIfNotExists('middlewares');
     terminal.navigateTo(['middlewares']);
     this.createTemplate({
       name: 'middleware.template',
@@ -367,7 +367,7 @@ export class App {
     });
     terminal.goBack(1);
 
-    await fsUtil.checkAndCreateDir('reducers');
+    await fsUtil.createDirIfNotExists('reducers');
     terminal.navigateTo(['reducers']);
     this.createTemplate({
       name: 'reducer.template',
@@ -383,7 +383,7 @@ export class App {
     });
     terminal.goBack(1);
 
-    fsUtil.checkAndCreateDir('actions');
+    fsUtil.createDirIfNotExists('actions');
     terminal.navigateTo(['actions']);
     this.createTemplate({
       name: 'actions.template',
@@ -402,9 +402,9 @@ export class App {
   };
 
   createContainersFolder = async () => {
-    await fsUtil.checkAndCreateDir('containers');
+    await fsUtil.createDirIfNotExists('containers');
     terminal.navigateTo(['containers']);
-    await fsUtil.checkAndCreateDir('App');
+    await fsUtil.createDirIfNotExists('App');
     terminal.navigateTo(['App']);
     this.createTemplate({
       name: 'App',
