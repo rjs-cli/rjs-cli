@@ -245,7 +245,7 @@ var App = /** @class */ (function () {
         this.hasProdPackages = function () { return _this.prodPackages.length; };
         this.hasDevPackages = function () { return _this.devPackages.length; };
         this.createTemplates = function () { return __awaiter(_this, void 0, void 0, function () {
-            var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexScriptTemplate, appTemplate, appTestTemplate;
+            var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexScriptTemplate, appTemplate, appTestTemplate, appStyleTemplate;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, FsUtil_1.fsUtil.checkSrcDirectory()];
@@ -265,12 +265,13 @@ var App = /** @class */ (function () {
                             useTypescript: useTypescript,
                         });
                         appTestTemplate = templates_1.createAppTestTemplate();
+                        appStyleTemplate = templates_1.createAppStyleTemplate(this.useSass ? 'scss' : 'css');
                         this.createTemplate({
                             name: 'index',
                             template: indexScriptTemplate,
                             type: 'script',
                         });
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('App')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('App')];
                     case 3:
                         _b.sent();
                         Terminal_1.terminal.navigateTo(['App']);
@@ -281,7 +282,11 @@ var App = /** @class */ (function () {
                             type: 'script',
                             scriptExtension: "test." + (useTypescript ? 'tsx' : 'js'),
                         });
-                        this.createTemplate({ name: 'App', type: 'style' });
+                        this.createTemplate({
+                            name: 'App',
+                            template: appStyleTemplate,
+                            type: 'style',
+                        });
                         // this will put you back in "src"
                         Terminal_1.terminal.goBack(1);
                         return [3 /*break*/, 5];
@@ -297,7 +302,8 @@ var App = /** @class */ (function () {
         this.createTemplate = function (_a) {
             var name = _a.name, _b = _a.template, template = _b === void 0 ? '' : _b, type = _a.type, scriptExtension = _a.scriptExtension, _c = _a.module, module = _c === void 0 ? _this.useModules : _c;
             var styleModule = module ? 'module.' : '';
-            var extension, filename, writeCommand;
+            var extension, filename;
+            console.log(template);
             if (type === 'script') {
                 extension = scriptExtension ? scriptExtension : _this.useTypescript ? 'tsx' : 'js';
                 filename = name + "." + extension;
@@ -318,14 +324,14 @@ var App = /** @class */ (function () {
                         styleResetTemplate = templates_1.createStyleReset();
                         indexStyleTemplate = templates_1.createIndexStyleTemplate({ useSass: this.useSass });
                         styleFolder = useSass ? 'scss' : 'css';
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('assets')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('assets')];
                     case 1:
                         _a.sent();
                         Terminal_1.terminal.navigateTo(['assets']);
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('images')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('images')];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir(styleFolder)];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists(styleFolder)];
                     case 3:
                         _a.sent();
                         Terminal_1.terminal.navigateTo([styleFolder]);
@@ -362,7 +368,7 @@ var App = /** @class */ (function () {
                             scriptExtension: this.useTypescript ? 'ts' : 'js',
                             template: templates_1.createStoreTemplate(),
                         });
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('middlewares')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('middlewares')];
                     case 2:
                         _a.sent();
                         Terminal_1.terminal.navigateTo(['middlewares']);
@@ -379,7 +385,7 @@ var App = /** @class */ (function () {
                             template: "export { templateMiddleware } from './middleware.template'",
                         });
                         Terminal_1.terminal.goBack(1);
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('reducers')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('reducers')];
                     case 3:
                         _a.sent();
                         Terminal_1.terminal.navigateTo(['reducers']);
@@ -396,7 +402,7 @@ var App = /** @class */ (function () {
                             template: templates_1.createRootReducerTemplate(this.useTypescript),
                         });
                         Terminal_1.terminal.goBack(1);
-                        FsUtil_1.fsUtil.checkAndCreateDir('actions');
+                        FsUtil_1.fsUtil.createDirIfNotExists('actions');
                         Terminal_1.terminal.navigateTo(['actions']);
                         this.createTemplate({
                             name: 'actions.template',
@@ -419,11 +425,11 @@ var App = /** @class */ (function () {
         this.createContainersFolder = function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('containers')];
+                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('containers')];
                     case 1:
                         _a.sent();
                         Terminal_1.terminal.navigateTo(['containers']);
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('App')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('App')];
                     case 2:
                         _a.sent();
                         Terminal_1.terminal.navigateTo(['App']);

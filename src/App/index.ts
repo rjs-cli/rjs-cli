@@ -14,6 +14,7 @@ import {
   createReducerTemplate,
   createRootReducerTemplate,
   createActionTemplate,
+  createAppStyleTemplate,
 } from '../templates';
 import { fsUtil } from '../FsUtil';
 import { terminal } from '../Terminal';
@@ -252,6 +253,7 @@ export class App {
         useTypescript,
       });
       const appTestTemplate = createAppTestTemplate();
+      const appStyleTemplate = createAppStyleTemplate(this.useSass ? 'scss' : 'css');
 
       this.createTemplate({
         name: 'index',
@@ -269,7 +271,11 @@ export class App {
         type: 'script',
         scriptExtension: `test.${useTypescript ? 'tsx' : 'js'}` as 'test.tsx' | 'test.js',
       });
-      this.createTemplate({ name: 'App', type: 'style' });
+      this.createTemplate({
+        name: 'App',
+        template: appStyleTemplate,
+        type: 'style',
+      });
 
       // this will put you back in "src"
       terminal.goBack(1);
@@ -290,7 +296,8 @@ export class App {
     module = this.useModules,
   }: CreateTemplateParams) => {
     const styleModule = module ? 'module.' : '';
-    let extension, filename, writeCommand;
+    let extension, filename;
+    console.log(template);
 
     if (type === 'script') {
       extension = scriptExtension ? scriptExtension : this.useTypescript ? 'tsx' : 'js';

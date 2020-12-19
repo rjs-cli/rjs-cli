@@ -30,24 +30,28 @@ footer, header, hgroup, menu, nav, section {
 }
 
 body,html{
-  height: 100%;
+  min-height: 100vh;
 }
 
 body {
 	line-height: 1;
 }
+
 ol, ul {
 	list-style: none;
 }
+
 blockquote, q {
 	quotes: none;
 }
 
-blockquote::before, blockquote::after,
+blockquote::before,
+blockquote::after,
 q:before, q:after {
 	content: '';
 	content: none;
 }
+
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -56,6 +60,7 @@ table {
 a, del, ins {
   text-decoration: none;
 }
+
 a {
   color: inherit;
 }
@@ -70,9 +75,5 @@ html {
 
 *, *::before, *::after {
   box-sizing: inherit;
-}
-
-input, button {
-  outline: 0;
 }
 `;

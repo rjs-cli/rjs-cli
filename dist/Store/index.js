@@ -45,20 +45,20 @@ var Store = /** @class */ (function () {
         this.create = function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('store')];
+                    case 0: return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('store')];
                     case 1:
                         _a.sent();
                         Terminal_1.terminal.navigateTo(['store']);
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('actions')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('actions')];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('middlewares')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('middlewares')];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('reducers')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('reducers')];
                     case 4:
                         _a.sent();
-                        return [4 /*yield*/, FsUtil_1.fsUtil.checkAndCreateDir('selectors')];
+                        return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('selectors')];
                     case 5:
                         _a.sent();
                         return [2 /*return*/];

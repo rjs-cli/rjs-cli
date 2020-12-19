@@ -3,12 +3,12 @@ import { terminal } from '../Terminal';
 
 export class Store {
   create = async () => {
-    await fsUtil.checkAndCreateDir('store');
+    await fsUtil.createDirIfNotExists('store');
     terminal.navigateTo(['store']);
-    await fsUtil.checkAndCreateDir('actions');
-    await fsUtil.checkAndCreateDir('middlewares');
-    await fsUtil.checkAndCreateDir('reducers');
-    await fsUtil.checkAndCreateDir('selectors');
+    await fsUtil.createDirIfNotExists('actions');
+    await fsUtil.createDirIfNotExists('middlewares');
+    await fsUtil.createDirIfNotExists('reducers');
+    await fsUtil.createDirIfNotExists('selectors');
   };
 }
 
