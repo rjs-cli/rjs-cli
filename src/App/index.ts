@@ -29,6 +29,8 @@ interface CreateReactAppOptions {
   useSass: boolean;
   useModules: boolean;
   useAxios: boolean;
+  useNpm: boolean;
+  usePnpm: boolean;
 }
 
 type Package =
@@ -42,6 +44,8 @@ type Package =
   | 'axios'
   | 'redux-devtools-extension'
   | '';
+
+type PackageManager = 'yarn' | 'npm' | 'pnpm';
 
 interface AppPackages {
   router: { prod: Package; dev: Package };
@@ -68,7 +72,7 @@ export class App {
   useSass: boolean = false;
   useModules: boolean = false;
   useAxios: boolean = false;
-  packageManager: 'yarn' | 'npm' | 'pnpm' = 'yarn';
+  packageManager: PackageManager = 'yarn';
   appPackages: AppPackages = {
     router: { prod: 'react-router-dom', dev: '@types/react-router-dom' },
     sass: { dev: 'node-sass@4.14.1' },
@@ -106,8 +110,16 @@ export class App {
       'useRedux',
       'Do you need redux as your state management ?',
     );
-    this.useRouter = await this.togglePrompt('useRouter', 'Do you need a some sort of router ?');
-    this.useAxios = await this.togglePrompt('useAxios', 'Will you need Axios ?');
+    this.useRouter = await this.togglePrompt('useRouter', 'Do you need a router ?');
+    this.useAxios = await this.togglePrompt('useAxios', 'Are you going to use Axios ?');
+
+    const packageManagerChoice: { packageManager: PackageManager } = await prompt({
+      name: 'packageManager',
+      choices: ['yarn', 'npm', 'pnpm'],
+      message: 'What package manager do you want to use ?',
+      type: 'select',
+    });
+    this.packageManager = packageManagerChoice.packageManager;
   };
 
   togglePrompt = async (name: string, message: string) => {
@@ -130,6 +142,8 @@ export class App {
       useSass,
       useModules,
       useAxios,
+      useNpm,
+      usePnpm,
     }: CreateReactAppOptions,
   ) => {
     try {
@@ -145,9 +159,20 @@ export class App {
         await this.interactiveCreateReactApp(!this.appName);
       }
 
+      // Default package manager is yarn
+      if (useNpm) {
+        this.packageManager = 'npm';
+      } else if (usePnpm) {
+        this.packageManager = 'pnpm';
+      }
+
       let command = `npx create-react-app ${this.appName}`;
       if (this.useTypescript) {
         command += ` --template typescript`;
+      }
+
+      if (this.packageManager === 'npm') {
+        command += ' --use-npm';
       }
 
       console.info(`${EOL}executing : ${cyan(`${command}`)}`);
@@ -190,8 +215,14 @@ export class App {
 
   installPackages = async () => {
     await fsUtil.goToRootDir();
-    const baseCommand = `${this.packageManager} add`;
-    let command = baseCommand;
+    let BASE_COMMAND: string = this.packageManager;
+    if (this.packageManager !== 'npm') {
+      BASE_COMMAND += ' add';
+    } else {
+      BASE_COMMAND += ' i';
+    }
+
+    let command = BASE_COMMAND;
 
     if (this.useRouter) {
       this.addPackage(this.useRouter, 'prodPackages', this.appPackages.router.prod);
@@ -216,12 +247,20 @@ export class App {
     }
 
     if (this.hasProdAndDevPackages()) {
-      command += ` && ${baseCommand} -D ${this.devPackages.join(' ')}`;
+      command += ` && ${BASE_COMMAND}`;
+
+      command +=
+        this.packageManager !== 'npm'
+          ? ` -D ${this.devPackages.join(' ')}`
+          : ` --save-dev ${this.devPackages.join(' ')}`;
     } else if (this.hasDevPackages()) {
-      command += ` -D ${this.devPackages.join(' ')}`;
+      command +=
+        this.packageManager !== 'npm'
+          ? ` -D ${this.devPackages.join(' ')}`
+          : ` --save-dev ${this.devPackages.join(' ')}`;
     }
 
-    if (command !== baseCommand) {
+    if (command !== BASE_COMMAND) {
       console.log(EOL + command);
 
       // TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____

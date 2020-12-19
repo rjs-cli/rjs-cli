@@ -67,7 +67,7 @@ var App = /** @class */ (function () {
         this.prodPackages = [];
         this.devPackages = [];
         this.interactiveCreateReactApp = function (askName) { return __awaiter(_this, void 0, void 0, function () {
-            var appName, _a, _b, _c, _d, _e, _f;
+            var appName, _a, _b, _c, _d, _e, _f, packageManagerChoice;
             return __generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
@@ -100,13 +100,22 @@ var App = /** @class */ (function () {
                     case 6:
                         _d.useRedux = _g.sent();
                         _e = this;
-                        return [4 /*yield*/, this.togglePrompt('useRouter', 'Do you need a some sort of router ?')];
+                        return [4 /*yield*/, this.togglePrompt('useRouter', 'Do you need a router ?')];
                     case 7:
                         _e.useRouter = _g.sent();
                         _f = this;
-                        return [4 /*yield*/, this.togglePrompt('useAxios', 'Will you need Axios ?')];
+                        return [4 /*yield*/, this.togglePrompt('useAxios', 'Are you going to use Axios ?')];
                     case 8:
                         _f.useAxios = _g.sent();
+                        return [4 /*yield*/, enquirer_1.prompt({
+                                name: 'packageManager',
+                                choices: ['yarn', 'npm', 'pnpm'],
+                                message: 'What package manager do you want to use ?',
+                                type: 'select',
+                            })];
+                    case 9:
+                        packageManagerChoice = _g.sent();
+                        this.packageManager = packageManagerChoice.packageManager;
                         return [2 /*return*/];
                 }
             });
@@ -128,7 +137,7 @@ var App = /** @class */ (function () {
             });
         }); };
         this.createReactApp = function (appName, _a) {
-            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useModules = _a.useModules, useAxios = _a.useAxios;
+            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useModules = _a.useModules, useAxios = _a.useAxios, useNpm = _a.useNpm, usePnpm = _a.usePnpm;
             return __awaiter(_this, void 0, void 0, function () {
                 var command, code, e_1;
                 return __generator(this, function (_b) {
@@ -148,9 +157,19 @@ var App = /** @class */ (function () {
                             _b.sent();
                             _b.label = 2;
                         case 2:
+                            // Default package manager is yarn
+                            if (useNpm) {
+                                this.packageManager = 'npm';
+                            }
+                            else if (usePnpm) {
+                                this.packageManager = 'pnpm';
+                            }
                             command = "npx create-react-app " + this.appName;
                             if (this.useTypescript) {
                                 command += " --template typescript";
+                            }
+                            if (this.packageManager === 'npm') {
+                                command += ' --use-npm';
                             }
                             console.info(os_1.EOL + "executing : " + chalk_1.cyan("" + command));
                             console.log("Sit back and relax we're taking care of everything ! \uD83D\uDE01");
@@ -197,14 +216,20 @@ var App = /** @class */ (function () {
             });
         };
         this.installPackages = function () { return __awaiter(_this, void 0, void 0, function () {
-            var baseCommand, command;
+            var BASE_COMMAND, command;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, FsUtil_1.fsUtil.goToRootDir()];
                     case 1:
                         _a.sent();
-                        baseCommand = this.packageManager + " add";
-                        command = baseCommand;
+                        BASE_COMMAND = this.packageManager;
+                        if (this.packageManager !== 'npm') {
+                            BASE_COMMAND += ' add';
+                        }
+                        else {
+                            BASE_COMMAND += ' i';
+                        }
+                        command = BASE_COMMAND;
                         if (this.useRouter) {
                             this.addPackage(this.useRouter, 'prodPackages', this.appPackages.router.prod);
                             this.addPackage(this.useTypescript, 'devPackages', this.appPackages.router.dev);
@@ -223,12 +248,19 @@ var App = /** @class */ (function () {
                             command += " " + this.prodPackages.join(' ');
                         }
                         if (this.hasProdAndDevPackages()) {
-                            command += " && " + baseCommand + " -D " + this.devPackages.join(' ');
+                            command += " && " + BASE_COMMAND;
+                            command +=
+                                this.packageManager !== 'npm'
+                                    ? " -D " + this.devPackages.join(' ')
+                                    : " --save-dev " + this.devPackages.join(' ');
                         }
                         else if (this.hasDevPackages()) {
-                            command += " -D " + this.devPackages.join(' ');
+                            command +=
+                                this.packageManager !== 'npm'
+                                    ? " -D " + this.devPackages.join(' ')
+                                    : " --save-dev " + this.devPackages.join(' ');
                         }
-                        if (command !== baseCommand) {
+                        if (command !== BASE_COMMAND) {
                             console.log(os_1.EOL + command);
                             // TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
                             // TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|

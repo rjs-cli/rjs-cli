@@ -18,6 +18,8 @@ program
   .option('-m, --use-modules', 'Uses css/scss modules to create App component', false)
   .option('-R, --use-redux', 'Bootstraps a react app with built in Redux', false)
   .option('-a, --use-axios', 'Bootstraps a react app with built in Axios', false)
+  .option('-N, --use-npm', 'Uses npm as a package manager', false)
+  .option('-P, --use-pnpm', 'Uses pnpm as a package manager', false)
   .action(app.createReactApp);
 
 program
