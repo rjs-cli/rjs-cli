@@ -297,7 +297,6 @@ export class App {
   }: CreateTemplateParams) => {
     const styleModule = module ? 'module.' : '';
     let extension, filename;
-    console.log(template);
 
     if (type === 'script') {
       extension = scriptExtension ? scriptExtension : this.useTypescript ? 'tsx' : 'js';

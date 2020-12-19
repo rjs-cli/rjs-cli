@@ -303,7 +303,6 @@ var App = /** @class */ (function () {
             var name = _a.name, _b = _a.template, template = _b === void 0 ? '' : _b, type = _a.type, scriptExtension = _a.scriptExtension, _c = _a.module, module = _c === void 0 ? _this.useModules : _c;
             var styleModule = module ? 'module.' : '';
             var extension, filename;
-            console.log(template);
             if (type === 'script') {
                 extension = scriptExtension ? scriptExtension : _this.useTypescript ? 'tsx' : 'js';
                 filename = name + "." + extension;
