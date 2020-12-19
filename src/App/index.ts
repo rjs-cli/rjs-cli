@@ -1,6 +1,5 @@
 import { prompt } from 'enquirer';
 import { EOL } from 'os';
-import shell from 'shelljs';
 import { cyan } from 'chalk';
 import {
   createIndexScriptTemplate,
@@ -161,7 +160,7 @@ export class App {
 
       terminal.executeCommand(command);
 
-      const { code } = shell.cd(this.appName);
+      const { code } = terminal.navigateTo([this.appName]);
       if (code) {
         console.error(`An error occured, seems like the folder ${this.appName} doesn't exist.`);
         process.exit(code);
@@ -230,9 +229,13 @@ export class App {
       // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
       // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
 
-      shell.exec(command);
+      terminal.executeCommand(command);
     }
   };
+
+  hasProdAndDevPackages = () => this.hasDevPackages() && this.hasProdPackages();
+  hasProdPackages = () => this.prodPackages.length;
+  hasDevPackages = () => this.devPackages.length;
 
   createTemplates = async () => {
     if (await fsUtil.checkSrcDirectory()) {
@@ -298,7 +301,6 @@ export class App {
     }
 
     fsUtil.writeFile(filename, template);
-
   };
 
   createAssetsFolder = async () => {
@@ -326,7 +328,7 @@ export class App {
     });
 
     if (useSass) {
-      fsUtil.writeFile("_variables.scss", scssVariablesTemplate);
+      fsUtil.writeFile('_variables.scss', scssVariablesTemplate);
     }
 
     this.createTemplate({
@@ -420,8 +422,4 @@ export class App {
     target: 'devPackages' | 'prodPackages',
     packageName: Package,
   ) => (usePackage ? this[target].push(packageName) : '');
-
-  hasProdAndDevPackages = () => this.hasDevPackages() && this.hasProdPackages();
-  hasProdPackages = () => this.prodPackages.length;
-  hasDevPackages = () => this.devPackages.length;
 }

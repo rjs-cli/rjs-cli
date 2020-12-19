@@ -35,10 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var enquirer_1 = require("enquirer");
 var os_1 = require("os");
+var shelljs_1 = __importDefault(require("shelljs"));
 var chalk_1 = require("chalk");
 var templates_1 = require("../templates");
 var FsUtil_1 = require("../FsUtil");
@@ -160,7 +164,7 @@ var App = /** @class */ (function () {
                             //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
                             //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
                             Terminal_1.terminal.executeCommand(command);
-                            code = Terminal_1.terminal.navigateTo([this.appName]).code;
+                            code = shelljs_1.default.cd(this.appName).code;
                             if (code) {
                                 console.error("An error occured, seems like the folder " + this.appName + " doesn't exist.");
                                 process.exit(code);
@@ -235,15 +239,12 @@ var App = /** @class */ (function () {
                             // TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
                             // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
                             // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
-                            Terminal_1.terminal.executeCommand(command);
+                            shelljs_1.default.exec(command);
                         }
                         return [2 /*return*/];
                 }
             });
         }); };
-        this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
-        this.hasProdPackages = function () { return _this.prodPackages.length; };
-        this.hasDevPackages = function () { return _this.devPackages.length; };
         this.createTemplates = function () { return __awaiter(_this, void 0, void 0, function () {
             var _a, useRedux, useSass, useRouter, useModules, useTypescript, indexScriptTemplate, appTemplate, appTestTemplate;
             return __generator(this, function (_b) {
@@ -336,7 +337,7 @@ var App = /** @class */ (function () {
                             module: false,
                         });
                         if (useSass) {
-                            FsUtil_1.fsUtil.writeFile('_variables.scss', scssVariablesTemplate);
+                            FsUtil_1.fsUtil.writeFile("_variables.scss", scssVariablesTemplate);
                         }
                         this.createTemplate({
                             name: useSass ? '_reset' : 'reset',
@@ -440,6 +441,9 @@ var App = /** @class */ (function () {
             });
         }); };
         this.addPackage = function (usePackage, target, packageName) { return (usePackage ? _this[target].push(packageName) : ''); };
+        this.hasProdAndDevPackages = function () { return _this.hasDevPackages() && _this.hasProdPackages(); };
+        this.hasProdPackages = function () { return _this.prodPackages.length; };
+        this.hasDevPackages = function () { return _this.devPackages.length; };
     }
     return App;
 }());
