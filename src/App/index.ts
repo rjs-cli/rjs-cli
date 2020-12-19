@@ -30,7 +30,6 @@ interface CreateReactAppOptions {
   useModules: boolean;
   useAxios: boolean;
   useNpm: boolean;
-  usePnpm: boolean;
 }
 
 type Package =
@@ -45,7 +44,7 @@ type Package =
   | 'redux-devtools-extension'
   | '';
 
-type PackageManager = 'yarn' | 'npm' | 'pnpm';
+type PackageManager = 'yarn' | 'npm';
 
 interface AppPackages {
   router: { prod: Package; dev: Package };
@@ -143,7 +142,6 @@ export class App {
       useModules,
       useAxios,
       useNpm,
-      usePnpm,
     }: CreateReactAppOptions,
   ) => {
     try {
@@ -162,8 +160,6 @@ export class App {
       // Default package manager is yarn
       if (useNpm) {
         this.packageManager = 'npm';
-      } else if (usePnpm) {
-        this.packageManager = 'pnpm';
       }
 
       let command = `npx create-react-app ${this.appName}`;
