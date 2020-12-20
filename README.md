@@ -1,4 +1,4 @@
-<h1 style="text-align: center;">RJS CLI</h1>
+<h1>RJS CLI</h1>
 
 [![License](https://img.shields.io/npm/l/express.svg)](https://github.com/rjs-cli/rjs-cli/blob/master/LICENSE.md)
 
