@@ -137,7 +137,7 @@ var App = /** @class */ (function () {
             });
         }); };
         this.createReactApp = function (appName, _a) {
-            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useModules = _a.useModules, useAxios = _a.useAxios, useNpm = _a.useNpm, usePnpm = _a.usePnpm;
+            var useTypescript = _a.useTypescript, interactive = _a.interactive, useRouter = _a.useRouter, useRedux = _a.useRedux, useSass = _a.useSass, useModules = _a.useModules, useAxios = _a.useAxios, useNpm = _a.useNpm;
             return __awaiter(_this, void 0, void 0, function () {
                 var command, code, e_1;
                 return __generator(this, function (_b) {
@@ -160,9 +160,6 @@ var App = /** @class */ (function () {
                             // Default package manager is yarn
                             if (useNpm) {
                                 this.packageManager = 'npm';
-                            }
-                            else if (usePnpm) {
-                                this.packageManager = 'pnpm';
                             }
                             command = "npx create-react-app " + this.appName;
                             if (this.useTypescript) {

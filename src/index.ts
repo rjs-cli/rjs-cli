@@ -23,20 +23,9 @@ program
 
 program
   .command('generate-component <name> [dir]')
+  .alias("gc")
   .description('Generates a component with a <name> and an optionnal [dir]')
   .option('-t, --use-typescript', 'Generates a component with typescript')
-  .option('-c, --is-class-based', 'Generates a class based component', false)
-  .option(
-    '-s, --use-styles <type>',
-    'Generates a componente with a stylesheet associated with [type] = css | scss',
-  )
-  .option('-m, --use-modules', 'Wheter or not to use the so called css modules', false)
-  .action(component.generate);
-
-program
-  .command('gc <name> [dir]')
-  .description('Generates a component with a <name> and an optionnal [dir]')
-  .option('-t, --use-typescript', 'Generates a component with typescript', false)
   .option('-c, --is-class-based', 'Generates a class based component', false)
   .option(
     '-s, --use-styles <type>',
