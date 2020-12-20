@@ -1,5 +1,5 @@
 {
-  "name": "reactjs-cli",
+  "name": "rjs-cli",
   "author": {
     "name": "David Nogueira",
     "email": "davidnogueira.dev.pro@gmail.com",
@@ -9,11 +9,11 @@
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reactjs-cli/reactjs-cli.git"
+    "url": "git+https://github.com/rjs-cli/rjs-cli.git"
   },
-  "homepage": "https://github.com/reactjs-cli/reactjs-cli#readme",
+  "homepage": "https://github.com/rjs-cli/rjs-cli#readme",
   "bugs": {
-    "url": "https://github.com/reactjs-cli/reactjs-cli/issues"
+    "url": "https://github.com/rjs-cli/rjs-cli/issues"
   },
   "main": "index.js",
   "bin": {
@@ -25,9 +25,12 @@
     "react cli",
     "generate components",
     "cli",
+    "command line interface",
     "javascript",
     "react init",
     "rjs",
+    "rjs cli",
+    "rjs-cli",
     "reactjs cli",
     "react-cli"
   ],

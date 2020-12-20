@@ -18,20 +18,12 @@ commander_1.program
     .option('-R, --use-redux', 'Bootstraps a react app with built in Redux', false)
     .option('-a, --use-axios', 'Bootstraps a react app with built in Axios', false)
     .option('-N, --use-npm', 'Uses npm as a package manager', false)
-    .option('-P, --use-pnpm', 'Uses pnpm as a package manager', false)
     .action(app.createReactApp);
 commander_1.program
     .command('generate-component <name> [dir]')
+    .alias("gc")
     .description('Generates a component with a <name> and an optionnal [dir]')
     .option('-t, --use-typescript', 'Generates a component with typescript')
-    .option('-c, --is-class-based', 'Generates a class based component', false)
-    .option('-s, --use-styles <type>', 'Generates a componente with a stylesheet associated with [type] = css | scss')
-    .option('-m, --use-modules', 'Wheter or not to use the so called css modules', false)
-    .action(component.generate);
-commander_1.program
-    .command('gc <name> [dir]')
-    .description('Generates a component with a <name> and an optionnal [dir]')
-    .option('-t, --use-typescript', 'Generates a component with typescript', false)
     .option('-c, --is-class-based', 'Generates a class based component', false)
     .option('-s, --use-styles <type>', 'Generates a componente with a stylesheet associated with [type] = css | scss')
     .option('-m, --use-modules', 'Wheter or not to use the so called css modules', false)
