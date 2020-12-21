@@ -59,7 +59,7 @@ var Component = /** @class */ (function () {
         this.generate = function (componentName, componentDir, _a) {
             var useStyles = _a.useStyles, useTypescript = _a.useTypescript, isClassBased = _a.isClassBased, useModules = _a.useModules;
             return __awaiter(_this, void 0, void 0, function () {
-                var scriptType, styleExtension, modules, componentType, dirPath, separatorRegexp, splitPath, hasSrcDir, hasComponentsDir;
+                var scriptType, styleExtension, modules, componentType, dirPath, separatorRegexp, splitPath, e_1, hasSrcDir, hasComponentsDir;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -76,7 +76,10 @@ var Component = /** @class */ (function () {
                             modules = this.useModules ? 'modules' : '';
                             componentType = this.isClassBased ? 'class' : 'functionnal';
                             this.message = "Generating " + scriptType + " " + componentType + " component " + this.name + (styleExtension ? " with " + this.useStyles + " " + modules : '');
-                            if (!this.directory) return [3 /*break*/, 2];
+                            _b.label = 1;
+                        case 1:
+                            _b.trys.push([1, 4, , 5]);
+                            if (!this.directory) return [3 /*break*/, 3];
                             dirPath = void 0;
                             if (this.directory === '.') {
                                 this.message += " in " + process.cwd();
@@ -84,7 +87,7 @@ var Component = /** @class */ (function () {
                                 separatorRegexp = new RegExp(/[\/ | \\]/, 'g');
                                 splitPath = dirPath.split(separatorRegexp);
                                 if (splitPath[splitPath.length - 1] === 'src') {
-                                    Terminal_1.terminal.errorMessage("Cannot create component files in src directory. You must be inside a directory.\n            " + os_1.default.EOL + "Please navigate inside one or specify a directory name. " + os_1.default.EOL + "    example: rjs gc <name> [directory] [options]\n            ");
+                                    Terminal_1.terminal.errorMessage("Cannot create component files in src directory. You must be inside a directory.\n              " + os_1.default.EOL + "Please navigate inside one or specify a directory name. " + os_1.default.EOL + "    example: rjs gc <name> [directory] [options]\n              ");
                                     process.exit(1);
                                 }
                             }
@@ -97,31 +100,35 @@ var Component = /** @class */ (function () {
                                 process.exit(1);
                             }
                             return [4 /*yield*/, this.create(dirPath)];
-                        case 1:
+                        case 2:
                             _b.sent();
                             process.exit(0);
-                            _b.label = 2;
-                        case 2: return [4 /*yield*/, FsUtil_1.fsUtil.checkSrcDirectory()];
-                        case 3:
-                            hasSrcDir = _b.sent();
-                            if (!hasSrcDir) return [3 /*break*/, 5];
-                            return [4 /*yield*/, FsUtil_1.fsUtil.checkComponentsDirectory()];
+                            _b.label = 3;
+                        case 3: return [3 /*break*/, 5];
                         case 4:
+                            e_1 = _b.sent();
+                            return [3 /*break*/, 5];
+                        case 5: return [4 /*yield*/, FsUtil_1.fsUtil.checkSrcDirectory()];
+                        case 6:
+                            hasSrcDir = _b.sent();
+                            if (!hasSrcDir) return [3 /*break*/, 8];
+                            return [4 /*yield*/, FsUtil_1.fsUtil.checkComponentsDirectory()];
+                        case 7:
                             hasComponentsDir = _b.sent();
                             if (!hasComponentsDir) {
                                 FsUtil_1.fsUtil.createComponentsDirectory();
                             }
-                            return [3 /*break*/, 6];
-                        case 5:
+                            return [3 /*break*/, 9];
+                        case 8:
                             FsUtil_1.fsUtil.createSrcDirectory();
                             FsUtil_1.fsUtil.createComponentsDirectory();
-                            _b.label = 6;
-                        case 6:
+                            _b.label = 9;
+                        case 9:
                             this.directory = path_1.default.join(shelljs_1.default.pwd().stdout, 'src', 'components', this.name);
                             this.message += " in \"" + this.directory + "\"";
                             Terminal_1.terminal.navigateTo(['src', 'components']);
                             return [4 /*yield*/, this.create()];
-                        case 7:
+                        case 10:
                             _b.sent();
                             return [2 /*return*/];
                     }

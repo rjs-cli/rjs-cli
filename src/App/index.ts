@@ -20,6 +20,7 @@ import { fsUtil } from '../FsUtil';
 import { terminal } from '../Terminal';
 import { store } from '../Store';
 import { repo } from '../utils';
+import shell from 'shelljs';
 
 interface CreateReactAppOptions {
   useTypescript: boolean;
@@ -174,17 +175,13 @@ export class App {
       console.info(`${EOL}executing : ${cyan(`${command}`)}`);
       console.log(`Sit back and relax we're taking care of everything ! 😁`);
 
-      //TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
-      //TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
-      //TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
-      //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
-      //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
-
       terminal.executeCommand(command);
 
       const { code } = terminal.navigateTo([this.appName]);
       if (code) {
-        console.error(`An error occured, seems like the folder ${this.appName} doesn't exist.`);
+        terminal.errorMessage(
+          `An error occured, seems like the folder ${this.appName} doesn't exist.`,
+        );
         process.exit(code);
       }
 
@@ -258,12 +255,6 @@ export class App {
 
     if (command !== BASE_COMMAND) {
       console.log(EOL + command);
-
-      // TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
-      // TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
-      // TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
-      // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
-      // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
 
       terminal.executeCommand(command);
     }

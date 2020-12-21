@@ -145,26 +145,32 @@ var FsUtil = /** @class */ (function () {
             });
         }); };
         this.doesDirectoryExist = function (name, directory) { return __awaiter(_this, void 0, void 0, function () {
-            var dirContent, regexMatch, regex, _i, dirContent_1, item, e_2;
+            var dirContent_2, regexMatch, regex, _i, dirContent_1, item, e_2, dirContent;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, promises_1.readdir(directory !== null && directory !== void 0 ? directory : process.cwd())];
+                        if (!directory) return [3 /*break*/, 4];
+                        _a.label = 1;
                     case 1:
-                        dirContent = _a.sent();
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, promises_1.readdir(directory)];
+                    case 2:
+                        dirContent_2 = _a.sent();
                         regexMatch = false;
                         regex = new RegExp(name, 'gi');
-                        for (_i = 0, dirContent_1 = dirContent; _i < dirContent_1.length; _i++) {
+                        for (_i = 0, dirContent_1 = dirContent_2; _i < dirContent_1.length; _i++) {
                             item = dirContent_1[_i];
                             if (item.match(regex))
                                 regexMatch = true;
                         }
                         return [2 /*return*/, regexMatch];
-                    case 2:
+                    case 3:
                         e_2 = _a.sent();
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [2 /*return*/, false];
+                    case 4: return [4 /*yield*/, promises_1.readdir(process.cwd())];
+                    case 5:
+                        dirContent = _a.sent();
+                        return [2 /*return*/, dirContent.includes(name)];
                 }
             });
         }); };

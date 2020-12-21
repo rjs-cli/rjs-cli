@@ -45,39 +45,41 @@ export class Component {
       styleExtension ? ` with ${this.useStyles} ${modules}` : ''
     }`;
 
-    if (this.directory) {
-      let dirPath;
+    try {
+      if (this.directory) {
+        let dirPath;
 
-      if (this.directory === '.') {
-        this.message += ` in ${process.cwd()}`;
-        dirPath = `${process.cwd()}`;
-        const separatorRegexp = new RegExp(/[\/ | \\]/, 'g');
-        const splitPath = dirPath.split(separatorRegexp);
+        if (this.directory === '.') {
+          this.message += ` in ${process.cwd()}`;
+          dirPath = `${process.cwd()}`;
+          const separatorRegexp = new RegExp(/[\/ | \\]/, 'g');
+          const splitPath = dirPath.split(separatorRegexp);
 
-        if (splitPath[splitPath.length - 1] === 'src') {
+          if (splitPath[splitPath.length - 1] === 'src') {
+            terminal.errorMessage(
+              `Cannot create component files in src directory. You must be inside a directory.
+              ${os.EOL}Please navigate inside one or specify a directory name. ${os.EOL}    example: rjs gc <name> [directory] [options]
+              `,
+            );
+            process.exit(1);
+          }
+        } else {
+          this.message += ` in ${process.cwd()}/${this.directory}`;
+          dirPath = path.join(process.cwd(), this.directory);
+        }
+
+        if (!dirPath.includes('src')) {
           terminal.errorMessage(
-            `Cannot create component files in src directory. You must be inside a directory.
-            ${os.EOL}Please navigate inside one or specify a directory name. ${os.EOL}    example: rjs gc <name> [directory] [options]
-            `,
+            "You're not in the src directory of your app, cannot create components outside of src.",
           );
           process.exit(1);
         }
-      } else {
-        this.message += ` in ${process.cwd()}/${this.directory}`;
-        dirPath = path.join(process.cwd(), this.directory);
+
+        await this.create(dirPath);
+
+        process.exit(0);
       }
-
-      if (!dirPath.includes('src')) {
-        terminal.errorMessage(
-          "You're not in the src directory of your app, cannot create components outside of src.",
-        );
-        process.exit(1);
-      }
-
-      await this.create(dirPath);
-
-      process.exit(0);
-    }
+    } catch (e) {}
 
     const hasSrcDir = await fsUtil.checkSrcDirectory();
 

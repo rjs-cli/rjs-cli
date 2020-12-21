@@ -81,18 +81,26 @@ class FsUtil {
   };
 
   doesDirectoryExist = async (name: string, directory?: string) => {
-    try {
-      const dirContent = await readdir(directory ?? process.cwd());
+    if (directory) {
+      try {
+        const dirContent = await readdir(directory);
 
-      let regexMatch = false;
-      const regex = new RegExp(name, 'gi');
+        let regexMatch = false;
+        const regex = new RegExp(name, 'gi');
 
-      for (const item of dirContent) {
-        if (item.match(regex)) regexMatch = true;
+        for (const item of dirContent) {
+          if (item.match(regex)) regexMatch = true;
+        }
+
+        return regexMatch;
+      } catch (e) {
+        return false;
       }
+    }
 
-      return regexMatch;
-    } catch (e) {}
+    const dirContent = await readdir(process.cwd());
+
+    return dirContent.includes(name);
   };
 
   createDirectory = (dirname: string) => shell.mkdir('-p', dirname);

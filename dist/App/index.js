@@ -170,15 +170,10 @@ var App = /** @class */ (function () {
                             }
                             console.info(os_1.EOL + "executing : " + chalk_1.cyan("" + command));
                             console.log("Sit back and relax we're taking care of everything ! \uD83D\uDE01");
-                            //TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
-                            //TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
-                            //TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
-                            //TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
-                            //TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
                             Terminal_1.terminal.executeCommand(command);
                             code = Terminal_1.terminal.navigateTo([this.appName]).code;
                             if (code) {
-                                console.error("An error occured, seems like the folder " + this.appName + " doesn't exist.");
+                                Terminal_1.terminal.errorMessage("An error occured, seems like the folder " + this.appName + " doesn't exist.");
                                 process.exit(code);
                             }
                             return [4 /*yield*/, this.createTemplates()];
@@ -259,11 +254,6 @@ var App = /** @class */ (function () {
                         }
                         if (command !== BASE_COMMAND) {
                             console.log(os_1.EOL + command);
-                            // TODO  _   _ _   _  ____ ___  __  __ __  __ _____ _   _ _____   ____  _____ _____ ___  ____  _____   ____  _____ _     _____    _    ____  _____
-                            // TODO | | | | \ | |/ ___/ _ \|  \/  |  \/  | ____| \ | |_   _| | __ )| ____|  ___/ _ \|  _ \| ____| |  _ \| ____| |   | ____|  / \  / ___|| ____|
-                            // TODO | | | |  \| | |  | | | | |\/| | |\/| |  _| |  \| | | |   |  _ \|  _| | |_ | | | | |_) |  _|   | |_) |  _| | |   |  _|   / _ \ \___ \|  _|
-                            // TODO | |_| | |\  | |__| |_| | |  | | |  | | |___| |\  | | |   | |_) | |___|  _|| |_| |  _ <| |___  |  _ <| |___| |___| |___ / ___ \ ___) | |___
-                            // TODO  \___/|_| \_|\____\___/|_|  |_|_|  |_|_____|_| \_| |_|   |____/|_____|_|   \___/|_| \_\_____| |_| \_\_____|_____|_____/_/   \_\____/|_____|
                             Terminal_1.terminal.executeCommand(command);
                         }
                         return [2 /*return*/];
