@@ -40,20 +40,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fsUtil = void 0;
+var os_1 = require("os");
 var promises_1 = require("fs/promises");
 var shelljs_1 = __importDefault(require("shelljs"));
+var Terminal_1 = require("../Terminal");
 var FsUtil = /** @class */ (function () {
     function FsUtil() {
         var _this = this;
         this.goToRootDir = function () { return __awaiter(_this, void 0, void 0, function () {
-            var path, hasPackageJson, timeout, dirContent;
+            var path, hasPackageJson_1, timeout, dirContent, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        _a.trys.push([0, 5, , 6]);
                         path = shelljs_1.default.pwd().stdout;
-                        hasPackageJson = false;
+                        hasPackageJson_1 = false;
                         timeout = setTimeout(function () {
-                            if (!hasPackageJson) {
+                            if (!hasPackageJson_1) {
                                 console.log('Could not find a package.json... Are you in the right directory ?');
                                 process.exit(1);
                             }
@@ -62,18 +65,24 @@ var FsUtil = /** @class */ (function () {
                     case 1: return [4 /*yield*/, promises_1.readdir(path)];
                     case 2:
                         dirContent = _a.sent();
-                        hasPackageJson = dirContent.includes('package.json');
-                        if (hasPackageJson) {
+                        hasPackageJson_1 = dirContent.includes('package.json');
+                        if (hasPackageJson_1) {
                             clearTimeout(timeout);
                             return [3 /*break*/, 4];
                         }
-                        shelljs_1.default.cd('../');
+                        Terminal_1.terminal.navigateTo(['..']);
                         path = shelljs_1.default.pwd().stdout;
                         _a.label = 3;
                     case 3:
                         if (true) return [3 /*break*/, 1];
                         _a.label = 4;
-                    case 4: return [2 /*return*/];
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
+                        e_1 = _a.sent();
+                        Terminal_1.terminal.errorMessage(os_1.EOL + "Looks like the directory you're currently in does not exist anymore, please retry in a valid directory" + os_1.EOL);
+                        process.exit(1);
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
@@ -129,24 +138,37 @@ var FsUtil = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.doesDirectoryExist(name, directory)];
                     case 1:
                         if (!(_a.sent())) {
-                            this.createDirectory(name);
+                            this.createDirectory(directory !== null && directory !== void 0 ? directory : name);
                         }
                         return [2 /*return*/];
                 }
             });
         }); };
         this.doesDirectoryExist = function (name, directory) { return __awaiter(_this, void 0, void 0, function () {
-            var response;
+            var dirContent, regexMatch, regex, _i, dirContent_1, item, e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, promises_1.readdir(directory !== null && directory !== void 0 ? directory : process.cwd())];
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, promises_1.readdir(directory !== null && directory !== void 0 ? directory : process.cwd())];
                     case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, response.includes(name)];
+                        dirContent = _a.sent();
+                        regexMatch = false;
+                        regex = new RegExp(name, 'gi');
+                        for (_i = 0, dirContent_1 = dirContent; _i < dirContent_1.length; _i++) {
+                            item = dirContent_1[_i];
+                            if (item.match(regex))
+                                regexMatch = true;
+                        }
+                        return [2 /*return*/, regexMatch];
+                    case 2:
+                        e_2 = _a.sent();
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         }); };
-        this.createDirectory = function (dirname) { return shelljs_1.default.mkdir(dirname); };
+        this.createDirectory = function (dirname) { return shelljs_1.default.mkdir('-p', dirname); };
         this.removeFiles = function (files) { return __awaiter(_this, void 0, void 0, function () {
             var _i, files_1, file, currentDirContent;
             return __generator(this, function (_a) {

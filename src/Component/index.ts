@@ -1,4 +1,5 @@
 import path from 'path';
+import os from 'os';
 import shell from 'shelljs';
 import { createClassComponentTemplate, createFunctionalComponentTemplate } from '../templates';
 import { fsUtil } from '../FsUtil';
@@ -27,35 +28,53 @@ export class Component {
   ) => {
     this.name = componentName;
     this.directory = componentDir;
-    if (['css', 'scss'].includes(useStyles)) {
-      this.useStyles = useStyles;
-    }
-
     this.useTypescript = useTypescript;
     this.isClassBased = isClassBased;
     this.useModules = useModules;
 
-    this.message = `Generating ${this.name} component`;
-    if (this.useTypescript) {
-      this.message += ' with typescript';
+    if (['css', 'scss'].includes(useStyles)) {
+      this.useStyles = useStyles;
     }
 
-    if (this.useStyles && ['css', 'scss'].includes(this.useStyles)) {
-      if (this.useTypescript) {
-        this.message += ' and';
-      }
-      this.message += ` ${this.useStyles}`;
-    }
+    const scriptType = this.useTypescript ? 'typescript' : 'javascript';
+    const styleExtension = this.useStyles && ['css', 'scss'].includes(this.useStyles);
+    const modules = this.useModules ? 'modules' : '';
+    const componentType = this.isClassBased ? 'class' : 'functionnal';
+
+    this.message = `Generating ${scriptType} ${componentType} component ${this.name}${
+      styleExtension ? ` with ${this.useStyles} ${modules}` : ''
+    }`;
 
     if (this.directory) {
-      await this.checkExistence();
+      let dirPath;
 
-      // todo create component
       if (this.directory === '.') {
-        console.info(`${this.message} in ${shell.pwd()}/`);
+        this.message += ` in ${process.cwd()}`;
+        dirPath = `${process.cwd()}`;
+        const separatorRegexp = new RegExp(/[\/ | \\]/, 'g');
+        const splitPath = dirPath.split(separatorRegexp);
+
+        if (splitPath[splitPath.length - 1] === 'src') {
+          terminal.errorMessage(
+            `Cannot create component files in src directory. You must be inside a directory.
+            ${os.EOL}Please navigate inside one or specify a directory name. ${os.EOL}    example: rjs gc <name> [directory] [options]
+            `,
+          );
+          process.exit(1);
+        }
       } else {
-        console.info(`${this.message} in ${shell.pwd()}/${this.directory}`);
+        this.message += ` in ${process.cwd()}/${this.directory}`;
+        dirPath = path.join(process.cwd(), this.directory);
       }
+
+      if (!dirPath.includes('src')) {
+        terminal.errorMessage(
+          "You're not in the src directory of your app, cannot create components outside of src.",
+        );
+        process.exit(1);
+      }
+
+      await this.create(dirPath);
 
       process.exit(0);
     }
@@ -73,40 +92,47 @@ export class Component {
       fsUtil.createComponentsDirectory();
     }
 
-    this.directory = `${shell.pwd()}/src/components/${this.name}`;
+    this.directory = path.join(shell.pwd().stdout, 'src', 'components', this.name);
     this.message += ` in "${this.directory}"`;
 
-    shell.cd(path.join('src', 'components'));
+    terminal.navigateTo(['src', 'components']);
+
     await this.create();
   };
 
-  checkExistence = async () => {
-    const alreadyExists = await fsUtil.doesDirectoryExist(this.name);
+  checkExistence = async (dirPath?: string) => {
+    const alreadyExists = await fsUtil.doesDirectoryExist(this.name, dirPath);
 
     if (alreadyExists) {
-      console.error('This component already exists, please choose a different name.');
+      terminal.errorMessage(`This component already exists, please choose a different name.`);
+
       process.exit(1);
     }
   };
 
-  create = async () => {
-    await this.checkExistence();
+  create = async (dirPath?: string) => {
+    await this.checkExistence(dirPath);
 
-    console.info(`${this.message}...`);
+    terminal.successMessage(`${this.message}...`);
 
-    shell.mkdir(this.name);
-    shell.cd(this.name);
+    if (!dirPath) {
+      await fsUtil.createDirIfNotExists(this.name);
+      terminal.navigateTo([this.name]);
+    } else if (dirPath !== '.') {
+      await fsUtil.createDirIfNotExists(this.name, this.directory);
+      terminal.navigateTo([dirPath]);
+    }
 
     if (this.useStyles) {
-      this.createStyles();
+      await this.createStyles();
     }
 
     const filename = this.useTypescript ? `${this.name}.tsx` : `${this.name}.js`;
 
-    fsUtil.writeFile(filename, this.createTemplate());
+    await fsUtil.writeFile(filename, this.createTemplate());
   };
 
-  createStyles = () => {
+  createStyles = async () => {
     const extension = this.useStyles;
     let file;
 
@@ -114,7 +140,7 @@ export class Component {
       ? (file = `${this.name}.module.${extension}`)
       : (file = `${this.name}.${extension}`);
 
-    shell.touch(file);
+    await fsUtil.writeFile(file, `.${this.name} {}`);
   };
 
   createTemplate = () => {

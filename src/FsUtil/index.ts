@@ -1,30 +1,39 @@
+import { EOL } from 'os';
 import { readdir, appendFile } from 'fs/promises';
 import shell from 'shelljs';
 import { terminal } from '../Terminal';
 
 class FsUtil {
   goToRootDir = async () => {
-    let path = shell.pwd().stdout;
-    let hasPackageJson = false;
-    const timeout = setTimeout(() => {
-      if (!hasPackageJson) {
-        console.log('Could not find a package.json... Are you in the right directory ?');
+    try {
+      let path = shell.pwd().stdout;
 
-        process.exit(1);
-      }
-    }, 40);
-    do {
-      const dirContent = await readdir(path);
+      let hasPackageJson = false;
+      const timeout = setTimeout(() => {
+        if (!hasPackageJson) {
+          console.log('Could not find a package.json... Are you in the right directory ?');
 
-      hasPackageJson = dirContent.includes('package.json');
-      if (hasPackageJson) {
-        clearTimeout(timeout);
-        break;
-      }
+          process.exit(1);
+        }
+      }, 40);
+      do {
+        const dirContent = await readdir(path);
 
-      shell.cd('../');
-      path = shell.pwd().stdout;
-    } while (true);
+        hasPackageJson = dirContent.includes('package.json');
+        if (hasPackageJson) {
+          clearTimeout(timeout);
+          break;
+        }
+
+        terminal.navigateTo(['..']);
+        path = shell.pwd().stdout;
+      } while (true);
+    } catch (e) {
+      terminal.errorMessage(
+        `${EOL}Looks like the directory you're currently in does not exist anymore, please retry in a valid directory${EOL}`,
+      );
+      process.exit(1);
+    }
 
     // const splitPath = path.split('/');
     // return splitPath[splitPath.length - 1];
@@ -32,6 +41,7 @@ class FsUtil {
 
   checkSrcDirectory = async () => {
     await this.goToRootDir();
+
     const appDir = shell.pwd().stdout;
 
     const dirContent = await readdir(appDir);
@@ -66,17 +76,26 @@ class FsUtil {
 
   createDirIfNotExists = async (name: string, directory?: string) => {
     if (!(await this.doesDirectoryExist(name, directory))) {
-      this.createDirectory(name);
+      this.createDirectory(directory ?? name);
     }
   };
 
   doesDirectoryExist = async (name: string, directory?: string) => {
-    const response = await readdir(directory ?? process.cwd());
+    try {
+      const dirContent = await readdir(directory ?? process.cwd());
 
-    return response.includes(name);
+      let regexMatch = false;
+      const regex = new RegExp(name, 'gi');
+
+      for (const item of dirContent) {
+        if (item.match(regex)) regexMatch = true;
+      }
+
+      return regexMatch;
+    } catch (e) {}
   };
 
-  createDirectory = (dirname: string) => shell.mkdir(dirname);
+  createDirectory = (dirname: string) => shell.mkdir('-p', dirname);
 
   removeFiles = async (files: string[]) => {
     for (const file of files) {
