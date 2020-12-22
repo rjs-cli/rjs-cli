@@ -23,13 +23,14 @@ program
 
 program
   .command('generate-component <name> [dir]')
-  .alias("gc")
+  .alias('gc')
   .description('Generates a component with a <name> and an optionnal [dir]')
-  .option('-t, --use-typescript', 'Generates a component with typescript')
-  .option('-c, --is-class-based', 'Generates a class based component', false)
+  .option('-t, --use-typescript', 'Generates a component with typescript', false)
+  .option('-c, --class', 'Generates a class based component', false)
   .option(
-    '-s, --use-styles <type>',
-    'Generates a componente with a stylesheet associated with [type] = css | scss',
+    '-s, --with-styles <type>',
+    'Generates a componente with a stylesheet associated with <type> = css | scss',
+    false,
   )
   .option('-m, --use-modules', 'Wheter or not to use the so called css modules', false)
   .action(component.generate);

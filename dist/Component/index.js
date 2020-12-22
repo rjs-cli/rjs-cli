@@ -51,13 +51,13 @@ var Component = /** @class */ (function () {
         var _this = this;
         this.name = '';
         this.directory = '';
-        this.useStyles = null;
+        this.withStyles = null;
         this.useTypescript = false;
         this.useModules = false;
         this.isClassBased = false;
         this.message = '';
         this.generate = function (componentName, componentDir, _a) {
-            var useStyles = _a.useStyles, useTypescript = _a.useTypescript, isClassBased = _a.isClassBased, useModules = _a.useModules;
+            var withStyles = _a.withStyles, useTypescript = _a.useTypescript, isClassBased = _a.class, useModules = _a.useModules;
             return __awaiter(_this, void 0, void 0, function () {
                 var scriptType, styleExtension, modules, componentType, dirPath, separatorRegexp, splitPath, e_1, hasSrcDir, hasComponentsDir;
                 return __generator(this, function (_b) {
@@ -68,14 +68,14 @@ var Component = /** @class */ (function () {
                             this.useTypescript = useTypescript;
                             this.isClassBased = isClassBased;
                             this.useModules = useModules;
-                            if (['css', 'scss'].includes(useStyles)) {
-                                this.useStyles = useStyles;
+                            if (['css', 'scss'].includes(withStyles)) {
+                                this.withStyles = withStyles;
                             }
                             scriptType = this.useTypescript ? 'typescript' : 'javascript';
-                            styleExtension = this.useStyles && ['css', 'scss'].includes(this.useStyles);
+                            styleExtension = this.withStyles && ['css', 'scss'].includes(this.withStyles);
                             modules = this.useModules ? 'modules' : '';
                             componentType = this.isClassBased ? 'class' : 'functionnal';
-                            this.message = "Generating " + scriptType + " " + componentType + " component " + this.name + (styleExtension ? " with " + this.useStyles + " " + modules : '');
+                            this.message = "Generating " + scriptType + " " + componentType + " component " + this.name + (styleExtension ? " with " + this.withStyles + " " + modules : '');
                             _b.label = 1;
                         case 1:
                             _b.trys.push([1, 4, , 5]);
@@ -87,7 +87,7 @@ var Component = /** @class */ (function () {
                                 separatorRegexp = new RegExp(/[\/ | \\]/, 'g');
                                 splitPath = dirPath.split(separatorRegexp);
                                 if (splitPath[splitPath.length - 1] === 'src') {
-                                    Terminal_1.terminal.errorMessage("Cannot create component files in src directory. You must be inside a directory.\n              " + os_1.default.EOL + "Please navigate inside one or specify a directory name. " + os_1.default.EOL + "    example: rjs gc <name> [directory] [options]\n              ");
+                                    Terminal_1.Terminal.errorMessage("Cannot create component files in src directory. You must be inside a directory.\n              " + os_1.default.EOL + "Please navigate inside one or specify a directory name. " + os_1.default.EOL + "    example: rjs gc <name> [directory] [options]\n              ");
                                     process.exit(1);
                                 }
                             }
@@ -96,7 +96,7 @@ var Component = /** @class */ (function () {
                                 dirPath = path_1.default.join(process.cwd(), this.directory);
                             }
                             if (!dirPath.includes('src')) {
-                                Terminal_1.terminal.errorMessage("You're not in the src directory of your app, cannot create components outside of src.");
+                                Terminal_1.Terminal.errorMessage("You're not in the src directory of your app, cannot create components outside of src.");
                                 process.exit(1);
                             }
                             return [4 /*yield*/, this.create(dirPath)];
@@ -126,7 +126,7 @@ var Component = /** @class */ (function () {
                         case 9:
                             this.directory = path_1.default.join(shelljs_1.default.pwd().stdout, 'src', 'components', this.name);
                             this.message += " in \"" + this.directory + "\"";
-                            Terminal_1.terminal.navigateTo(['src', 'components']);
+                            Terminal_1.Terminal.navigateTo(['src', 'components']);
                             return [4 /*yield*/, this.create()];
                         case 10:
                             _b.sent();
@@ -143,7 +143,7 @@ var Component = /** @class */ (function () {
                     case 1:
                         alreadyExists = _a.sent();
                         if (alreadyExists) {
-                            Terminal_1.terminal.errorMessage("This component already exists, please choose a different name.");
+                            Terminal_1.Terminal.errorMessage("This component already exists, please choose a different name.");
                             process.exit(1);
                         }
                         return [2 /*return*/];
@@ -157,22 +157,22 @@ var Component = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.checkExistence(dirPath)];
                     case 1:
                         _a.sent();
-                        Terminal_1.terminal.successMessage(this.message + "...");
+                        Terminal_1.Terminal.successMessage(this.message + "...");
                         if (!!dirPath) return [3 /*break*/, 3];
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists(this.name)];
                     case 2:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo([this.name]);
+                        Terminal_1.Terminal.navigateTo([this.name]);
                         return [3 /*break*/, 5];
                     case 3:
                         if (!(dirPath !== '.')) return [3 /*break*/, 5];
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists(this.name, this.directory)];
                     case 4:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo([dirPath]);
+                        Terminal_1.Terminal.navigateTo([dirPath]);
                         _a.label = 5;
                     case 5:
-                        if (!this.useStyles) return [3 /*break*/, 7];
+                        if (!this.withStyles) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.createStyles()];
                     case 6:
                         _a.sent();
@@ -191,7 +191,7 @@ var Component = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        extension = this.useStyles;
+                        extension = this.withStyles;
                         this.useModules
                             ? (file = this.name + ".module." + extension)
                             : (file = this.name + "." + extension);
@@ -203,7 +203,7 @@ var Component = /** @class */ (function () {
             });
         }); };
         this.createTemplate = function () {
-            var _a = _this, componentName = _a.name, styleExtension = _a.useStyles, useModules = _a.useModules, useTypescript = _a.useTypescript, isClassBased = _a.isClassBased;
+            var _a = _this, componentName = _a.name, styleExtension = _a.withStyles, useModules = _a.useModules, useTypescript = _a.useTypescript, isClassBased = _a.isClassBased;
             var template;
             if (isClassBased) {
                 template = templates_1.createClassComponentTemplate({

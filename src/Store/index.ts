@@ -1,10 +1,10 @@
 import { fsUtil } from '../FsUtil';
-import { terminal } from '../Terminal';
+import { Terminal } from '../Terminal';
 
 export class Store {
   create = async () => {
     await fsUtil.createDirIfNotExists('store');
-    terminal.navigateTo(['store']);
+    Terminal.navigateTo(['store']);
     await fsUtil.createDirIfNotExists('actions');
     await fsUtil.createDirIfNotExists('middlewares');
     await fsUtil.createDirIfNotExists('reducers');

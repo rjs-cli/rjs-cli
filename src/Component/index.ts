@@ -3,19 +3,19 @@ import os from 'os';
 import shell from 'shelljs';
 import { createClassComponentTemplate, createFunctionalComponentTemplate } from '../templates';
 import { fsUtil } from '../FsUtil';
-import { terminal } from '../Terminal';
+import { Terminal } from '../Terminal';
 
 interface GenerateComponentOptions {
-  useStyles: 'css' | 'scss';
+  withStyles: 'css' | 'scss';
   useTypescript: boolean;
   useModules: boolean;
-  isClassBased: boolean;
+  class: boolean;
 }
 
 export class Component {
   name: string = '';
   directory: string = '';
-  useStyles: 'css' | 'scss' | null = null;
+  withStyles: 'css' | 'scss' | null = null;
   useTypescript: boolean = false;
   useModules: boolean = false;
   isClassBased: boolean = false;
@@ -24,7 +24,7 @@ export class Component {
   generate = async (
     componentName: string,
     componentDir: string,
-    { useStyles, useTypescript, isClassBased, useModules }: GenerateComponentOptions,
+    { withStyles, useTypescript, class: isClassBased, useModules }: GenerateComponentOptions,
   ) => {
     this.name = componentName;
     this.directory = componentDir;
@@ -32,17 +32,17 @@ export class Component {
     this.isClassBased = isClassBased;
     this.useModules = useModules;
 
-    if (['css', 'scss'].includes(useStyles)) {
-      this.useStyles = useStyles;
+    if (['css', 'scss'].includes(withStyles)) {
+      this.withStyles = withStyles;
     }
 
     const scriptType = this.useTypescript ? 'typescript' : 'javascript';
-    const styleExtension = this.useStyles && ['css', 'scss'].includes(this.useStyles);
+    const styleExtension = this.withStyles && ['css', 'scss'].includes(this.withStyles);
     const modules = this.useModules ? 'modules' : '';
     const componentType = this.isClassBased ? 'class' : 'functionnal';
 
     this.message = `Generating ${scriptType} ${componentType} component ${this.name}${
-      styleExtension ? ` with ${this.useStyles} ${modules}` : ''
+      styleExtension ? ` with ${this.withStyles} ${modules}` : ''
     }`;
 
     try {
@@ -56,7 +56,7 @@ export class Component {
           const splitPath = dirPath.split(separatorRegexp);
 
           if (splitPath[splitPath.length - 1] === 'src') {
-            terminal.errorMessage(
+            Terminal.errorMessage(
               `Cannot create component files in src directory. You must be inside a directory.
               ${os.EOL}Please navigate inside one or specify a directory name. ${os.EOL}    example: rjs gc <name> [directory] [options]
               `,
@@ -69,7 +69,7 @@ export class Component {
         }
 
         if (!dirPath.includes('src')) {
-          terminal.errorMessage(
+          Terminal.errorMessage(
             "You're not in the src directory of your app, cannot create components outside of src.",
           );
           process.exit(1);
@@ -97,7 +97,7 @@ export class Component {
     this.directory = path.join(shell.pwd().stdout, 'src', 'components', this.name);
     this.message += ` in "${this.directory}"`;
 
-    terminal.navigateTo(['src', 'components']);
+    Terminal.navigateTo(['src', 'components']);
 
     await this.create();
   };
@@ -106,7 +106,7 @@ export class Component {
     const alreadyExists = await fsUtil.doesDirectoryExist(this.name, dirPath);
 
     if (alreadyExists) {
-      terminal.errorMessage(`This component already exists, please choose a different name.`);
+      Terminal.errorMessage(`This component already exists, please choose a different name.`);
 
       process.exit(1);
     }
@@ -115,17 +115,17 @@ export class Component {
   create = async (dirPath?: string) => {
     await this.checkExistence(dirPath);
 
-    terminal.successMessage(`${this.message}...`);
+    Terminal.successMessage(`${this.message}...`);
 
     if (!dirPath) {
       await fsUtil.createDirIfNotExists(this.name);
-      terminal.navigateTo([this.name]);
+      Terminal.navigateTo([this.name]);
     } else if (dirPath !== '.') {
       await fsUtil.createDirIfNotExists(this.name, this.directory);
-      terminal.navigateTo([dirPath]);
+      Terminal.navigateTo([dirPath]);
     }
 
-    if (this.useStyles) {
+    if (this.withStyles) {
       await this.createStyles();
     }
 
@@ -135,7 +135,7 @@ export class Component {
   };
 
   createStyles = async () => {
-    const extension = this.useStyles;
+    const extension = this.withStyles;
     let file;
 
     this.useModules
@@ -148,7 +148,7 @@ export class Component {
   createTemplate = () => {
     const {
       name: componentName,
-      useStyles: styleExtension,
+      withStyles: styleExtension,
       useModules,
       useTypescript,
       isClassBased,

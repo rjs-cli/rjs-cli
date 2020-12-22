@@ -70,7 +70,7 @@ var FsUtil = /** @class */ (function () {
                             clearTimeout(timeout);
                             return [3 /*break*/, 4];
                         }
-                        Terminal_1.terminal.navigateTo(['..']);
+                        Terminal_1.Terminal.navigateTo(['..']);
                         path = shelljs_1.default.pwd().stdout;
                         _a.label = 3;
                     case 3:
@@ -79,7 +79,7 @@ var FsUtil = /** @class */ (function () {
                     case 4: return [3 /*break*/, 6];
                     case 5:
                         e_1 = _a.sent();
-                        Terminal_1.terminal.errorMessage(os_1.EOL + "Looks like the directory you're currently in does not exist anymore, please retry in a valid directory" + os_1.EOL);
+                        Terminal_1.Terminal.errorMessage(os_1.EOL + "Looks like the directory you're currently in does not exist anymore, please retry in a valid directory" + os_1.EOL);
                         process.exit(1);
                         return [3 /*break*/, 6];
                     case 6: return [2 /*return*/];

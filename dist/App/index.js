@@ -170,10 +170,10 @@ var App = /** @class */ (function () {
                             }
                             console.info(os_1.EOL + "executing : " + chalk_1.cyan("" + command));
                             console.log("Sit back and relax we're taking care of everything ! \uD83D\uDE01");
-                            Terminal_1.terminal.executeCommand(command);
-                            code = Terminal_1.terminal.navigateTo([this.appName]).code;
+                            Terminal_1.Terminal.executeCommand(command);
+                            code = Terminal_1.Terminal.navigateTo([this.appName]).code;
                             if (code) {
-                                Terminal_1.terminal.errorMessage("An error occured, seems like the folder " + this.appName + " doesn't exist.");
+                                Terminal_1.Terminal.errorMessage("An error occured, seems like the folder " + this.appName + " doesn't exist.");
                                 process.exit(code);
                             }
                             return [4 /*yield*/, this.createTemplates()];
@@ -254,7 +254,7 @@ var App = /** @class */ (function () {
                         }
                         if (command !== BASE_COMMAND) {
                             console.log(os_1.EOL + command);
-                            Terminal_1.terminal.executeCommand(command);
+                            Terminal_1.Terminal.executeCommand(command);
                         }
                         return [2 /*return*/];
                 }
@@ -271,7 +271,7 @@ var App = /** @class */ (function () {
                     case 1:
                         if (!_b.sent()) return [3 /*break*/, 4];
                         // Removes the cra templates for App and index
-                        Terminal_1.terminal.navigateTo(['src']);
+                        Terminal_1.Terminal.navigateTo(['src']);
                         return [4 /*yield*/, FsUtil_1.fsUtil.removeFilesFromRegexp(/\b(App|index)\b\.([test\.]{5})?[jtscx]{2,3}/gi)];
                     case 2:
                         _b.sent();
@@ -293,7 +293,7 @@ var App = /** @class */ (function () {
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('App')];
                     case 3:
                         _b.sent();
-                        Terminal_1.terminal.navigateTo(['App']);
+                        Terminal_1.Terminal.navigateTo(['App']);
                         this.createTemplate({ name: 'App', template: appTemplate, type: 'script' });
                         this.createTemplate({
                             name: 'App',
@@ -307,7 +307,7 @@ var App = /** @class */ (function () {
                             type: 'style',
                         });
                         // this will put you back in "src"
-                        Terminal_1.terminal.goBack(1);
+                        Terminal_1.Terminal.goBack(1);
                         return [3 /*break*/, 5];
                     case 4:
                         console.error(os_1.EOL + "No src directory found. Seems like something went wrong while creating your app.");
@@ -345,14 +345,14 @@ var App = /** @class */ (function () {
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('assets')];
                     case 1:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo(['assets']);
+                        Terminal_1.Terminal.navigateTo(['assets']);
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('images')];
                     case 2:
                         _a.sent();
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists(styleFolder)];
                     case 3:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo([styleFolder]);
+                        Terminal_1.Terminal.navigateTo([styleFolder]);
                         this.createTemplate({
                             name: 'index',
                             template: indexStyleTemplate,
@@ -369,7 +369,7 @@ var App = /** @class */ (function () {
                             module: false,
                         });
                         // This will put you back in "src"
-                        Terminal_1.terminal.goBack(2);
+                        Terminal_1.Terminal.goBack(2);
                         return [2 /*return*/];
                 }
             });
@@ -389,7 +389,7 @@ var App = /** @class */ (function () {
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('middlewares')];
                     case 2:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo(['middlewares']);
+                        Terminal_1.Terminal.navigateTo(['middlewares']);
                         this.createTemplate({
                             name: 'middleware.template',
                             type: 'script',
@@ -402,11 +402,11 @@ var App = /** @class */ (function () {
                             scriptExtension: this.useTypescript ? 'ts' : 'js',
                             template: "export { templateMiddleware } from './middleware.template'",
                         });
-                        Terminal_1.terminal.goBack(1);
+                        Terminal_1.Terminal.goBack(1);
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('reducers')];
                     case 3:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo(['reducers']);
+                        Terminal_1.Terminal.navigateTo(['reducers']);
                         this.createTemplate({
                             name: 'reducer.template',
                             type: 'script',
@@ -419,9 +419,9 @@ var App = /** @class */ (function () {
                             scriptExtension: this.useTypescript ? 'ts' : 'js',
                             template: templates_1.createRootReducerTemplate(this.useTypescript),
                         });
-                        Terminal_1.terminal.goBack(1);
+                        Terminal_1.Terminal.goBack(1);
                         FsUtil_1.fsUtil.createDirIfNotExists('actions');
-                        Terminal_1.terminal.navigateTo(['actions']);
+                        Terminal_1.Terminal.navigateTo(['actions']);
                         this.createTemplate({
                             name: 'actions.template',
                             type: 'script',
@@ -435,7 +435,7 @@ var App = /** @class */ (function () {
                             template: "export * as actionsTemplate from './actions.template'",
                         });
                         // this will put you back in "src"
-                        Terminal_1.terminal.goBack(2);
+                        Terminal_1.Terminal.goBack(2);
                         return [2 /*return*/];
                 }
             });
@@ -446,11 +446,11 @@ var App = /** @class */ (function () {
                     case 0: return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('containers')];
                     case 1:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo(['containers']);
+                        Terminal_1.Terminal.navigateTo(['containers']);
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('App')];
                     case 2:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo(['App']);
+                        Terminal_1.Terminal.navigateTo(['App']);
                         this.createTemplate({
                             name: 'App',
                             type: 'script',
@@ -458,7 +458,7 @@ var App = /** @class */ (function () {
                             template: templates_1.createAppContainerTemplate(this.useTypescript),
                         });
                         // this will put you back in "src"
-                        Terminal_1.terminal.goBack(2);
+                        Terminal_1.Terminal.goBack(2);
                         return [2 /*return*/];
                 }
             });

@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 import { readdir, appendFile } from 'fs/promises';
 import shell from 'shelljs';
-import { terminal } from '../Terminal';
+import { Terminal } from '../Terminal';
 
 class FsUtil {
   goToRootDir = async () => {
@@ -25,11 +25,11 @@ class FsUtil {
           break;
         }
 
-        terminal.navigateTo(['..']);
+        Terminal.navigateTo(['..']);
         path = shell.pwd().stdout;
       } while (true);
     } catch (e) {
-      terminal.errorMessage(
+      Terminal.errorMessage(
         `${EOL}Looks like the directory you're currently in does not exist anymore, please retry in a valid directory${EOL}`,
       );
       process.exit(1);

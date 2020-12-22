@@ -17,7 +17,7 @@ import {
   createAppStyleTemplate,
 } from '../templates';
 import { fsUtil } from '../FsUtil';
-import { terminal } from '../Terminal';
+import { Terminal } from '../Terminal';
 import { store } from '../Store';
 import { repo } from '../utils';
 import shell from 'shelljs';
@@ -175,11 +175,11 @@ export class App {
       console.info(`${EOL}executing : ${cyan(`${command}`)}`);
       console.log(`Sit back and relax we're taking care of everything ! 😁`);
 
-      terminal.executeCommand(command);
+      Terminal.executeCommand(command);
 
-      const { code } = terminal.navigateTo([this.appName]);
+      const { code } = Terminal.navigateTo([this.appName]);
       if (code) {
-        terminal.errorMessage(
+        Terminal.errorMessage(
           `An error occured, seems like the folder ${this.appName} doesn't exist.`,
         );
         process.exit(code);
@@ -256,7 +256,7 @@ export class App {
     if (command !== BASE_COMMAND) {
       console.log(EOL + command);
 
-      terminal.executeCommand(command);
+      Terminal.executeCommand(command);
     }
   };
 
@@ -267,7 +267,7 @@ export class App {
   createTemplates = async () => {
     if (await fsUtil.checkSrcDirectory()) {
       // Removes the cra templates for App and index
-      terminal.navigateTo(['src']);
+      Terminal.navigateTo(['src']);
       await fsUtil.removeFilesFromRegexp(/\b(App|index)\b\.([test\.]{5})?[jtscx]{2,3}/gi);
 
       const { useRedux, useSass, useRouter, useModules, useTypescript } = this;
@@ -288,7 +288,7 @@ export class App {
       });
 
       await fsUtil.createDirIfNotExists('App');
-      terminal.navigateTo(['App']);
+      Terminal.navigateTo(['App']);
 
       this.createTemplate({ name: 'App', template: appTemplate, type: 'script' });
       this.createTemplate({
@@ -304,7 +304,7 @@ export class App {
       });
 
       // this will put you back in "src"
-      terminal.goBack(1);
+      Terminal.goBack(1);
     } else {
       console.error(
         `${EOL}No src directory found. Seems like something went wrong while creating your app.`,
@@ -345,12 +345,12 @@ export class App {
     const styleFolder = useSass ? 'scss' : 'css';
 
     await fsUtil.createDirIfNotExists('assets');
-    terminal.navigateTo(['assets']);
+    Terminal.navigateTo(['assets']);
 
     await fsUtil.createDirIfNotExists('images');
 
     await fsUtil.createDirIfNotExists(styleFolder);
-    terminal.navigateTo([styleFolder]);
+    Terminal.navigateTo([styleFolder]);
 
     this.createTemplate({
       name: 'index',
@@ -371,7 +371,7 @@ export class App {
     });
 
     // This will put you back in "src"
-    terminal.goBack(2);
+    Terminal.goBack(2);
   };
 
   createStoreFolder = async () => {
@@ -384,7 +384,7 @@ export class App {
     });
 
     await fsUtil.createDirIfNotExists('middlewares');
-    terminal.navigateTo(['middlewares']);
+    Terminal.navigateTo(['middlewares']);
     this.createTemplate({
       name: 'middleware.template',
       type: 'script',
@@ -397,10 +397,10 @@ export class App {
       scriptExtension: this.useTypescript ? 'ts' : 'js',
       template: "export { templateMiddleware } from './middleware.template'",
     });
-    terminal.goBack(1);
+    Terminal.goBack(1);
 
     await fsUtil.createDirIfNotExists('reducers');
-    terminal.navigateTo(['reducers']);
+    Terminal.navigateTo(['reducers']);
     this.createTemplate({
       name: 'reducer.template',
       type: 'script',
@@ -413,10 +413,10 @@ export class App {
       scriptExtension: this.useTypescript ? 'ts' : 'js',
       template: createRootReducerTemplate(this.useTypescript),
     });
-    terminal.goBack(1);
+    Terminal.goBack(1);
 
     fsUtil.createDirIfNotExists('actions');
-    terminal.navigateTo(['actions']);
+    Terminal.navigateTo(['actions']);
     this.createTemplate({
       name: 'actions.template',
       type: 'script',
@@ -430,14 +430,14 @@ export class App {
       template: `export * as actionsTemplate from './actions.template'`,
     });
     // this will put you back in "src"
-    terminal.goBack(2);
+    Terminal.goBack(2);
   };
 
   createContainersFolder = async () => {
     await fsUtil.createDirIfNotExists('containers');
-    terminal.navigateTo(['containers']);
+    Terminal.navigateTo(['containers']);
     await fsUtil.createDirIfNotExists('App');
-    terminal.navigateTo(['App']);
+    Terminal.navigateTo(['App']);
     this.createTemplate({
       name: 'App',
       type: 'script',
@@ -446,7 +446,7 @@ export class App {
     });
 
     // this will put you back in "src"
-    terminal.goBack(2);
+    Terminal.goBack(2);
   };
 
   addPackage = (

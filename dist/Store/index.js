@@ -48,7 +48,7 @@ var Store = /** @class */ (function () {
                     case 0: return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('store')];
                     case 1:
                         _a.sent();
-                        Terminal_1.terminal.navigateTo(['store']);
+                        Terminal_1.Terminal.navigateTo(['store']);
                         return [4 /*yield*/, FsUtil_1.fsUtil.createDirIfNotExists('actions')];
                     case 2:
                         _a.sent();
