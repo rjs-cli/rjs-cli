@@ -34,9 +34,6 @@ class FsUtil {
       );
       process.exit(1);
     }
-
-    // const splitPath = path.split('/');
-    // return splitPath[splitPath.length - 1];
   };
 
   checkSrcDirectory = async () => {

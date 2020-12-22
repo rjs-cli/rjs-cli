@@ -5,7 +5,7 @@
     "email": "davidnogueira.dev.pro@gmail.com",
     "url": "https://github.com/ZayenJS/"
   },
-  "description": "A CLI that uses create-react-app to init a new React app and generate components",
+  "description": "A CLI that uses create-react-app to init a new React app and can generate components",
   "version": "1.0.0",
   "repository": {
     "type": "git",
@@ -22,7 +22,12 @@
   "scripts": {},
   "keywords": [
     "react",
+    "reactjs",
     "react cli",
+    "react-cli",
+    "reactjs cli",
+    "reactjs-cli",
+    "react component",
     "generate components",
     "cli",
     "command line interface",
@@ -30,9 +35,7 @@
     "react init",
     "rjs",
     "rjs cli",
-    "rjs-cli",
-    "reactjs cli",
-    "react-cli"
+    "rjs-cli"
   ],
   "license": "MIT",
   "dependencies": {
