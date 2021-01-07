@@ -1,19 +1,19 @@
 {
-  "name": "reactjs-cli",
+  "name": "cli-rjs",
   "author": {
     "name": "David Nogueira",
     "email": "davidnogueira.dev.pro@gmail.com",
     "url": "https://github.com/ZayenJS/"
   },
   "description": "A CLI that uses create-react-app to init a new React app and can generate components",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rjs-cli/rjs-cli.git"
+    "url": "git+https://github.com/cli-rjs/cli-rjs.git"
   },
-  "homepage": "https://github.com/rjs-cli/rjs-cli#readme",
+  "homepage": "https://github.com/cli-rjs/cli-rjs#readme",
   "bugs": {
-    "url": "https://github.com/rjs-cli/rjs-cli/issues"
+    "url": "https://github.com/cli-rjs/cli-rjs/issues"
   },
   "main": "index.js",
   "bin": {

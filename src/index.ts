@@ -6,7 +6,7 @@ import { Component } from './Component';
 const app = new App();
 const component = new Component();
 
-program.version('0.0.1');
+program.version('1.0.1');
 
 program
   .command('init [app-name]')
