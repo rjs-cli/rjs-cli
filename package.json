@@ -6,7 +6,7 @@
     "url": "https://github.com/ZayenJS/"
   },
   "description": "A CLI that uses create-react-app to init a new React app and can generate components",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rjs-cli/rjs-cli.git"
