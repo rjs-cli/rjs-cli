@@ -9,11 +9,11 @@
   "version": "1.0.1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cli-rjs/cli-rjs.git"
+    "url": "git+https://github.com/rjs-cli/rjs-cli.git"
   },
-  "homepage": "https://github.com/cli-rjs/cli-rjs#readme",
+  "homepage": "https://github.com/rjs-cli/rjs-cli#readme",
   "bugs": {
-    "url": "https://github.com/cli-rjs/cli-rjs/issues"
+    "url": "https://github.com/rjs-cli/rjs-cli/issues"
   },
   "main": "index.js",
   "bin": {
