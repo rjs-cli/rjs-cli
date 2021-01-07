@@ -1,4 +1,4 @@
-<h1>RJS CLI</h1>
+<h1>CLI RJS</h1>
 
 [![License](https://img.shields.io/npm/l/express.svg)](https://github.com/rjs-cli/rjs-cli/blob/master/LICENSE.md)
 
@@ -22,13 +22,13 @@ To help speed up productivity in React projects and stop copying, pasting, and r
 Install with [npm](https://www.npmjs.com/):
 
 ```sh
-$ npm install -g rjs-cli
+$ npm install -g cli-rjs
 ```
 
 Install with [yarn](https://yarnpkg.com/en/):
 
 ```sh
-$ yarn global add rjs-cli
+$ yarn global add cli-rjs
 ```
 
 ---
